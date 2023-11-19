@@ -1,0 +1,81 @@
+/* CSS Reset */
+body, h1, h2, h3, h4, h5, h6, p, ul, li, table, th, td {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+}
+
+.email-container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    background-color: #fff;
+}
+
+.loiChao {
+    text-align: center;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #ddd;
+}
+
+.loiChao h1 {
+    color: #f90;
+}
+
+.moDau {
+    margin-top: 20px;
+    padding: 20px;
+    background-color: #f9f9f9;
+}
+
+.moDau a {
+    color: #f90;
+    text-decoration: none;
+}
+
+.moDau a:hover {
+    text-decoration: underline;
+}
+
+.thongTinDonHang p {
+    margin-bottom: 10px;
+}
+
+.tablea {
+    width: 100%;
+    margin-top: 20px;
+    border-collapse: collapse;
+}
+
+.tablea th, .tablea td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.order-details p {
+    margin-top: 10px;
+}
+
+.email-footer {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #ddd;
+    text-align: center;
+    color: #888;
+}
+
+.email-footer a {
+    color: #f90;
+    text-decoration: none;
+}
+
+.email-footer a:hover {
+    text-decoration: underline;
+}

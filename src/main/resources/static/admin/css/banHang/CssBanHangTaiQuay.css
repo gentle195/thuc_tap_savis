@@ -1,0 +1,66 @@
+body {
+    min-height: 100vh;
+}
+
+#table-BanHangTaiQuay {
+    max-height: 400px;
+}
+
+.table-responsive {
+    max-height: 400px;
+}
+
+.quantity-input {
+    border: none;
+    background-color: #F8F9FA;
+}
+
+.quantity-input:focus {
+    outline: none;
+}
+
+.full-width-row {
+    text-align: center;
+    vertical-align: middle;
+}
+
+#inputKhuyenMai {
+    border: none;
+}
+
+#inputKhuyenMai:focus {
+    outline: none;
+}
+
+.tienKhachDua-input:hover {
+    border: none;
+}
+
+input:hover,
+input:focus {
+    border: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+}
+
+select:hover,
+select:focus {
+    border: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+}
+
+.xoaHDCT {
+    border: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+    background-color: #F8F9FA;
+}
+
+.xoaHDCT:hover,
+.xoaHDCT:focus {
+    border: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+}
+

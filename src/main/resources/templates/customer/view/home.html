@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{customer/layouts/index}">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Trang chủ</title>
+    <script th:src="@{/customer/js/view/home.js}"></script>
+</head>
+
+<body>
+<section layout:fragment="content">
+    <span th:replace="customer/fragments/section_start :: section-start"></span>
+    <section class="banner spad">
+        <div class="container">
+            <div class="row">
+                <!-- First Banner -->
+                <div class="col-lg-7 offset-lg-4" th:if="${resultSP.lstShowSanPhamTaiQuayDTO.size() >= 1}">
+                    <div class="banner__item">
+                        <div class="banner__item__pic">
+                            <img th:src="${'/customer/images/'+ resultSP.lstShowSanPhamTaiQuayDTO[0].anhChinhs[0]}"
+                                 alt="">
+                        </div>
+                        <div class="banner__item__text">
+                            <h2 th:text="${resultSP.lstShowSanPhamTaiQuayDTO[0].tenSanPham}">Clothing Collections
+                                2030</h2>
+                            <a
+                                    th:href="${'/customer/shop-details/'+ resultSP.lstShowSanPhamTaiQuayDTO[0].sanPhamId}">Mua
+                                ngay</a>
+                        </div>
+                    </div>
+                </div>
+                <!-- Second Banner -->
+                <div class="col-lg-5" th:if="${resultSP.lstShowSanPhamTaiQuayDTO.size() >= 2}">
+                    <div class="banner__item banner__item--middle">
+                        <div class="banner__item__pic">
+                            <img th:src="${'/customer/images/'+ resultSP.lstShowSanPhamTaiQuayDTO[1].anhChinhs[0]}"
+                                 alt="">
+                        </div>
+                        <div class="banner__item__text">
+                            <h2 th:text="${resultSP.lstShowSanPhamTaiQuayDTO[1].tenSanPham}">Accessories</h2>
+                            <a
+                                    th:href="${'/customer/shop-details/'+ resultSP.lstShowSanPhamTaiQuayDTO[1].sanPhamId}">Mua
+                                ngay</a>
+                        </div>
+                    </div>
+                </div>
+                <!-- Third Banner -->
+                <div class="col-lg-7" th:if="${resultSP.lstShowSanPhamTaiQuayDTO.size() >= 3}">
+                    <div class="banner__item banner__item--last">
+                        <div class="banner__item__pic">
+                            <img th:src="${'/customer/images/'+ resultSP.lstShowSanPhamTaiQuayDTO[2].anhChinhs[0]}"
+                                 alt="">
+                        </div>
+                        <div class="banner__item__text">
+                            <h2 th:text="${resultSP.lstShowSanPhamTaiQuayDTO[2].tenSanPham}">Shoes Spring 2030</h2>
+                            <a
+                                    th:href="${'/customer/shop-details/'+ resultSP.lstShowSanPhamTaiQuayDTO[2].sanPhamId}">Mua
+                                ngay</a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+    <section class="product spad">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <ul class="filter__controls">
+                        <li class="active">Sản phẩm mới nhất</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="row product__filter">
+                <div class="col-lg-3 col-md-6 col-sm-6 col-md-6 col-sm-6 mix new-arrivals"
+                     th:each="item, istat : ${resultSP.lstShowSanPhamTaiQuayDTO}" th:object="${resultSP}">
+                    <div class="product__item">
+                        <div class="product__item__pic set-bg">
+                            <div th:id="'showHinhAnhSanPhamChiTiet' + ${istat.index}" class="carousel slide"
+                                 data-bs-ride="carousel">
+                                <div class="carousel-inner">
+                                    <div class="carousel-item" th:name="'divImgIsActive'+${istat.index}"
+                                         th:id="'imgActive'+${istat.index}+${istatAC.index}"
+                                         th:classappend="${#numbers.formatInteger(istat.index+''+istatAC.index,5) == #numbers.formatInteger(istat.index+''+0,5)? 'active':''}"
+                                         th:each="img, istatAC : ${item.anhChinhs}">
+                                        <img th:src="${'/customer/images/'+img}" class="d-block img-responsive"
+                                             alt="...">
+                                    </div>
+                                </div>
+                            </div>
+                            <span class="label">Mới nhất</span>
+                            <ul class="product__hover">
+                                <li><a href="#"><img th:src="@{images/icon/search.png}" alt="">
+                                    <span>Sp tương tự</span>
+                                </a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="product__item__text">
+                            <h6 th:text="${item.tenSanPham}">Piqué Biker Jacket</h6>
+                            <a th:href="${'/customer/shop-details/'+item.sanPhamId}" class="add-cart">+ Thêm vào
+                                giỏ</a>
+                            <div class="rating">
+                            </div>
+                            <h5 th:text="${#numbers.formatDecimal(item.gia, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"></h5>
+                            <div class="product__color__select">
+                                <label
+                                        onclick="chooseOptionColorLabel(this.getAttribute('id'),this.getAttribute('name'), this.getAttribute('input-name'), this.getAttribute('input-id'),
+                                                                                this.getAttribute('sp-name'),this.getAttribute('sp-id'),this.getAttribute('img-box-name'),this.getAttribute('img-box-id') )"
+                                        th:for="${ms.tenMauSac}+${istat.index}+${istatMS.index}"
+                                        th:id="labelMS+${istat.index}+${istatMS.index}"
+                                        th:style="'background-color:'+ ${ms.maMauSac}   "
+                                        th:each="ms, istatMS : ${item.lstMauSac}" th:name="labelMSName+${istat.index}"
+                                        th:input-name="inputMSName+${istat.index}"
+                                        th:input-id="${ms.tenMauSac}+${istat.index}+${istatMS.index}"
+                                        th:sp-name="sanPhamIdSPTQ" th:sp-id="sanPhamId+${istat.index}"
+                                        th:img-box-name="'divImgIsActive'+${istat.index}"
+                                        th:img-box-id="'imgActive'+${istat.index}+${istatMS.index}">
+                                    <input type="radio" th:value="${ms.id}" th:name="inputMSName+${istat.index}"
+                                           th:id="${ms.tenMauSac}+${istat.index}+${istatMS.index}"
+                                           th:field="*{mauSacId}" hidden>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</section>
+</body>
+
+</html>

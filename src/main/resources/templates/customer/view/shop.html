@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{customer/layouts/index}">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Trang chủ</title>
+    <script th:src="@{/customer/js/view/shop.js}"></script>
+    <style>
+        .shop__sidebar__color label.msActive:after {
+            border: 1px solid black;
+        }
+
+        .add-to-cart-text {
+            display: none;
+            /* Ẩn nội dung mặc định */
+        }
+
+        a:hover .add-to-cart-text {
+            display: inline;
+            /* Hiển thị nội dung khi hover vào liên kết */
+            margin-right: 45px;
+        }
+    </style>
+
+</head>
+
+<body>
+    <section layout:fragment="content">
+        <!-- Breadcrumb Section Begin -->
+        <section class="breadcrumb-option">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="breadcrumb__text">
+                            <h4>Danh sách sản phẩm</h4>
+                            <div class="breadcrumb__links">
+                                <a th:href="@{/customer/home}">Trang chủ</a>
+                                <span>Danh sách sản phẩm</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Breadcrumb Section End -->
+
+        <!-- Shop Section Begin -->
+        <section class="shop spad">
+            <form id="flexUrlTableFormShop" enctype="multipart/form-data" method="get">
+                <input type="hidden" name="page" id="inputPageShop">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-3" th:object="${dataSearch}">
+                            <div class="shop__sidebar">
+                                <div class="shop__sidebar__search">
+                                    <div name="styleCss">
+                                        <input type="text" th:field="*{tenSanPham}" placeholder="Search...">
+                                        <button type="submit"><span class="icon_search"></span></button>
+                                    </div>
+                                </div>
+                                <div class="shop__sidebar__accordion">
+                                    <div class="accordion" id="accordionExample">
+                                        <div class="card">
+                                            <div class="card-heading">
+                                                <a data-toggle="collapse" data-target="#collapseLeft1">Loại sản phẩm</a>
+                                            </div>
+                                            <div id="collapseLeft1" class="collapse show"
+                                                data-parent="#accordionExample">
+                                                <div class="card-body">
+                                                    <div class="shop__sidebar__categories">
+                                                        <ul class="nice-scroll">
+                                                            <li>
+                                                                <a href="#" name="loaiSanPhamIdsName"
+                                                                    id="tenLoaiSanPhamRadioIdLabel"
+                                                                    input-name="loaiSanPhamIds"
+                                                                    th:if="*{loaiSanPhamIds!=null && loaiSanPhamIds!=''}"
+                                                                    onclick="clearChooseOptionLi(this.getAttribute('name'),this.getAttribute('id'),this.getAttribute('input-name'))">
+                                                                    Tất cả
+                                                                </a>
+                                                            </li>
+                                                            <li th:each="item, istat : ${lstLoaiSanPham}">
+                                                                <a href="#" name="loaiSanPhamIdsName"
+                                                                    th:id="'tenLoaiSanPhamRadioIdLabel'+${istat.index}"
+                                                                    th:input-id="'tenLoaiSanPhamRadioId'+${istat.index}"
+                                                                    input-name="loaiSanPhamIds"
+                                                                    onclick="chooseOptionLi(this.getAttribute('name'),this.getAttribute('id'),this.getAttribute('input-name'),this.getAttribute('input-id'))">
+                                                                    [[${item.tenLoaiSanPham}]]
+                                                                    ([[${item.soSanPhamCungLoai}]])</a>
+                                                                <input type="radio" th:field="*{loaiSanPhamIds}"
+                                                                    th:value="${item.id}"
+                                                                    th:id="'tenLoaiSanPhamRadioId'+${istat.index}"
+                                                                    hidden>
+                                                                <script th:inline="javascript">
+                                                                    $(document).ready(function () {
+                                                                        var index = '[[${istat.index}]]';
+                                                                        if (document.getElementById(
+                                                                            'tenLoaiSanPhamRadioId' + index)
+                                                                            .checked == true) {
+                                                                            document.getElementById(
+                                                                                "tenLoaiSanPhamRadioIdLabel" +
+                                                                                index).style.color =
+                                                                                "#111111";
+                                                                        }
+                                                                    });
+                                                                </script>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card">
+                                            <div class="card-heading">
+                                                <a data-toggle="collapse" data-target="#collapseLeft2">Phong cách</a>
+                                            </div>
+                                            <div id="collapseLeft2" class="collapse show"
+                                                data-parent="#accordionExample">
+                                                <div class="card-body">
+                                                    <div class="shop__sidebar__brand">
+                                                        <ul>
+                                                            <li>
+                                                                <a href="#" name="phongCachIdsName"
+                                                                    id="tenPhongCachRadioIdLabel"
+                                                                    input-name="phongCachIds"
+                                                                    th:if="*{phongCachIds!=null && phongCachIds!=''}"
+                                                                    onclick="clearChooseOptionLi(this.getAttribute('name'),this.getAttribute('id'),this.getAttribute('input-name'))">
+                                                                    Tất cả
+                                                                </a>
+                                                            </li>
+                                                            <li th:each="item, istat : ${lstPhongCach}">
+                                                                <a href="#" name="phongCachIdsName"
+                                                                    th:id="'tenPhongCachRadioIdLabel'+${istat.index}"
+                                                                    th:input-id="'tenPhongCachRadioId'+${istat.index}"
+                                                                    input-name="phongCachIds"
+                                                                    onclick="chooseOptionLi(this.getAttribute('name'),this.getAttribute('id'),this.getAttribute('input-name'),this.getAttribute('input-id'))">[[${item.tenPhongCach}]]
+                                                                    ([[${item.soSanPhamCungPhongCach}]])</a>
+                                                                <input type="radio" th:field="*{phongCachIds}"
+                                                                    th:value="${item.id}"
+                                                                    th:id="'tenPhongCachRadioId'+${istat.index}" hidden>
+                                                                <script th:inline="javascript">
+                                                                    $(document).ready(function () {
+                                                                        var index = '[[${istat.index}]]';
+                                                                        if (document.getElementById(
+                                                                            'tenPhongCachRadioId' + index)
+                                                                            .checked == true) {
+                                                                            document.getElementById(
+                                                                                "tenPhongCachRadioIdLabel" +
+                                                                                index).style.color =
+                                                                                "#111111";
+                                                                        }
+                                                                    });
+                                                                </script>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card">
+                                            <div class="card-heading">
+                                                <a data-toggle="collapse" data-target="#collapseLeft3">Chất liệu</a>
+                                            </div>
+                                            <div id="collapseLeft3" class="collapse show"
+                                                data-parent="#accordionExample">
+                                                <div class="card-body">
+                                                    <div class="shop__sidebar__brand">
+                                                        <ul>
+                                                            <li>
+                                                                <a href="#" name="chatLieuIdsName"
+                                                                    id="tenChatLieuRadioIdLabel"
+                                                                    input-name="chatLieuIds"
+                                                                    th:if="*{chatLieuIds!=null && chatLieuIds!=''}"
+                                                                    onclick="clearChooseOptionLi(this.getAttribute('name'),this.getAttribute('id'),this.getAttribute('input-name'))">
+                                                                    Tất cả
+                                                                </a>
+                                                            </li>
+
+                                                            <li th:each="item, istat : ${lstChatLieu}">
+                                                                <a href="#" name="chatLieuIdsName"
+                                                                    th:id="'tenChatLieuRadioIdLabel'+${istat.index}"
+                                                                    th:input-id="'tenChatLieuRadioId'+${istat.index}"
+                                                                    input-name="chatLieuIds"
+                                                                    onclick="chooseOptionLi(this.getAttribute('name'),this.getAttribute('id'),this.getAttribute('input-name'),this.getAttribute('input-id'))">[[${item.tenChatLieu}]]
+                                                                    ([[${item.soSanPhamCungChatLieu}]])</a>
+                                                                <input type="radio" th:field="*{chatLieuIds}"
+                                                                    th:value="${item.id}"
+                                                                    th:id="'tenChatLieuRadioId'+${istat.index}" hidden>
+                                                                <script th:inline="javascript">
+                                                                    $(document).ready(function () {
+                                                                        var index = '[[${istat.index}]]';
+                                                                        if (document.getElementById(
+                                                                            'tenChatLieuRadioId' + index)
+                                                                            .checked == true) {
+                                                                            document.getElementById(
+                                                                                "tenChatLieuRadioIdLabel" +
+                                                                                index).style.color =
+                                                                                "#111111";
+                                                                        }
+                                                                    });
+                                                                </script>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card">
+                                            <div class="card-heading">
+                                                <a data-toggle="collapse" data-target="#collapseLeft4">Giá</a>
+                                            </div>
+                                            <div id="collapseLeft1" class="collapse show"
+                                                data-parent="#accordionExample">
+                                                <div class="card-body">
+                                                    <div class="shop__sidebar__price">
+                                                        <ul>
+                                                            <li>
+                                                                <a href="#" name="giaOptionName"
+                                                                    id="giaOptionRadioIdLabel" input-name="giaOption"
+                                                                    th:if="*{giaOption!=null && giaOption!=''}"
+                                                                    onclick="clearChooseOptionLi(this.getAttribute('name'),this.getAttribute('id'),this.getAttribute('input-name'))">
+                                                                    Tất cả
+                                                                </a>
+                                                            </li>
+
+                                                            <li th:each="item, istat : ${lstGia}">
+                                                                <a href="#" name="giaOptionName"
+                                                                    th:id="'giaOptionRadioIdLabel'+${istat.index}"
+                                                                    th:input-id="'giaOptionRadioId'+${istat.index}"
+                                                                    input-name="giaOption" th:text="${item}"
+                                                                    onclick="chooseOptionLi(this.getAttribute('name'),this.getAttribute('id'),this.getAttribute('input-name'),this.getAttribute('input-id'))">
+                                                                </a>
+                                                                <input type="radio" th:field="*{giaOption}"
+                                                                    th:value="${istat.index}"
+                                                                    th:id="'giaOptionRadioId'+${istat.index}" hidden>
+
+                                                                <script th:inline="javascript">
+                                                                    $(document).ready(function () {
+                                                                        var index = '[[${istat.index}]]';
+                                                                        if (document.getElementById(
+                                                                            'giaOptionRadioId' + index)
+                                                                            .checked == true) {
+                                                                            document.getElementById(
+                                                                                "giaOptionRadioIdLabel" +
+                                                                                index).style.color =
+                                                                                "#111111";
+                                                                        }
+                                                                    });
+                                                                </script>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card">
+                                            <div class="card-heading">
+                                                <a data-toggle="collapse" data-target="#collapseFour">Kích cỡ</a>
+                                            </div>
+                                            <div id="collapseFour" class="collapse show"
+                                                data-parent="#accordionExample">
+                                                <div class="card-body">
+                                                    <div class="shop__sidebar__size">
+                                                        <label th:for="allKichCo" name="kichCoIdsName"
+                                                            th:id="KichCoIdsRadio" th:input-id="tenKichCoRadioId"
+                                                            input-name="kichCoIds"
+                                                            th:if="*{kichCoIds!=null && kichCoIds!=''}"
+                                                            onclick="chooseOptionLabel(this.getAttribute('name'),this.getAttribute('id'),this.getAttribute('input-name'),this.getAttribute('input-id'))">ALL
+                                                        </label>
+                                                        <label th:for="${item.tenKichCo}" name="kichCoIdsName"
+                                                            th:id="'KichCoIdsRadio'+${istat.index}"
+                                                            th:input-id="'tenKichCoRadioId'+${istat.index}"
+                                                            input-name="kichCoIds"
+                                                            onclick="chooseOptionLabel(this.getAttribute('name'),this.getAttribute('id'),this.getAttribute('input-name'),this.getAttribute('input-id'))"
+                                                            th:each="item, istat : ${lstKichCo}">[[${item.tenKichCo}]]
+                                                            <input type="radio" th:field="*{kichCoIds}"
+                                                                th:value="${item.id}"
+                                                                th:id="'tenKichCoRadioId'+${istat.index}" hidden>
+
+                                                            <script th:inline="javascript">
+                                                                $(document).ready(function () {
+                                                                    var index = '[[${istat.index}]]';
+                                                                    if (document.getElementById(
+                                                                        'tenKichCoRadioId' + index)
+                                                                        .checked == true) {
+                                                                        document.getElementById(
+                                                                            "KichCoIdsRadio" +
+                                                                            index).style.backgroundColor =
+                                                                            "#111111";
+                                                                        document.getElementById(
+                                                                            "KichCoIdsRadio" +
+                                                                            index).style.color =
+                                                                            "white";
+                                                                    }
+                                                                });
+                                                            </script>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card">
+                                            <div class="card-heading">
+                                                <a data-toggle="collapse" data-target="#collapseFive">Màu sắc</a>
+                                            </div>
+                                            <div id="collapseFive" class="collapse show"
+                                                data-parent="#accordionExample">
+                                                <div class="card-body">
+                                                    <div class="shop__sidebar__color">
+                                                        <div class="ml-3"></div>
+                                                        <label id="allMauSacId" th:input-name="mauSacIds"
+                                                            th:label-name="labelMSSearchName" class="text-center ml-1"
+                                                            style="vertical-align: middle;"
+                                                            th:if="*{mauSacIds !=null && mauSacIds!=''}"
+                                                            onclick="clearChooseOptionLabel(this.getAttribute('input-name'), this.getAttribute('label-name'))">All
+                                                        </label>
+                                                        <label th:class="ml-1"
+                                                            onclick="chooseOptionColorLabel(this.getAttribute('id'),this.getAttribute('name'), this.getAttribute('input-name'), this.getAttribute('input-id'))"
+                                                            th:for="'mauSacInpId'+${istat.index}"
+                                                            th:id="labelMSSearch+${istat.index}"
+                                                            th:style="'background-color:'+ ${ms.maMauSac}"
+                                                            th:each="ms, istat : ${lstMauSac}"
+                                                            th:name="labelMSSearchName" th:input-name="mauSacIds"
+                                                            th:input-id="'mauSacInpId'+${istat.index}">
+                                                            <input type="radio" th:value="${ms.id}"
+                                                                th:id="'mauSacInpId'+${istat.index}"
+                                                                th:field="*{mauSacIds}" name="mauSacIds" hidden>
+
+                                                            <script th:inline="javascript">
+                                                                $(document).ready(function () {
+                                                                    var index = '[[${istat.index}]]';
+                                                                    if (document.getElementById(
+                                                                        'mauSacInpId' + index)
+                                                                        .checked == true) {
+                                                                        $('#labelMSSearch' + index).toggleClass(
+                                                                            'msActive');
+                                                                    }
+                                                                });
+                                                            </script>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-9">
+                            <div class="shop__product__option">
+                                <div class="row">
+                                    <div class="col-lg-6 col-md-6 col-sm-6">
+                                        <div class="shop__product__option__left">
+                                            <p>Hiển thị
+                                                [[${sanPhamPage.number*sanPhamPage.size+1}]]-[[${sanPhamPage.number*sanPhamPage.size+sanPhamPage.getContent().size()}]]
+                                                trên [[${sanPhamPage.totalPages*sanPhamPage.getContent().size()}]] kết
+                                                quả</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6 col-md-6 col-sm-6">
+                                        <div class="shop__product__option__right">
+                                            <p>Xếp theo giá: </p>
+                                            <select th:field="${dataSearch.tieuChiGia}"
+                                                onchange="flexUrlSubmit('/shop', 'get')">
+                                                <option value="">Tất cả</option>
+                                                <option value="thapDenCao">Từ thấp đến cao</option>
+                                                <option value="caoDenThap">Từ cao đến thấp</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-12 text-center" th:if="${!sanPhamPage.hasContent()}">
+                                    <img th:src="@{/customer/images/images/img-3.png}" class="img-responsive img-fluid"
+                                        width="60%" alt="">
+                                    <h2 style="color: #FFCA47;">Không tìm thấy sản phẩm bạn mong muốn</h2>
+                                </div>
+                                <div class="col-lg-4 col-md-6 col-sm-6 mix"
+                                    th:each="item, istat : ${resultSP.lstShowSanPhamTaiQuayDTO}"
+                                    th:object="${resultSP}">
+                                    <div class="product__item">
+                                        <div class="product__item__pic set-bg">
+                                            <div th:id="'showHinhAnhSanPhamChiTiet' + ${istat.index}"
+                                                class="carousel slide" data-bs-ride="carousel">
+                                                <div class="carousel-inner">
+                                                    <div class="carousel-item" th:name="'divImgIsActive'+${istat.index}"
+                                                        th:id="'imgActive'+${istat.index}+${istatAC.index}"
+                                                        th:classappend="${#numbers.formatInteger(istat.index+''+istatAC.index,5) == #numbers.formatInteger(istat.index+''+0,5)? 'active':''}"
+                                                        th:each="img, istatAC : ${item.anhChinhs}">
+                                                        <img th:src="${'/customer/images/'+img}"
+                                                            class="d-block img-responsive" alt="...">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!-- <span class="label">Mới nhất</span> -->
+                                            <ul class="product__hover">
+                                                <!-- <li><a href="#"><img th:src="@{images/icon/heart.png}" alt="">
+                                                        <span>yêu thích</span>
+                                                    </a>
+                                                </li>
+                                                <li><a href="#"><img th:src="@{images/icon/compare.png}" alt="">
+                                                        <span>So sánh</span>
+                                                    </a>
+                                                </li> -->
+                                                <li><a
+                                                        th:href="${'/customer/shop?loaiSanPhamIds=' + item.loaiSanPhamId}"><img
+                                                            th:src="@{images/icon/search.png}" alt="">
+                                                        <span>Tương tự</span>
+                                                    </a>
+                                                </li>
+
+                                                <li>
+                                                    <a th:href="${'/customer/shop-details/'+item.sanPhamId}">
+                                                        <img th:src="@{images/icon/cart.png}" alt="">
+                                                        <span class="add-to-cart-text">Thêm vào giỏ</span>
+                                                    </a>
+                                                </li>
+
+                                            </ul>
+                                        </div>
+                                        <div class="product__item__text">
+                                            <h6 th:text="${item.tenSanPham}"></h6>
+                                            <a th:href="${'/MuaNgay/shop-details/'+item.sanPhamId}" class="add-cart">+
+                                                Mua ngay</a>
+                                            <div class="rating">
+                                            </div>
+                                            <h5>
+                                                <h5 th:text="${#numbers.formatDecimal(item.gia, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"
+                                                    style="vertical-align: middle;"></h5>
+                                            </h5>
+                                            <div class="product__color__select">
+                                                <label th:class="${istatMS.index == 0? 'active': ''}"
+                                                    onclick="chooseOptionColorLabelImg(this.getAttribute('id'),this.getAttribute('name'), this.getAttribute('input-name'), this.getAttribute('input-id'),
+                                                this.getAttribute('sp-name'),this.getAttribute('sp-id'),this.getAttribute('img-box-name'),this.getAttribute('img-box-id') )"
+                                                    th:for="${ms.tenMauSac}+${istat.index}+${istatMS.index}"
+                                                    th:id="labelMS+${istat.index}+${istatMS.index}"
+                                                    th:style="'background-color:'+ ${ms.maMauSac}   "
+                                                    th:each="ms, istatMS : ${item.lstMauSac}"
+                                                    th:name="labelMSName+${istat.index}"
+                                                    th:input-name="inputMSName+${istat.index}"
+                                                    th:input-id="${ms.tenMauSac}+${istat.index}+${istatMS.index}"
+                                                    th:sp-name="sanPhamIdSPTQ" th:sp-id="sanPhamId+${istat.index}"
+                                                    th:img-box-name="'divImgIsActive'+${istat.index}"
+                                                    th:img-box-id="'imgActive'+${istat.index}+${istatMS.index}">
+                                                    <input type="radio" th:value="${ms.id}"
+                                                        th:name="inputMSName+${istat.index}"
+                                                        th:id="${ms.tenMauSac}+${istat.index}+${istatMS.index}"
+                                                        th:field="*{mauSacId}" hidden>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="product__pagination" th:if="${sanPhamPage.totalPages >0}">
+                                        <button href="#" th:class="${1 == sanPhamPage.number + 1}? 'active' : ''"
+                                            th:if="${sanPhamPage.number + 1 - 2 > 1}" id="firstPageShop">1</button>
+                                        <span th:if="${sanPhamPage.number + 1 - 2 > 1}">...</span>
+                                        <button
+                                            th:each="pageNumber : ${#numbers.sequence(sanPhamPage.number + 1 > 2 ? sanPhamPage.number + 1 - 2 : 1, sanPhamPage.number + 1 + 2 < sanPhamPage.totalPages ? sanPhamPage.number + 1 + 2 : sanPhamPage.totalPages)}"
+                                            th:class="${pageNumber == sanPhamPage.number + 1}? 'active' : ''"
+                                            th:id="pageNumberShop+${pageNumber}" th:page-number="${pageNumber}"
+                                            th:text="${pageNumber}"
+                                            onclick="changePage(this.getAttribute('page-number'))">
+                                        </button>
+
+                                        <span th:if="${sanPhamPage.number + 1 + 2 < sanPhamPage.totalPages}">...</span>
+                                        <button
+                                            th:class="${ sanPhamPage.totalPages == sanPhamPage.number + 1}? 'active' : ''"
+                                            th:if="${sanPhamPage.number + 1 + 2 < sanPhamPage.totalPages}"
+                                            th:text="${sanPhamPage.totalPages}" id="lastPageShop"></button>
+
+                                        <script th:inline="javascript">
+                                            $(document).ready(function () {
+                                                $('#firstPageShop').on("click", function () {
+                                                    var num = 1;
+                                                    $('#inputPageShop').attr("value", num);
+                                                    $('#flexUrlTableFormShop').submit();
+                                                })
+                                                $('#lastPageShop').on("click", function () {
+                                                    var num = parseInt("[[${sanPhamPage.totalPages}]]");
+                                                    $('#inputPageShop').attr("value", num);
+                                                    $('#flexUrlTableFormShop').submit();
+                                                })
+                                            });
+                                            function changePage(pageNumber) {
+                                                var num = pageNumber;
+                                                $('#inputPageShop').attr("value", num);
+                                                $('#flexUrlTableFormShop').submit();
+                                            }
+                                        </script>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </section>
+        <!-- Shop Section End -->
+    </section>
+</body>
+
+</html>

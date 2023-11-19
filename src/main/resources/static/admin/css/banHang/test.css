@@ -1,0 +1,181 @@
+.container-fluid {
+    display: flex;
+}
+
+.tableSPCT {
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    height: 500px;
+}
+
+.button-container {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-top: 10px;
+    margin-right: 10px;
+}
+
+.button-container button {
+    margin-left: 10px;
+    background-color: #4CAF50;
+    color: #ffffff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.button-container button:hover {
+    background-color: #45a049;
+}
+.custom-table {
+    width: 100%;
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+.custom-table th,
+.custom-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #ebebeb;
+}
+
+.custom-table th {
+    background-color: #f6f6f6;
+}
+
+.custom-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.custom-table tbody tr:nth-child(even) {
+    background-color: #fafafa;
+}
+
+.custom-table tbody tr:hover {
+    background-color: #f2f2f2;
+}
+
+.panel.hoaDon h2.titleHoaDon {
+    font-size: 24px;
+    margin-bottom: 10px;
+    text-align: center;
+    color: #1ab7ea;
+}
+.cart__discount {
+    margin-bottom: 60px;
+}
+
+.cart__discount h6 {
+    color: #111111;
+    font-weight: 700;
+    text-transform: uppercase;
+    margin-bottom: 35px;
+}
+
+.cart__discount form {
+    position: relative;
+}
+
+.cart__discount form input {
+    font-size: 14px;
+    color: #b7b7b7;
+    height: 50px;
+    width: 100%;
+    border: 1px solid #e1e1e1;
+    padding-left: 20px;
+}
+
+.cart__discount form input::-webkit-input-placeholder {
+    color: #b7b7b7;
+}
+
+.cart__discount form input::-moz-placeholder {
+    color: #b7b7b7;
+}
+
+.cart__discount form input:-ms-input-placeholder {
+    color: #b7b7b7;
+}
+
+.cart__discount form input::-ms-input-placeholder {
+    color: #b7b7b7;
+}
+
+.cart__discount form input::placeholder {
+    color: #b7b7b7;
+}
+
+.cart__discount form button {
+    font-size: 14px;
+    color: #ffffff;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    background: #111111;
+    padding: 0 30px;
+    border: none;
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 100%;
+}
+
+.cart__total {
+    background: #f3f2ee;
+    padding: 35px 40px 40px;
+}
+
+.cart__total h6 {
+    color: #111111;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+}
+
+.cart__total ul {
+    margin-bottom: 25px;
+}
+
+.cart__total ul li {
+    list-style: none;
+    font-size: 16px;
+    color: #444444;
+    line-height: 40px;
+    overflow: hidden;
+}
+
+.cart__total ul li span {
+    font-weight: 700;
+    color: #e53637;
+    float: right;
+}
+
+.cart__total .primary-btn {
+    display: block;
+    padding: 12px 10px;
+    /*text-align: center;*/
+    letter-spacing: 2px;
+}
+.primary-btn {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 14px 30px;
+    color: #ffffff;
+    background: #000000;
+    letter-spacing: 4px;
+    float: right;
+    margin-left: 10px;
+}
+.btn-group {
+    overflow: auto;
+    margin-top: 10px;
+}
+h6{
+    text-align: left;
+}

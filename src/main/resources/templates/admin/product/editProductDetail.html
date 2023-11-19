@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{admin/layouts/index.html}">
+
+<head>
+    <title>Chỉnh sửa sản phẩm chi tiết</title>
+</head>
+
+<body>
+    <section layout:fragment="content" class="container">
+        <script th:inline="javascript">
+            window.onload = function () {
+                var messageSuccess = '[[${messageSuccess}]]';
+                var messageDanger = '[[${messageDanger}]]';
+                if (messageSuccess.length !== 0) {
+                    $("#messageSuccess").toast("show");
+                }
+                if (messageDanger.length !== 0) {
+                    $("#messageDanger").toast("show");
+                }
+            }
+        </script>
+        <div id="toastsCustomCss" style="position: fixed; top: 10px; right: 0;z-index: 1;">
+            <div id="messageSuccess" th:if="${messageSuccess}" class="toast" role="alert" aria-live="assertive"
+                aria-atomic="true" data-delay="3000">
+                <div class="toast-header">
+                    <svg class="bd-placeholder-img rounded mr-2" width="20" height="20"
+                        xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" focusable="false"
+                        role="img">
+                        <rect width="100%" height="100%" fill="#007aff"></rect>
+                    </svg>
+                    <!-- <img src="..." class="rounded mr-2" alt="..."> -->
+                    <strong class="pr-3 mr-auto">Thông báo hệ thống</strong>
+                    <small>Now</small>
+                    <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="toast-body" th:text="${messageSuccess}"></div>
+            </div>
+            <div id="messageDanger" th:if="${messageDanger}" class="toast" role="alert" aria-live="assertive"
+                aria-atomic="true" data-delay="3000">
+                <div class="toast-header">
+                    <svg class="bd-placeholder-img rounded mr-2" width="20" height="20"
+                        xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" focusable="false"
+                        role="img">
+                        <rect width="100%" height="100%" fill="red"></rect>
+                    </svg>
+                    <!-- <img src="..." class="rounded mr-2" alt="..."> -->
+                    <strong class="pr-3 mr-auto">Thông báo hệ thống</strong>
+                    <small>Now</small>
+                    <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="toast-body" th:text="${messageDanger}"></div>
+            </div>
+            <div id="toastAjax" class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-delay="2000">
+            </div>
+        </div>
+        <form enctype="multipart/form-data" id="flexUrlTableFormEditProductDetail" th:object="${sanPhamChiTietDTO}">
+            <input type="hidden" th:field="*{id}">
+            <input type="hidden" th:field="*{sanPhamId}">
+            <div id="myForm">
+                <h1 class="h3 mb-2 text-gray-800">Cập nhật chi tiết sản phẩm</h1>
+                <div class="card shadow mb-4 mt-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold">
+                            Kích cỡ và màu sắc
+                        </h6>
+                    </div>
+                    <div class="col-sm-12 row">
+                        <div class="col-sm-4 mt-3">
+                            <div class="row">
+                                <div class="col-12"><label for="kichCoId">Tên kích cỡ:</label></div>
+                                <div class="col-10" style="padding-right: 3px;">
+                                    <select class="form-control" id="kichCoId" th:classappend="${#fields.hasErrors('kichCoId')}?
+                                        is-invalid : ''" th:field="*{kichCoId}">
+                                        <option th:each="item : ${lstKichCo}" th:value="${item.id}"
+                                            th:text="${item.tenKichCo}" th:selected="${item.id ==
+                                                sanPhamChiTietDTO.kichCoId}"></option>
+                                    </select>
+                                    <small id="kichCoId" th:if="${#fields.hasErrors('kichCoId')}" th:class="${#fields.hasErrors('kichCoId')}?
+                                        invalid-feedback : ''" th:errors="*{kichCoId}"></small>
+                                </div>
+                                <div class="col-2" style="padding-left: 0;">
+                                    <a class="btn btn-outline-info"
+                                        onclick="openPopupIsShowSpeedAddProduct('Tên Kích cỡ', 'kichCo')">
+                                        <img th:src="@{/admin/img/icons/plus.svg}"></a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4 mt-3 mb-3">
+                            <div class="row">
+                                <div class="col-12"><label for="mauSacId">Tên màu sắc:</label></div>
+                                <div class="col-10" style="padding-right: 3px;">
+                                    <select class="form-control" id="mauSacId" th:classappend="${#fields.hasErrors('mauSacId')}?
+                                        is-invalid : ''" th:field="*{mauSacId}">
+                                        <option th:each="item : ${lstMauSac}" th:value="${item.id}"
+                                            th:text="${item.tenMauSac}" th:selected="${item.id ==
+                                                sanPhamChiTietDTO.mauSacId}"></option>
+                                    </select>
+                                    <small id="mauSacId" th:if="${#fields.hasErrors('mauSacId')}" th:class="${#fields.hasErrors('mauSacId')}?
+                                        invalid-feedback : ''" th:errors="*{mauSacId}"></small>
+                                </div>
+                                <div class="col-2" style="padding-left: 0;">
+                                    <a class="btn btn-outline-info"
+                                        onclick="openPopupIsShowSpeedAddProduct('Tên màu sắc', 'mauSac')">
+                                        <img th:src="@{/admin/img/icons/plus.svg}"></a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-2 mt-3 mb-3">
+                            <label for="soLuong">Số Lượng:</label>
+                            <input type="number" class="form-control" th:classappend="${#fields.hasErrors('soLuong')}?
+                                is-invalid : ''" placeholder="Số Lượng sản phẩm" th:field="*{soLuong}" />
+                            <small th:if="${#fields.hasErrors('soLuong')}" th:class="${#fields.hasErrors('soLuong')}?
+                                invalid-feedback : ''" th:errors="*{soLuong}"></small>
+                        </div>
+                        <div class="col-sm-2 mt-3 mb-3 text-center">
+                            <label for="soLuong">Có hiển thị:</label>
+                            <div class="custom-control
+                            custom-switch
+                            align-items-center">
+                                <input type="checkbox" class="custom-control-input" id="customSwitch1"
+                                    th:data-id="*{id}" th:field="*{coHienThi}"
+                                    th:checked="${sanPhamChiTietDTO.coHienThi == true? 'true' : 'false'}"
+                                    onclick="openPopupChangeIsShowFormAddProduct(this.getAttribute('data-id'))" />
+                                <label class="custom-control-label" th:for="customSwitch1"></label>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 mt-3 mb-3">
+                            <div class="float-right">
+                                <a class="btn btn-secondary" th:href="@{'/admin/product/edit/' + *{sanPhamId}}">
+                                    <span>Đóng <img th:src="@{/admin/img/icons/x-lg.svg}"
+                                            aria-label="chi tiết" /></span>
+                                </a>
+                                <a class="btn btn-primary"
+                                    onclick="flexUrlSubmit('updateOrCreateProductDetail', 'post', 'EditProductDetail')">
+                                    <span id="createOrUpdateBtn">Cập nhật chi tiết sản phẩm <img
+                                            th:src="@{/admin/img/icons/box-arrow-down.svg}"
+                                            aria-label="chi tiết" /></span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Modal iShowSpeed product -->
+            <div class="modal fade" id="iShowSpeedModalId" tabindex="-1" role="dialog" aria-labelledby="modelTitleId"
+                aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header text-center">
+                            <h5 class="modal-title">Thêm giá trị thuộc tính cho sản phẩm</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="col-sm-12">
+                                <input type="text" class="form-control" name="fieldthuocTinhInput"
+                                    id="fieldthuocTinhInput" hidden />
+                                <label>Tên thuộc tính: <span id="tenThuocTinh"></span></label>
+                                <br>
+                                <label for="tenThuocTinhInput">Giá trị thuộc tính:</label>
+                                <input type="text" class="form-control" name="thuocTinhInput" id="tenThuocTinhInput" />
+                                <small id="tenThuocTinhInputError" class="invalid-feedback"></small>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <a type="button" id="notChangeIsShow" class="btn btn-outline-dark"
+                                data-dismiss="modal">Đóng</a>
+                            <a id="yesOptionChangeIsShow" type="button" class="btn btn-danger"
+                                onclick="flexUrlSubmit('saveOptionValue', 'post', 'AddProduct')">Lưu</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <!-- Modal delete -->
+        <div class="modal fade" id="confirmationId" tabindex="-1" role="dialog" aria-labelledby="modelTitleId"
+            aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Xác nhận xóa sản
+                            phẩm</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">Bạn có muốn xóa sản
+                        phẩm
+                        này?</div>
+                    <div class="modal-footer">
+                        <a type="button" class="btn
+                                            btn-outline-dark" data-dismiss="modal">Đóng</a>
+                        <a id="yesOptionDeleteModalId" type="button" class="btn
+                                            btn-danger">Xóa</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Modal isShow product -->
+        <div class="modal fade" id="isShowModalId" tabindex="-1" role="dialog" aria-labelledby="modelTitleId"
+            aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Xác nhận thay
+                            đổi
+                            trạng thái hiển thị sản phẩm</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        Bạn có muốn thay đổi trạng thái hiển thị
+                        của
+                        sản phẩm đã chọn?
+                    </div>
+                    <div class="modal-footer">
+                        <a type="button" id="notChangeIsShow" class="btn btn-outline-dark" data-dismiss="modal">Đóng</a>
+                        <a id="yesOptionChangeIsShow" type="button" class="btn
+                                            btn-danger">Đồng ý</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- modal delete all -->
+        <div class="modal fade" id="confirmationDeleteIdsAddProduct" tabindex="-1" role="dialog"
+            aria-labelledby="modelTitleId" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Xác nhận xóa hết sản phẩm</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        Bạn có muốn xóa hết sản phẩm đã chọn?
+                    </div>
+                    <div class="modal-footer">
+                        <a type="button" class="btn btn-outline-dark" data-dismiss="modal">Đóng</a>
+                        <a onclick="deleteAll('deleteAllByIds', 'AddProduct')" type="button"
+                            class="btn btn-danger">Xóa</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Modal isShow product -->
+        <div class="modal fade" id="isShowModalId" tabindex="-1" role="dialog" aria-labelledby="modelTitleId"
+            aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Xác nhận thay đổi trạng thái hiển thị sản phẩm</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        Bạn có muốn thay đổi trạng thái hiển thị của sản phẩm đã chọn?
+                    </div>
+                    <div class="modal-footer">
+                        <a type="button" id="notChangeIsShow" class="btn btn-outline-dark" data-dismiss="modal">Đóng</a>
+                        <a id="yesOptionChangeIsShow" type="button" class="btn btn-danger">Đồng ý</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+            $(document).ready(function () {
+                $('[data-toggle="popover"]').popover();
+            });
+        </script>
+        <script th:inline="javascript">
+            window.onload = function () {
+                var messageSuccess = '[[${messageSuccess}]]';
+                var messageDanger = '[[${messageDanger}]]';
+                $('#toastsCustomCss').attr("style", "position: absolute; top: 70px; right: 0;z-index: 10000;");
+                if (messageSuccess.length !== 0) {
+                    $("#messageSuccess").toast("show");
+                }
+                if (messageDanger.length !== 0) {
+                    $("#messageDanger").toast("show");
+                }
+            }
+        </script>
+        <script type="text/javascript" th:src="@{/admin/js/product/product.js}"></script>
+    </section>
+</body>
+
+</html>

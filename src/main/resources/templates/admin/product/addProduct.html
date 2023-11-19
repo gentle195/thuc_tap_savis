@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{admin/layouts/index.html}">
+
+<head>
+    <title th:text="${sanPhamManageDTO.isEdit? 'Cập nhật sản phẩm' : 'Thêm mới sản phẩm'}">Thêm sản phẩm</title>
+    <style>
+        .imageThumb {
+            height: 300px;
+            width: 300px;
+            cursor: pointer;
+        }
+
+        .parent-span {
+            display: inline-block;
+            margin: 10px 10px 0 0;
+        }
+
+        .remove {
+            background: #444;
+            border: 1px solid black;
+            border: 1px solid black;
+            color: white;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .remove:hover {
+            background: white;
+            color: black;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.3/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.3.2/html2canvas.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/numeral.js/2.0.6/numeral.min.js"></script>
+</head>
+
+<body>
+    <section layout:fragment="content" class="container-fluid">
+        <script th:inline="javascript">
+            window.onload = function () {
+                var messageSuccess = '[[${messageSuccess}]]';
+                var messageDanger = '[[${messageDanger}]]';
+                if (messageSuccess.length !== 0) {
+                    $("#messageSuccess").toast("show");
+                }
+                if (messageDanger.length !== 0) {
+                    $("#messageDanger").toast("show");
+                }
+            }
+        </script>
+        <div id="toastsCustomCss" style="position: fixed; top: 10px; right: 0;z-index: 1;">
+            <div id="messageSuccess" th:if="${messageSuccess}" class="toast" role="alert" aria-live="assertive"
+                aria-atomic="true" data-delay="4000">
+                <div class="toast-header">
+                    <svg class="bd-placeholder-img rounded mr-2" width="20" height="20"
+                        xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" focusable="false"
+                        role="img">
+                        <rect width="100%" height="100%" fill="#007aff"></rect>
+                    </svg>
+                    <!-- <img src="..." class="rounded mr-2" alt="..."> -->
+                    <strong class="pr-3 mr-auto">Thông báo</strong>
+                    <small>Now</small>
+                    <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="toast-body">
+                    <span id="messageSuccessBodyId" th:text="${messageSuccess}"></span>
+                </div>
+            </div>
+            <div id="messageDanger" th:if="${messageDanger}" class="toast" role="alert" aria-live="assertive"
+                aria-atomic="true" data-delay="4000">
+                <div class="toast-header">
+                    <svg class="bd-placeholder-img rounded mr-2" width="20" height="20"
+                        xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" focusable="false"
+                        role="img">
+                        <rect width="100%" height="100%" fill="red"></rect>
+                    </svg>
+                    <!-- <img src="..." class="rounded mr-2" alt="..."> -->
+                    <strong class="pr-3 mr-auto">Thông báo</strong>
+                    <small>Now</small>
+                    <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="toast-body">
+                    <span id="messageDangerBodyId" th:text="${messageDanger}"></span>
+                </div>
+            </div>
+            <div id="toastAjax" class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-delay="2000">
+            </div>
+        </div>
+        <form enctype="multipart/form-data" id="flexUrlTableFormAddProduct" th:object="${sanPhamManageDTO}">
+            <div id="myForm">
+                <div class="card shadow mb-1 pt-sm-2 pb-sm-3">
+                    <div class="modal-header">
+                        <h5 class="modal-title">
+                            Thêm mới sản phẩm
+                        </h5>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" th:field="*{isEdit}" />
+                        <input type="hidden" th:field="*{isCreatedValueImg}" />
+                        <input type="hidden" th:field="*{isCreatedImg}" />
+                        <input type="hidden" th:field="*{isGenaratedData}" />
+                        <input type="hidden" th:field="*{isAddProductImageSuccess}" />
+                        <input type="hidden" th:field="*{isAddProductSuccess}" />
+                        <input type="hidden" th:field="*{isHaveImg}" />
+                        <div class="form-group mt-2">
+                            <input type="text" class="form-control" name="productId" id="productId"
+                                aria-describedby="productId" placeholder="productId" th:field="*{sanPhamId}" readonly
+                                hidden />
+                        </div>
+                        <div class="col-sm-12 row">
+                            <div class="row">
+                                <div class="col-sm-6 ">
+                                    <label for="tenSanPham">Tên sản phẩm:</label>
+                                    <input type="text" class="form-control" name="tenSanPham" th:classappend="${#fields.hasErrors('tenSanPham')}?
+                                            is-invalid : ''" id="tenSanPhamSearch" placeholder="Tên sản phẩm"
+                                        th:field="*{tenSanPham}" />
+                                    <small id="tenSanPham" th:if="${#fields.hasErrors('tenSanPham')}" th:class="${#fields.hasErrors('tenSanPham')}?
+                                            invalid-feedback : ''" th:errors="*{tenSanPham}"></small>
+                                </div>
+                                <div class="col-sm-6">
+                                    <label for="gia">Giá:</label>
+                                    <input type="text" class="form-control" id="giaInput" th:classappend="${#fields.hasErrors('gia')}?
+                                            is-invalid : ''" aria-describedby="giaHId" placeholder="Giá bán" />
+                                    <input type="number" th:field="*{gia}" id="giaInputVal" hidden>
+                                    <small id="gia" th:if="${#fields.hasErrors('gia')}" th:class="${#fields.hasErrors('gia')}?
+                                            invalid-feedback : ''" th:errors="*{gia}"></small>
+                                    <script th:inline="javascript">
+                                        var inputElement = document.getElementById('giaInput');
+                                        inputElement.addEventListener('input', function (event) {
+                                            if (inputElement.value) {
+                                                var numericValue = parseFloat(event.target.value.replace(/[^\d.]/g, ''));
+                                                if (!isNaN(numericValue)) {
+                                                    var formattedValue = formatCurrency(numericValue);
+                                                    document.getElementById('giaInputVal').value = numericValue;
+                                                    event.target.value = formattedValue;
+                                                } else {
+                                                    return event.target.value = "";
+                                                }
+                                            } else {
+                                                document.getElementById('giaInputVal').value = "";
+                                            }
+                                        });
+
+                                        function formatCurrency(value) {
+                                            if (!isNaN(value)) {
+                                                var formattedCurrency = numeral(value).format('0,0');
+                                                return formattedCurrency;
+                                            } else {
+                                                return "";
+                                            }
+                                        }
+
+                                        $(document).ready(function () {
+                                            var numericValueGia = document.getElementById('giaInputVal').value;
+                                            var formattedValue = formatCurrency(numericValueGia);
+                                            document.getElementById('giaInput').value = formattedValue;
+                                        })
+                                    </script>
+                                </div>
+                                <div class="col-sm-3 mt-3">
+                                    <div class="row">
+                                        <div class="col-lg-12"><label for="loaiSanPhamId">Loại sản phẩm:</label></div>
+                                        <div class="col-lg-9" style="padding-right: 3px;">
+                                            <select class="form-control" name="loaiSanPhamId" id="loaiSanPhamId"
+                                                th:classappend="${#fields.hasErrors('loaiSanPhamId')}?
+                                                is-invalid : ''" th:field="*{loaiSanPhamId}">
+                                                <option value="-1" selected>Chưa chọn</option>
+                                                <option th:each="item :
+                                                    ${lstLoaiSanPham}" th:value="${item.id}"
+                                                    th:text="${item.tenLoaiSanPham}" th:selected="${item.id ==
+                                                    sanPhamManageDTO.loaiSanPhamId}"></option>
+                                            </select>
+                                            <small id="loaiSanPhamId" th:if="${#fields.hasErrors('loaiSanPhamId')}"
+                                                th:class="${#fields.hasErrors('loaiSanPhamId')}?
+                                                invalid-feedback : ''" th:errors="*{loaiSanPhamId}"></small>
+                                        </div>
+                                        <div class="col-lg-3" style="padding-right: 0;">
+                                            <a class="btn btn-outline-info col-sm-12 row"
+                                                onclick="openPopupIsShowSpeedAddProduct('Loại sản phẩm', 'loaiSanPham')">
+                                                <img th:src="@{/admin/img/icons/plus.svg}"></a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3 mt-3">
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <label for="kieuDangId">Tên kiểu dáng:</label>
+                                        </div>
+                                        <div class="col-9" style="padding-right: 3px;">
+                                            <select class="form-control" name="kieuDangId" id="kieuDangId"
+                                                th:classappend="${#fields.hasErrors('kieuDangId')}?
+                                                is-invalid : ''" th:field="*{kieuDangId}">
+                                                <option value="-1" selected>Chưa chọn</option>
+                                                <option th:each="item : ${lstKieuDang}" th:value="${item.id}"
+                                                    th:text="${item.tenKieuDang}" th:selected="${item.id ==
+                                                    sanPhamManageDTO.kieuDangId}">
+                                                </option>
+                                            </select>
+                                            <small id="kieuDangId" th:if="${#fields.hasErrors('kieuDangId')}" th:class="${#fields.hasErrors('kieuDangId')}?
+                                            invalid-feedback : ''" th:errors="*{kieuDangId}"></small>
+                                        </div>
+                                        <div class="col-3" style="padding-right: 0;">
+                                            <a class="btn btn-outline-info col-sm-12 row"
+                                                onclick="openPopupIsShowSpeedAddProduct('Tên kiểu dáng', 'kieuDang')">
+                                                <img th:src="@{/admin/img/icons/plus.svg}"></a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3 mt-3">
+                                    <div class="row">
+                                        <div class="col-lg-12"><label for="chatLieuId">Tên chất liệu:</label></div>
+                                        <div class="col-lg-9" style="padding-right: 3px;">
+                                            <select class="form-control" name="chatLieuId" id="chatLieuId"
+                                                th:classappend="${#fields.hasErrors('chatLieuId')}?
+                                            is-invalid : ''" th:field="*{chatLieuId}">
+                                                <option value="-1" selected>Chưa chọn</option>
+                                                <option th:each="item : ${lstChatLieu}" th:value="${item.id}"
+                                                    th:text="${item.tenChatLieu}" th:selected="${item.id
+                                                        == sanPhamManageDTO.chatLieuId}"></option>
+                                            </select>
+                                            <small id="chatLieuId" th:if="${#fields.hasErrors('chatLieuId')}" th:class="${#fields.hasErrors('chatLieuId')}?
+                                            invalid-feedback : ''" th:errors="*{chatLieuId}"></small>
+                                        </div>
+                                        <div class="col-lg-3" style="padding-right: 0;">
+                                            <a class="btn btn-outline-info col-sm-12 row"
+                                                onclick="openPopupIsShowSpeedAddProduct('Tên chất liệu', 'chatLieu')">
+                                                <img th:src="@{/admin/img/icons/plus.svg}"></a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3 mt-3">
+                                    <div class="row">
+                                        <div class="col-12"><label for="phongCachId">Tên phong cách:</label></div>
+                                        <div class="col-9" style="padding-right: 3px;">
+                                            <select class="form-control" name="phongCachId" id="phongCachId"
+                                                th:classappend="${#fields.hasErrors('phongCachId')}?
+                                                is-invalid : ''" th:field="*{phongCachId}">
+                                                <option value="-1" selected>Chưa chọn</option>
+                                                <option th:each="item : ${lstPhongCach}" th:value="${item.id}"
+                                                    th:text="${item.tenPhongCach}" th:selected="${item.id ==
+                                                    sanPhamManageDTO.phongCachId}"></option>
+                                            </select>
+                                            <small id="phongCachId" th:if="${#fields.hasErrors('phongCachId')}"
+                                                th:class="${#fields.hasErrors('phongCachId')}?
+                                                invalid-feedback : ''" th:errors="*{phongCachId}"></small>
+                                        </div>
+                                        <div class="col-3" style="padding-right: 0;">
+                                            <a class="btn btn-outline-info col-sm-12 row"
+                                                onclick="openPopupIsShowSpeedAddProduct('Tên phong cách', 'phongCach')">
+                                                <img th:src="@{/admin/img/icons/plus.svg}"></a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-12 mt-3">
+                                    <label for="moTa">Mô tả sản phẩm:</label>
+                                    <textarea form="flexUrlTableFormAddProduct" class="form-control" name="moTa"
+                                        id="moTa" th:field="*{moTa}" placeholder="Mô tả chi tiết sản phẩm..."
+                                        th:classappend="${#fields.hasErrors('moTa')}?
+                                            is-invalid : ''" aria-describedby="moTaHId"></textarea>
+                                    <small id="moTa" th:if="${#fields.hasErrors('moTa')}" th:class="${#fields.hasErrors('moTa')}?
+                                            invalid-feedback : ''" th:errors="*{moTa}"></small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div th:if="${#lists.isEmpty(dataGen) && #lists.isEmpty(lstHinhAnhMauSacDTO)}">
+                        <div class="mt-3 modal-footer" th:if="*{isGenaratedData == true}">
+                            <div class="float-right">
+                                <a class="btn btn-info mr-sm-1 text-light" onclick="openPopupCreateProductDetail()">Thêm
+                                    sản
+                                    phẩm chi tiết</a>
+                                <a class="btn btn-primary text-light" th:href="@{/admin/product}">
+                                    <span>Quay trở về trang chủ </span></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card shadow mb-4 mt-4" th:if="*{isEdit == false}">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold">
+                            Kích cỡ và màu sắc
+                        </h6>
+                    </div>
+                    <div class="col-sm-12 row">
+                        <div th:class="*{isGenaratedData == true? 'col-sm-6 mt-3 mb-3' : 'col-sm-5 mt-3 mb-3'}">
+                            <div class="row">
+                                <div class="col-12">
+                                    <label for="kichCoIds">Tên kích cỡ:</label>
+                                </div>
+                                <div class="col-10" style="padding-right: 3px;">
+                                    <select class="selectpicker" name="kichCoIds" id="kichCoIds" th:field="*{kichCoIds}"
+                                        th:classappend="${#fields.hasErrors('kichCoIds')}?
+                                            is-invalid : ''" multiple>
+                                        <option th:each="item : ${lstKichCo}" th:value="${item.id}"
+                                            th:text="${item.tenKichCo}">
+                                        </option>
+                                    </select>
+                                    <small id="kichCoIds" th:if="${#fields.hasErrors('kichCoIds')}" th:class="${#fields.hasErrors('kichCoIds')}?
+                                            invalid-feedback : ''" th:errors="*{kichCoIds}"></small>
+                                </div>
+                                <div class="col-2" style="padding-right: 0px;">
+                                    <a class="btn btn-outline-info row col-sm-12"
+                                        onclick="openPopupIsShowSpeedAddProduct('Tên kích cỡ', 'kichCo')">
+                                        <img th:src="@{/admin/img/icons/plus.svg}"></a>
+                                </div>
+                            </div>
+                        </div>
+                        <div th:class="*{isGenaratedData == true? 'col-sm-6 mt-3 mb-3' : 'col-sm-5 mt-3 mb-3'}">
+                            <div class="row">
+                                <div class="col-12"><label for="mauSacIds">Tên màu sắc:</label></div>
+                                <div class="col-10" style="padding-right: 3px;">
+                                    <select class="selectpicker" name="mauSacIds" id="mauSacIds" th:field="*{mauSacIds}"
+                                        th:classappend="${#fields.hasErrors('mauSacIds')}?
+                                    is-invalid : ''" multiple>
+                                        <option th:each="item : ${lstMauSac}" th:value="${item.id}">
+                                            <span>
+                                                <span th:text="${item.tenMauSac}"></span>
+                                            </span>
+                                        </option>
+                                    </select>
+                                    <small id="mauSacIds" th:if="${#fields.hasErrors('mauSacIds')}" th:class="${#fields.hasErrors('mauSacIds')}?
+                                    invalid-feedback : ''" th:errors="*{mauSacIds}"></small>
+                                </div>
+                                <div class="col-2" style="padding-right: 0px;">
+                                    <a class="btn btn-outline-info col-sm-12 row"
+                                        onclick="openPopupIsShowSpeedAddProduct('Tên màu sắc', 'mauSac')">
+                                        <img th:src="@{/admin/img/icons/plus.svg}"></a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-2 mt-3 mb-3" th:if="*{isGenaratedData == false}">
+                            <label for="soLuong">Số Lượng:</label>
+                            <input type="number" class="form-control" name="soLuong" th:classappend="${#fields.hasErrors('soLuong')}?
+                                is-invalid : ''" placeholder="Số Lượng" th:field="*{soLuong}" />
+                            <small th:if="${#fields.hasErrors('soLuong')}" th:class="${#fields.hasErrors('soLuong')}?
+                                invalid-feedback : ''" th:errors="*{soLuong}"></small>
+                        </div>
+                        <div class="col-sm-12 mt-3 mb-3">
+                            <div class="float-right">
+                                <a class="btn btn-primary text-light" th:if="*{isGenaratedData == false}"
+                                    onclick="flexUrlSubmit('generateProductDetails', 'post', 'AddProduct')">
+                                    <span>Tạo sản phẩm <i class="bi bi-save"></i></span>
+                                </a>
+                                <a class="btn btn-primary text-light" th:if="*{isGenaratedData == true}"
+                                    th:href="@{/admin/product/add}">
+                                    Tạo mới thêm sản phẩm khác <i class="bi bi-journal-plus"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card shadow mb-4 mt-4" th:if="${not #lists.isEmpty(dataGen)}">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold">
+                        Bảng sản phẩm chi tiết đã thêm mới
+                        <div class="btn-group-sm">
+                            <div class="float-right">
+                                <a class="btn btn-danger text-light" onclick="showConfirmModalDialogDeleteAllbyId()">Xóa
+                                    <i class="bi bi-x-circle"></i></a>
+                            </div>
+                        </div>
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover" id="dataTable" width="100%" cellspacing="0">
+                            <thead class="text-nowrap text-center">
+                                <tr>
+                                    <th>
+                                        <div class="checkbox-wrapper-30">
+                                            <span class="checkbox">
+                                                <input type="checkbox" onclick="toggleProductDetailIds(this)" />
+                                                <svg>
+                                                    <use xlink:href="#checkbox-30" class="checkbox"></use>
+                                                </svg>
+                                            </span>
+                                            <svg xmlns="http://www.w3.org/2000/svg" style="display:none">
+                                                <symbol id="checkbox-30" viewBox="0 0 22 22">
+                                                    <path fill="none" stroke="currentColor" d="M5.5,11.3L9,14.8L20.2,3.3l0,0c-0.5-1-1.5-1.8-2.7-1.8h-13c-1.7,0-3,1.3-3,3v13c0,1.7,1.3,3,3,3h13
+                                                            c1.7,0,3-1.3,3-3v-13c0-0.4-0.1-0.8-0.3-1.2" />
+                                                </symbol>
+                                            </svg>
+                                        </div>
+                                    </th>
+                                    <th>#</th>
+                                    <th>Số lượng</th>
+                                    <th>Kích cỡ</th>
+                                    <th>Màu sắc</th>
+                                    <th>Có hiển thị</th>
+                                    <th>Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <th:block th:each="data, istat : ${dataGen}">
+                                    <tr class="text-center">
+                                        <th style="vertical-align: middle;">
+                                            <div class="checkbox-wrapper-30">
+                                                <span class="checkbox">
+                                                    <input type="checkbox" name="productDetailIds"
+                                                        th:value="${data.id}" />
+                                                    <svg>
+                                                        <use xlink:href="#checkbox-30" class="checkbox"></use>
+                                                    </svg>
+                                                </span>
+                                                <svg xmlns="http://www.w3.org/2000/svg" style="display:none">
+                                                    <symbol id="checkbox-30" viewBox="0 0 22 22">
+                                                        <path fill="none" stroke="currentColor" d="M5.5,11.3L9,14.8L20.2,3.3l0,0c-0.5-1-1.5-1.8-2.7-1.8h-13c-1.7,0-3,1.3-3,3v13c0,1.7,1.3,3,3,3h13
+                                                                    c1.7,0,3-1.3,3-3v-13c0-0.4-0.1-0.8-0.3-1.2" />
+                                                    </symbol>
+                                                </svg>
+                                            </div>
+                                        </th>
+                                        <td th:text="${istat.index + 1}"></td>
+                                        <td style="width: 120px;">
+                                            <input type="number" name="mauSacProductIds" th:value="${data.sanPham.id}"
+                                                hidden />
+                                            <input type="number" name="soLuongTheoIds" th:value="${data.id}" hidden />
+                                            <input type="text" class="form-control text-center"
+                                                th:value="${data.soLuong}" th:id="${'soLuongs'+istat.index}"
+                                                name="soLuongs" placeholder="Số lượng sản phẩm" />
+                                        </td>
+                                        <td th:text="${data.kichCo.tenKichCo}"></td>
+                                        <td th:text="${data.mauSac.tenMauSac}"></td>
+                                        <td>
+                                            <div class="custom-control
+                                                            custom-switch
+                                                            align-items-center">
+                                                <input type="checkbox" class="custom-control-input" th:id="customSwitch
+                                                                +
+                                                                ${data.id}" th:data-id="${data.id}" th:checked="${data.coHienThi?
+                                                                'true' : 'false'}"
+                                                    onclick="openPopupChangeIsShowFormAddProduct(this.getAttribute('data-id'))" />
+                                                <label class="custom-control-label" th:for="customSwitch
+                                                                +
+                                                                ${data.id}"></label>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="btn-group">
+                                                <a class="btn btn-outline-primary btn-sm" data-toggle="popover"
+                                                    data-trigger="hover" data-placement="top"
+                                                    data-content="Cập nhật sản phẩm chi tiết"
+                                                    th:href="@{'/admin/product/productDetail/edit/' + ${data.id}} +'/addProduct'"
+                                                    disabled><img th:src="@{/admin/img/icons/edit.svg}"></a>
+
+                                                <a class="btn btn-outline-danger btn-sm" th:data-id="${data.id}"
+                                                    data-toggle="popover" data-trigger="hover" data-placement="top"
+                                                    data-content="Xóa sản phẩm chi tiết"
+                                                    th:data-name="${data.mauSac.tenMauSac}"
+                                                    onclick="showConfirmModalDeleteDialog(this.getAttribute('data-id'), this.getAttribute('data-name'))"><img
+                                                        th:src="@{/admin/img/icons/trash.svg}"></a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </th:block>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <h6 class="m-0 font-weight-bold">
+                        <div class="btn-group-sm">
+                            <div class="float-right">
+                                <a class="btn btn-info mr-sm-1 text-light" onclick="openPopupCreateProductDetail()">Thêm
+                                    sản
+                                    phẩm chi tiết</a>
+                                <div class="btn-group" th:if="*{isCreatedImg == false}">
+                                    <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown"
+                                        aria-expanded="false">
+                                        Thêm ảnh sản phẩm
+                                    </button>
+                                    <div class="dropdown-menu dropdown-menu-right">
+                                        <a class="btn dropdown-item" type="button"
+                                            onclick="flexUrlSubmit('addImageProductDetail/0', 'get','AddProduct')">Cho
+                                            toàn bộ màu sắc</a>
+                                        <a class="btn dropdown-item" type="button" th:mauSacId="${data.key}"
+                                            onclick="flexUrlSubmit('addImageProductDetail/'+this.getAttribute('mauSacId'), 'get','AddProduct')"
+                                            th:each="data, istat : *{lstMauSacAddImg}">Cho màu sắc [[${data.value}]]</a>
+                                    </div>
+                                </div>
+                                <a class="btn btn-warning mr-sm-1 text-light"
+                                    onclick="flexUrlSubmit('updateQuantityProductDetail', 'post', 'AddProduct')">Cập
+                                    nhật</a>
+                            </div>
+                        </div>
+                    </h6>
+                </div>
+            </div>
+
+            <div class="card shadow mb-4 mt-4"
+                th:if="${sanPhamManageDTO.lstHinhAnhMauSacDTO != null && !sanPhamManageDTO.lstHinhAnhMauSacDTO.isEmpty()}">
+                <div>
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold">
+                            Hình ảnh của sản phẩm
+                        </h6>
+                    </div>
+                    <div class="col-sm-12">
+                        <h7 th:if="*{isCreatedValueImg == false}">
+                            <p class="m-0 font-italic mt-2" style="color: red">*Để ảnh được hiển thị tốt nhất thì bạn
+                                nên xem những lưu ý sau: <a class="btn-outline-danger btn-sm"
+                                    onclick="openPopupNoteImg()">Lưu ý...</a>
+                            </p>
+                        </h7>
+                        <div class="col-sm-12 card mb-4 mt-4" th:each="item, istat : *{lstHinhAnhMauSacDTO}"
+                            style="background-color: #ffffffe7;">
+                            <input type="hidden" th:value="${item.tenMauSacAddImg}"
+                                th:field="*{lstHinhAnhMauSacDTO[__${istat.index}__].tenMauSacAddImg}">
+                            <div class="row">
+                                <div class="col-sm-12 mt-3">
+                                    <div class="col-sm-12">
+                                        <input type="number" class="form-control"
+                                            th:field="*{lstHinhAnhMauSacDTO[__${istat.index}__].mauSacAddImagesId}"
+                                            name="mauSacAddImagesId" th:value="${item.mauSacAddImagesId}" hidden />
+                                        <div th:if="*{isCreatedValueImg == false}" class="mb-3 mt-3">
+                                            <h6>Tên màu sắc của sản phẩm đang thêm ảnh: <span
+                                                    th:text="${item.tenMauSacAddImg}"></span></h6>
+                                            <div class="file-input">
+                                                <div class="file-preview">
+                                                    <button type="button" class="close fileinput-remove"
+                                                        aria-label="Close">
+                                                        <span aria-hidden="true">×</span>
+                                                    </button>
+                                                    <div class="file-drop-zone clearfix"
+                                                        th:id="'preview-img-'+ ${istat.index}">
+
+                                                    </div>
+                                                </div>
+                                                <div class="kv-upload-progress kv-hidden" style="display: none;">
+                                                    <div class="progress">
+                                                        <div class="progress-bar bg-success progress-bar-success progress-bar-striped active progress-bar-animated"
+                                                            role="progressbar" aria-valuenow="0" aria-valuemin="0"
+                                                            aria-valuemax="100" style="width: 0%;">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="clearfix"></div>
+                                                <div class="file-caption icon-visible">
+                                                    <div class="input-group ">
+                                                        <input readonly=""
+                                                            class="file-caption-name form-control kv-fileinput-caption"
+                                                            placeholder="Select files ..."
+                                                            title="63ea4beff683aa1e4b6dec64e1ae8e60.jfif">
+
+                                                        <span class="file-caption-icon"><i
+                                                                class="bi-file-earmark-arrow-up"></i></span>
+                                                        <div class="input-group-btn input-group-append">
+                                                            <button type="button" title="Abort ongoing upload"
+                                                                class="btn btn-default btn-outline-secondary kv-hidden fileinput-cancel fileinput-cancel-button"
+                                                                style="display: none;"><i class="bi-slash-circle"></i>
+                                                                <span class="hidden-xs">Cancel</span></button>
+                                                            <div class="btn btn-primary btn-file" tabindex="500"><i
+                                                                    class="bi-folder2-open"></i> <span
+                                                                    class="hidden-xs">Browse …</span><input type="file"
+                                                                    onchange="previewImages(this.getAttribute('index'))"
+                                                                    th:id="'file-input-'+${istat.index}"
+                                                                    th:field="*{lstHinhAnhMauSacDTO[__${istat.index}__].imgFiles}"
+                                                                    th:index="${istat.index}" multiple></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- --------- -->
+                                        </div>
+                                        <div th:if="*{isCreatedValueImg == true}">
+                                            <h6>Tên màu sắc của ảnh sản phẩm: <span
+                                                    th:text="${item.tenMauSacAddImg}"></span>
+                                            </h6>
+                                            <div class="file-input" th:if="*{isCreatedValueImg == true}">
+                                                <div class="file-preview">
+                                                    <button type="button" class="close fileinput-remove"
+                                                        aria-label="Close">
+                                                        <span aria-hidden="true">×</span>
+                                                    </button>
+                                                    <div class=" file-drop-zone clearfix">
+                                                        <div class="file-preview-thumbnails clearfix">
+                                                            <div class="file-preview-frame krajee-default  kv-preview-thumb rotatable"
+                                                                th:id="'imgBoxProduct'+${istat.index}+${istatHAMS.index}"
+                                                                th:if="*{not #lists.isEmpty(lstHinhAnhMauSacDTO[__${istat.index}__].hinhAnhDTOs)}"
+                                                                th:each="img, istatHAMS : *{lstHinhAnhMauSacDTO[__${istat.index}__].hinhAnhDTOs}">
+                                                                <div class="kv-file-content">
+                                                                    <img th:src="${'/admin/product/images/' + img.tenAnh}"
+                                                                        th:id="${img.tenAnh}"
+                                                                        style="width: auto; height: auto; max-width: 100%; max-height: 100%; image-orientation: from-image;"
+                                                                        alt="">
+                                                                </div>
+                                                                <div class="file-thumbnail-footer">
+                                                                    <div class="file-footer-caption"
+                                                                        title="63ea4beff683aa1e4b6dec64e1ae8e60.jfif">
+                                                                        <div class="file-caption-info">
+                                                                            ảnh sản phẩm</div>
+                                                                        <div class="file-size-info"> <samp></samp></div>
+                                                                    </div>
+                                                                    <div class="file-thumb-progress kv-hidden">
+                                                                        <div class="progress">
+                                                                            <div class="progress-bar bg-info progress-bar-info progress-bar-striped active progress-bar-animated"
+                                                                                role="progressbar" aria-valuenow="101"
+                                                                                aria-valuemin="0" aria-valuemax="100"
+                                                                                style="width: 101%;">
+                                                                                Initializing …
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="file-actions">
+                                                                        <div class="file-footer-buttons">
+                                                                            <button type="button"
+                                                                                th:id="'laAnhChinhBtn'+${istat.index}+${istatHAMS.index}"
+                                                                                onclick="changeLaAnhChinh(this.getAttribute('img-name'), this.getAttribute('id'), this.getAttribute('name'))"
+                                                                                th:img-name="${img.tenAnh}"
+                                                                                data-toggle="popover"
+                                                                                data-trigger="hover"
+                                                                                data-placement="top"
+                                                                                data-content="Chọn ảnh chính"
+                                                                                th:name="'laAnhChinhBtn'+${istat.index}"
+                                                                                th:classappend="${img.laAnhChinh == true? 'active': ''}"
+                                                                                class="btn btn-sm btn-kv btn-default btn-outline-warning"><i
+                                                                                    class="bi bi-star"></i>
+                                                                            </button>
+                                                                            <button type="button"
+                                                                                th:classappend="${img.coHienThi == true? 'active': ''}"
+                                                                                th:img-name="${img.tenAnh}"
+                                                                                data-toggle="popover"
+                                                                                data-trigger="hover"
+                                                                                data-placement="top"
+                                                                                data-content="Chọn có hiển thị"
+                                                                                th:id="'coHienThiBtn'+${istat.index}+${istatHAMS.index}"
+                                                                                onclick="changeCoHienThi(this.getAttribute('img-name'),this.getAttribute('id'))"
+                                                                                class="btn btn-sm btn-kv btn-default btn-outline-info"><i
+                                                                                    class="bi bi-back"></i>
+                                                                            </button>
+                                                                            <button type="button" data-toggle="popover"
+                                                                                data-trigger="hover"
+                                                                                data-placement="top"
+                                                                                data-content="Xóa hình ảnh"
+                                                                                onclick="openPopupRemoveHinhAnh(this.getAttribute('imgName'),this.getAttribute('imgBox'))"
+                                                                                th:imgName="${img.tenAnh}"
+                                                                                th:imgBox="'imgBoxProduct'+${istat.index}+${istatHAMS.index}"
+                                                                                class="btn btn-sm btn-kv btn-default btn-outline-danger"><i
+                                                                                    class="bi-trash"></i></button>
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <div class="clearfix"></div>
+                                                                </div>
+
+                                                                <div class="kv-zoom-cache">
+                                                                    <div class="file-preview-frame krajee-default  kv-zoom-thumb rotatable"
+                                                                        id="zoom-thumb-inp-add-2-21238_63ea4beff683aa1e4b6dec64e1ae8e60.jfif"
+                                                                        data-fileindex="-1"
+                                                                        data-fileid="21238_63ea4beff683aa1e4b6dec64e1ae8e60.jfif"
+                                                                        data-filename="63ea4beff683aa1e4b6dec64e1ae8e60.jfif.jpg"
+                                                                        data-template="image" data-zoom="{zoomData}">
+                                                                        <div class="kv-file-content">
+                                                                            <img src="" alt="">
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="file-preview-status text-center text-success"></div>
+                                                        <div class="kv-fileinput-error file-error-message"
+                                                            style="display: none;"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="kv-upload-progress kv-hidden" style="display: none;">
+                                                    <div class="progress">
+                                                        <div class="progress-bar bg-success progress-bar-success progress-bar-striped active progress-bar-animated"
+                                                            role="progressbar" aria-valuenow="0" aria-valuemin="0"
+                                                            aria-valuemax="100" style="width: 0%;">
+                                                            0%
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="clearfix"></div>
+                                                <div class="file-caption icon-visible">
+                                                    <div class="input-group ">
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr class="mt-2 mb-2">
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="col-sm-12 mt-3 pb-5">
+                            <div class="float-right">
+                                <a class="btn btn-success mr-sm-1 text-light" th:sanPhamId="*{sanPhamId}"
+                                    th:if="*{isHaveImg == true && isCreatedValueImg == false}"
+                                    onclick="flexUrlSubmit('edit/'+this.getAttribute('sanPhamId'), 'get','AddProduct')">Ảnh
+                                    sản
+                                    phẩm</a>
+                                <a class="btn btn-primary text-light fileinput-upload"
+                                    th:if="*{isCreatedValueImg == false}"
+                                    onclick="flexUrlSubmit('saveImageProductDetail', 'post', 'AddProduct')">
+                                    <span>Hoàn tất thêm ảnh sản phẩm <img th:src="@{/admin/img/icons/save.svg}"
+                                            aria-label="chi tiết" /></span></a>
+                                <a class="btn btn-secondary" th:href="@{/admin/product}"
+                                    th:if="*{isCreatedValueImg == true}">Đi đến trang chủ</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- them -->
+            </div>
+            <!-- Modal iShowSpeed product -->
+            <div class="modal fade" id="iShowSpeedModalId" tabindex="-1" role="dialog" aria-labelledby="modelTitleId"
+                aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header text-center">
+                            <h5 class="modal-title">Thêm giá trị thuộc tính cho sản phẩm</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="col-sm-12">
+                                <input type="text" class="form-control" name="fieldthuocTinhInput"
+                                    id="fieldthuocTinhInput" hidden />
+                                <label>Tên thuộc tính: <span id="tenThuocTinh"></span></label>
+                                <br>
+                                <label for="tenThuocTinhInput">Giá trị thuộc tính:</label>
+                                <input type="text" class="form-control" name="thuocTinhInput" id="tenThuocTinhInput" />
+                            </div>
+                            <div class="col-sm-12" id="maMauSacDiv">
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <a type="button" id="notChangeIsShow" class="btn btn-outline-dark"
+                                data-dismiss="modal">Đóng</a>
+                            <a id="yesOptionChangeIsShow" type="button" class="btn btn-primary text-light"
+                                onclick="flexUrlSubmit('saveOptionValue', 'post', 'AddProduct')">Lưu</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade" id="createProductDetailForm" tabindex="-1" role="dialog"
+                aria-labelledby="modelTitleId" aria-hidden="true">
+                <div class="modal-xl modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Thêm sản phẩm chi tiết</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="col-sm-12 row">
+                                <div class="col-sm-5 mt-3 mb-3">
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <label for="kichCoIdsInProductDetail">Tên kích cỡ:</label>
+                                        </div>
+                                        <div class="col-12" style="padding-right: 3px;">
+                                            <select class="selectpicker" name="kichCoIdsInProductDetail"
+                                                id="kichCoIdsInProductDetail" multiple>
+                                                <option th:each="item : ${lstKichCo}" th:value="${item.id}"
+                                                    th:text="${item.tenKichCo}">
+                                                </option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-5 mt-3 mb-3">
+                                    <div class="row">
+                                        <div class="col-12"><label for="mauSacIdsInProductDetail">Tên màu sắc:</label>
+                                        </div>
+                                        <div class="col-12" style="padding-right: 3px;">
+                                            <select class="selectpicker" name="mauSacIdsInProductDetail"
+                                                id="mauSacIdsInProductDetail" multiple>
+                                                <option th:each="item : ${lstMauSac}" th:value="${item.id}">
+                                                    <span>
+                                                        <span th:text="${item.tenMauSac}"></span>
+                                                    </span>
+                                                </option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2 mt-3 mb-3">
+                                    <label for="soLuong">Số Lượng:</label>
+                                    <input type="number" class="form-control" name="soLuongInProductDetail"
+                                        placeholder="Số Lượng" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <a type="button" class="btn btn-outline-dark" data-dismiss="modal">Đóng</a>
+                            <a class="btn btn-primary text-light"
+                                onclick="flexUrlSubmit('genProductDetails', 'post', 'AddProduct')">
+                                <span>Tạo sản phẩm chi tiết <i class="bi bi-save"></i></span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <!-- Modal delete -->
+        <div class="modal fade" id="deleteModalId" tabindex="-1" role="dialog" aria-labelledby="modelTitleId"
+            aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Xác nhận xóa sản
+                            phẩm</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">Bạn có muốn xóa sản
+                        phẩm
+                        này?</div>
+                    <div class="modal-footer">
+                        <a type="button" class="btn
+                                            btn-outline-dark" data-dismiss="modal">Đóng</a>
+                        <a id="yesOptionDeleteModalId" type="button" onclick="submitDeleteProductDetail()" class="btn
+                                            btn-danger text-light">Xóa</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Modal delete image-->
+        <div class="modal fade" id="deleteImageModalId" tabindex="-1" role="dialog" aria-labelledby="modelTitleId"
+            aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Xác nhận xóa hình ảnh sản
+                            phẩm</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">Bạn có muốn xóa hình ảnh sản
+                        phẩm
+                        này?</div>
+                    <div class="modal-footer">
+                        <a type="button" class="btn
+                                            btn-outline-dark" data-dismiss="modal">Đóng</a>
+                        <a id="yesOptionDeleteImageModalId" onclick="confirmRemoveHinhAnh()" type="button" class="btn
+                                            btn-danger text-light">Xóa</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- modal add bo -->
+        <div class="modal fade" id="imageModalId" tabindex="-1" role="dialog" aria-labelledby="modelTitleId"
+            aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Thêm ảnh sản
+                            phẩm</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                    </div>
+                    <div class="modal-footer">
+                        <a type="button" id="notChangeIsShow" class="btn btn-outline-dark" data-dismiss="modal">Đóng</a>
+                        <a id="yesOptionChangeIsShow" type="button" class="btn
+                                            btn-primary text-light">Đồng ý</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- modal note img -->
+        <div class="modal fade" id="imageNoteModalId" tabindex="-1" role="dialog" aria-labelledby="modelTitleId"
+            aria-hidden="true">
+            <div class="modal-dialog modal-xl" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Những lưu ý khi thêm sản phẩm</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <h5>*Hiện tại, người bán có thể đăng tải tối đa <span style="color: red;">9</span> hình ảnh sản
+                            phẩm + <span style="color: red;">1</span> hình ảnh
+                            cho mỗi màu sắc (bao gồm cả ảnh chính) cho mỗi sản phẩm.</h5>
+                        <div class="row mt-2 mb-2">
+                            <div class="col-lg-6">
+                                <table class="table table-bordered">
+                                    <thead class="text-center" style="background-color: coral;vertical-align: middle;">
+                                        <th>Yếu tố chính</th>
+                                        <th>Hướng dẫn</th>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>Định dạng</td>
+                                            <td>- PNG/JPEG</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Hình ảnh liên quan đến sản phẩm</td>
+                                            <td>
+                                                <p>- Thể hiện sản phẩm và thương hiệu rõ ràng.</p>
+                                                <p>- Hiển thị hình ảnh sản phẩm đặc trưng.</p>
+                                                <p>- Tránh thêm văn bản và hình ảnh khác vào trong hình.</p>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Phong cách chụp ảnh</td>
+                                            <td>
+                                                <p>
+                                                    - Chụp ảnh tập trung vào sản phẩm trong môi trường đủ ánh sáng, tốt
+                                                    nhất là
+                                                    trên nền trắng.</p>
+                                                <p>- Đảm bảo hình ảnh sản phẩm chiếm tỷ lệ ít nhất là 70% bức hình.</p>
+                                                <p>
+                                                    - Sử dụng góc chụp trực diện hoặc góc chụp 30 độ.
+                                                </p>
+                                                <p>- Hạn chế các hình ảnh phóng to và cắt ảnh.</p>
+                                                <p>- Không sử dụng các hình ảnh gây xúc phạm.</p>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Chất lượng hình ảnh</td>
+                                            <td>
+                                                <p>- Kích thước ảnh tối thiểu: 600 x 600 pixels</p>
+                                                <p>- Độ phân giải tối thiểu: 72dpi</p>
+                                                <p>- Không làm biến dạng tỷ lệ sản phẩm.</p>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="col-lg-6">
+                                <img th:src="@{/admin/img/vd1.png}" class="img-responsive" width="100%" alt="">
+                                <img th:src="@{/admin/img/vd2.png}" class="img-responsive mt-2" width="100%" alt="">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <a type="button" id="notChangeIsShow" class="btn btn-outline-dark" data-dismiss="modal">Đóng</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- modal delete all -->
+        <div class="modal fade" id="confirmationDeleteIds" tabindex="-1" role="dialog" aria-labelledby="modelTitleId"
+            aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Xác nhận xóa hết sản phẩm</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        Bạn có muốn xóa hết sản phẩm đã chọn?
+                    </div>
+                    <div class="modal-footer">
+                        <a type="button" class="btn btn-outline-dark" data-dismiss="modal">Đóng</a>
+                        <a onclick="flexUrlSubmit('deleteAllByIdsAddProduct', 'post', 'AddProduct')" type="button"
+                            class="btn btn-danger text-light">Xóa</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script type="text/javascript" th:src="@{/admin/js/product/product.js}"></script>
+    </section>
+</body>
+
+</html>

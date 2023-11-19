@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{admin/layouts/index.html}">
+
+<head>
+    <title>Quản lý sản phẩm</title>
+    <script type="text/javascript" th:src="@{/admin/js/product/product.js}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.3/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.3.2/html2canvas.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/numeral.js/2.0.6/numeral.min.js"></script>
+</head>
+
+<body>
+    <section layout:fragment="content" class="container-fluid">
+        <script th:inline="javascript">
+            window.onload = function () {
+                var messageSuccess = '[[${messageSuccess}]]';
+                var messageDanger = '[[${messageDanger}]]';
+                if (messageSuccess.length !== 0) {
+                    $("#messageSuccess").toast("show");
+                }
+                if (messageDanger.length !== 0) {
+                    $("#messageDanger").toast("show");
+                }
+            }
+        </script>
+        <div id="toastsCustomCss" style="position: fixed; top: 10px; right: 0;z-index: 1;">
+            <div id="messageSuccess" th:if="${messageSuccess}" class="toast" role="alert" aria-live="assertive"
+                aria-atomic="true" data-delay="3000">
+                <div class="toast-header">
+                    <svg class="bd-placeholder-img rounded mr-2" width="20" height="20"
+                        xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" focusable="false"
+                        role="img">
+                        <rect width="100%" height="100%" fill="#007aff"></rect>
+                    </svg>
+                    <!-- <img src="..." class="rounded mr-2" alt="..."> -->
+                    <strong class="pr-3 mr-auto">Thông báo</strong>
+                    <small>Now</small>
+                    <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="toast-body" th:text="${messageSuccess}"></div>
+            </div>
+            <div id="messageDanger" th:if="${messageDanger}" class="toast" role="alert" aria-live="assertive"
+                aria-atomic="true" data-delay="3000">
+                <div class="toast-header">
+                    <svg class="bd-placeholder-img rounded mr-2" width="20" height="20"
+                        xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" focusable="false"
+                        role="img">
+                        <rect width="100%" height="100%" fill="red"></rect>
+                    </svg>
+                    <!-- <img src="..." class="rounded mr-2" alt="..."> -->
+                    <strong class="pr-3 mr-auto">Thông báo</strong>
+                    <small>Now</small>
+                    <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="toast-body" th:text="${messageDanger}"></div>
+            </div>
+        </div>
+        <!-- Begin Page Content -->
+        <div>
+            <!-- Page Heading -->
+            <h1 class="h3 mb-2 text-gray-800">Quản lý sản phẩm</h1>
+            <hr>
+            <form th:action="@{/admin/product}" id="flexUrlTableFormProductManage" enctype="multipart/form-data"
+                th:object="${dataSearch}" method="get">
+                <input type="number" name="page" id="inputPageProductManage" hidden>
+                <div class="card shadow mb-1 pt-sm-2 pb-sm-3">
+                    <div class="col-sm-12">
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <label for="tenSanPham">Tên sản phẩm:</label>
+                                <input type="text" class="form-control" name="tenSanPham"
+                                    id="tenSanPhamSearchProductManage" placeholder="Tên sản phẩm"
+                                    th:field="*{tenSanPham}">
+                            </div>
+                            <div class="col-sm-3">
+                                <label for="kieuDangId">Tên kiểu dáng:</label>
+                                <select class="selectpicker" name="kieuDangId" id="kieuDangId" th:field="*{kieuDangIds}"
+                                    multiple>
+                                    <option th:each="item : ${lstKieuDang}" th:value="${item.id}"
+                                        th:text="${item.tenKieuDang}">
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-sm-3">
+                                <label for="chatLieuIds">Tên chất liệu:</label>
+                                <select class="selectpicker" name="chatLieuIds" id="chatLieuIds"
+                                    th:field="*{chatLieuIds}" multiple>
+                                    <option th:each="item : ${lstChatLieu}" th:value="${item.id}"
+                                        th:text="${item.tenChatLieu} "></option>
+                                </select>
+                            </div>
+                            <div class="col-sm-3">
+                                <label for="loaiSanPhamIds">Tên loại sản phẩm:</label>
+                                <select class="selectpicker" name="loaiSanPhamIds" id="loaiSanPhamIds"
+                                    th:field="*{loaiSanPhamIds}" multiple>
+                                    <option th:each="item : ${lstLoaiSanPham}" th:value="${item.id}"
+                                        th:text="${item.tenLoaiSanPham}">
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                        <!-- --- -->
+                        <div class="row mt-3">
+                            <div class="col-sm-3">
+                                <label for="phongCachIds">Tên phong cách:</label>
+                                <select class="selectpicker" name="phongCachIds" id="phongCachIds"
+                                    th:field="*{phongCachIds}" multiple>
+                                    <option th:each="item : ${lstPhongCach}" th:value="${item.id}"
+                                        th:text="${item.tenPhongCach}">
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-sm-3">
+                                <label for="kichCoIds">Tên kích cỡ:</label>
+                                <select class="selectpicker" name="kichCoIds" id="kichCoIds" th:field="*{kichCoIds}"
+                                    multiple>
+                                    <option th:each="item : ${lstKichCo}" th:value="${item.id}"
+                                        th:text="${item.tenKichCo}">
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-sm-3">
+                                <label for="mauSacIds">Tên màu sắc:</label>
+                                <select class="selectpicker" name="mauSacIds" id="mauSacIds" th:field="*{mauSacIds}"
+                                    multiple>
+                                    <option th:each="item, istat : ${lstMauSac}" th:value="${item.id}"
+                                        th:text="${item.tenMauSac}">
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-sm-3">
+                                <label for="hienThi">Loại hiển thị:</label>
+                                <select class="selectpicker" name="hienThi" id="hienThi" th:field="*{coHienThi}"
+                                    multiple>
+                                    <option value="1">Đang hiển thị</option>
+                                    <option value="0">Không hiển thị</option>
+                                </select>
+                            </div>
+                        </div>
+                        <!-- --- -->
+                        <!-- <div class="row mt-3">
+                            <div class="col-sm-3">
+                                <label for="createdBy">Người tạo:</label>
+                                <input type="text" class="form-control" name="createdBy" id="createdBy"
+                                    placeholder="Người tạo" th:field="*{nguoiTaoSPCT}">
+                            </div>
+                            <div class="col-sm-3">
+                                <label for="createdTime">Thời gian tạo:</label>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <input type="date" class="form-control" name="minCreatedTime"
+                                            id="minCreatedTime" th:field="*{ngayTaoMin}">
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <input type="date" class="form-control" name="maxCreatedTime"
+                                            id="maxCreatedTime" th:field="*{ngayTaoMax}">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <label for="lastModifedBy">Người sửa đổi cuối:</label>
+                                <input type="text" class="form-control" name="lastModifedTime" id="lastModifedTime"
+                                    placeholder="Người sửa đổi cuối" th:field="*{nguoiCapNhatSPCT}">
+                            </div>
+                            <div class="col-sm-3">
+                                <label for="lastModifedTime">Thời gian sửa đổi cuối:</label>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <input type="date" class="form-control" name="minLastModifedTime"
+                                            id="minLastModifedTime" placeholder="Người tạo"
+                                            th:field="*{ngayCapNhatMin}">
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <input type="date" class="form-control" name="maxLastModifedTime"
+                                            id="maxLastModifedTime" placeholder="Thời gian sửa đổi cuối"
+                                            th:field="*{ngayCapNhatMax}">
+                                    </div>
+                                </div>
+                            </div>
+                        </div> -->
+                        <div class="row mt-3">
+                            <div class="col-sm-3">
+                                <label>Giá:</label>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control" id="giaMinInput" th:classappend="${#fields.hasErrors('giaMin')}?
+                                        is-invalid : ''" placeholder="Giá trị đầu">
+                                        <input type="number" class="form-control" id="giaMinHid" th:field="*{giaMin}"
+                                            hidden>
+                                        <small id="giaMin" th:if="${#fields.hasErrors('giaMin')}" th:class="${#fields.hasErrors('giaMin')}?
+                                            invalid-feedback : ''" th:errors="*{giaMin}"></small>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control" id="giaMaxInput" th:classappend="${#fields.hasErrors('giaMax')}?
+                                        is-invalid : ''" placeholder="Giá trị đầu">
+                                        <input type="number" class="form-control" id="giaMaxHid" th:field="*{giaMax}"
+                                            hidden>
+                                        <small id="giaMax" th:if="${#fields.hasErrors('giaMax')}" th:class="${#fields.hasErrors('giaMax')}?
+                                            invalid-feedback : ''" th:errors="*{giaMax}"></small>
+                                    </div>
+                                </div>
+                                <script th:inline="javascript">
+                                    var inputElement1 = document.getElementById('giaMinInput');
+                                    inputElement1.addEventListener('input', function (event) {
+                                        if (inputElement1.value) {
+                                            var numericValue1 = parseFloat(event.target.value.replace(/[^\d.]/g, ''));
+                                            if (!isNaN(numericValue1)) {
+                                                var formattedValue1 = formatCurrency(numericValue1);
+                                                document.getElementById('giaMinHid').value = numericValue1;
+                                                event.target.value = formattedValue1;
+                                            } else {
+                                                return event.target.value = "";
+                                            }
+                                        } else {
+                                            document.getElementById('giaMinHid').value = "";
+                                        }
+                                    });
+
+                                    var inputElement2 = document.getElementById('giaMaxInput');
+                                    inputElement2.addEventListener('input', function (event) {
+                                        if (inputElement2.value) {
+                                            var numericValue2 = parseFloat(event.target.value.replace(/[^\d.]/g, ''));
+                                            if (!isNaN(numericValue2)) {
+                                                var formattedValue2 = formatCurrency(numericValue2);
+                                                document.getElementById('giaMaxHid').value = numericValue2;
+                                                event.target.value = formattedValue2;
+                                            } else {
+                                                return event.target.value = "";
+                                            }
+                                        } else {
+                                            document.getElementById('giaMaxHid').value = "";
+                                        }
+                                    });
+
+                                    function formatCurrency(value) {
+                                        if (!isNaN(value)) {
+                                            var formattedCurrency = numeral(value).format('0,0');
+                                            return formattedCurrency;
+                                        } else {
+                                            return "";
+                                        }
+                                    }
+
+                                    $(document).ready(function () {
+                                        var numericValueGia1 = document.getElementById('giaMinHid').value;
+                                        var formattedValue1 = formatCurrency(numericValueGia1);
+                                        document.getElementById('giaMinInput').value = formattedValue1;
+
+                                        var numericValueGia2 = document.getElementById('giaMaxHid').value;
+                                        var formattedValue2 = formatCurrency(numericValueGia2);
+                                        document.getElementById('giaMaxInput').value = formattedValue2;
+                                    })
+                                </script>
+                            </div>
+                            <div class="col-sm-3">
+                                <label>Số lượng sản phẩm chi tiết:</label>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <input type="number" class="form-control" th:field="*{soLuongMin}"
+                                            th:classappend="${#fields.hasErrors('soLuongMin')}?
+                                        is-invalid : ''" placeholder="Giá trị đầu">
+                                        <small id="soLuongMin" th:if="${#fields.hasErrors('soLuongMin')}" th:class="${#fields.hasErrors('soLuongMin')}?
+                                            invalid-feedback : ''" th:errors="*{soLuongMin}"></small>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <input type="number" class="form-control" th:field="*{soLuongMax}"
+                                            th:classappend="${#fields.hasErrors('soLuongMax')}?
+                                        is-invalid : ''" placeholder="Giá trị cuối">
+                                        <small id="soLuongMax" th:if="${#fields.hasErrors('soLuongMax')}" th:class="${#fields.hasErrors('soLuongMax')}?
+                                            invalid-feedback : ''" th:errors="*{soLuongMax}"></small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 mt-3">
+                            <div class="float-right">
+                                <a class="btn btn-primary text-light"
+                                    onclick="flexUrlSubmit('', 'get', 'ProductManage')">Tìm
+                                    kiếm <i class="bi bi-search"></i></a>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <!-- DataTales Example -->
+                <div class="card shadow mb-4 mt-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold">
+                            <div class="btn-group-sm">
+                                <div class="float-right">
+                                    <a class="btn btn-success mr-sm-1 text-light"
+                                        th:href="@{/admin/product/exportExcelProduct}">Export <svg
+                                            xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                            fill="currentColor" class="bi bi-filetype-xls" viewBox="0 0 16 16">
+                                            <path fill-rule="evenodd"
+                                                d="M14 4.5V14a2 2 0 0 1-2 2h-1v-1h1a1 1 0 0 0 1-1V4.5h-2A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v9H2V2a2 2 0 0 1 2-2h5.5L14 4.5ZM6.472 15.29a1.176 1.176 0 0 1-.111-.449h.765a.578.578 0 0 0 .254.384c.07.049.154.087.25.114.095.028.202.041.319.041.164 0 .302-.023.413-.07a.559.559 0 0 0 .255-.193.507.507 0 0 0 .085-.29.387.387 0 0 0-.153-.326c-.101-.08-.255-.144-.462-.193l-.619-.143a1.72 1.72 0 0 1-.539-.214 1.001 1.001 0 0 1-.351-.367 1.068 1.068 0 0 1-.123-.524c0-.244.063-.457.19-.639.127-.181.303-.322.527-.422.225-.1.484-.149.777-.149.305 0 .564.05.78.152.216.102.383.239.5.41.12.17.186.359.2.566h-.75a.56.56 0 0 0-.12-.258.625.625 0 0 0-.247-.181.923.923 0 0 0-.369-.068c-.217 0-.388.05-.513.152a.472.472 0 0 0-.184.384c0 .121.048.22.143.3a.97.97 0 0 0 .405.175l.62.143c.217.05.406.12.566.211a1 1 0 0 1 .375.358c.09.148.135.335.135.56 0 .247-.063.466-.188.656a1.216 1.216 0 0 1-.539.439c-.234.105-.52.158-.858.158-.254 0-.476-.03-.665-.09a1.404 1.404 0 0 1-.478-.252 1.13 1.13 0 0 1-.29-.375Zm-2.945-3.358h-.893L1.81 13.37h-.036l-.832-1.438h-.93l1.227 1.983L0 15.931h.861l.853-1.415h.035l.85 1.415h.908L2.253 13.94l1.274-2.007Zm2.727 3.325H4.557v-3.325h-.79v4h2.487v-.675Z" />
+                                        </svg></a>
+                                    <a class="btn btn-primary mr-sm-1 text-light" th:href="@{/admin/product/add}">Thêm
+                                        mới <i class="bi bi-bookmark-plus"></i></a>
+                                    <a class="btn btn-danger text-light"
+                                        onclick="showConfirmModalDialogDeleteAllbyId()">Xóa <i
+                                            class="bi bi-x-circle"></i></a>
+                                </div>
+                            </div>
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover" id="dataTable" width="100%" cellspacing="0">
+                                <thead class="text-nowrap text-center">
+                                    <tr>
+                                        <th>
+                                            <div class="checkbox-wrapper-30">
+                                                <span class="checkbox">
+                                                    <input type="checkbox" onclick="toggleProductIds(this)" />
+                                                    <svg>
+                                                        <use xlink:href="#checkbox-30" class="checkbox"></use>
+                                                    </svg>
+                                                </span>
+                                                <svg xmlns="http://www.w3.org/2000/svg" style="display:none">
+                                                    <symbol id="checkbox-30" viewBox="0 0 22 22">
+                                                        <path fill="none" stroke="currentColor"
+                                                            d="M5.5,11.3L9,14.8L20.2,3.3l0,0c-0.5-1-1.5-1.8-2.7-1.8h-13c-1.7,0-3,1.3-3,3v13c0,1.7,1.3,3,3,3h13 c1.7,0,3-1.3,3-3v-13c0-0.4-0.1-0.8-0.3-1.2" />
+                                                    </symbol>
+                                                </svg>
+                                            </div>
+                                        </th>
+                                        <th>#</th>
+                                        <th>Ảnh chính</th>
+                                        <th>Tên sản phẩm</th>
+                                        <!-- <th>Số lượng</th> -->
+                                        <th>Giá</th>
+                                        <th>Tổng số lượng</th>
+                                        <!-- <th>Kích cỡ</th>
+                                        <th>Màu sắc</th> -->
+                                        <!-- <th>Kiểu dáng</th>
+                                        <th>Chất liệu</th>
+                                        <th>Loại sản phẩm</th>
+                                        <th>Phong cách</th> -->
+                                        <!-- <th>Mô tả</th> -->
+                                        <!-- <th>Người tạo</th>
+                                        <th>Ngày tạo</th>
+                                        <th>Người chỉnh sửa</th>
+                                        <th>Ngày chỉnh sửa</th> -->
+                                        <!-- <th>Có hiển thị</th> -->
+                                        <th>Thao tác</th>
+                                    </tr>
+                                    <tr th:if="${!sanPhamPage.hasContent()}">
+                                        <td colspan="11">
+                                            <h4><i>Không có sản phẩm nào phù hợp</i></h4>
+                                        </td>
+                                    </tr>
+                                </thead>
+                                <tbody class="text-center">
+                                    <tr th:each="item, istat : ${sanPhams}">
+                                        <th style="vertical-align: middle;">
+                                            <div class="checkbox-wrapper-30">
+                                                <span class="checkbox">
+                                                    <input type="checkbox" name="productIds"
+                                                        th:value="${item.sanPham.id}" />
+                                                    <svg>
+                                                        <use xlink:href="#checkbox-30" class="checkbox"></use>
+                                                    </svg>
+                                                </span>
+                                                <svg xmlns="http://www.w3.org/2000/svg" style="display:none">
+                                                    <symbol id="checkbox-30" viewBox="0 0 22 22">
+                                                        <path fill="none" stroke="currentColor"
+                                                            d="M5.5,11.3L9,14.8L20.2,3.3l0,0c-0.5-1-1.5-1.8-2.7-1.8h-13c-1.7,0-3,1.3-3,3v13c0,1.7,1.3,3,3,3h13 c1.7,0,3-1.3,3-3v-13c0-0.4-0.1-0.8-0.3-1.2" />
+                                                    </symbol>
+                                                </svg>
+                                            </div>
+                                        </th>
+                                        <td style="vertical-align: middle;"
+                                            th:text="${sanPhamPage.number * sanPhamPage.size + istat.index + 1}"></td>
+                                        <td>
+                                            <div class="row col-sm-8 offset-2" style="height: 160px; width: 160px;">
+                                                <div th:id="'carouselProductManageIndicators'+${istat.index}"
+                                                    class="carousel slide" data-ride="carousel">
+                                                    <ol class="carousel-indicators">
+                                                        <li th:data-target="'#carouselProductManageIndicators'+${istat.index}"
+                                                            th:data-slide-to="${#numbers.formatInteger(istat.index+''+istatAC.index,5)}"
+                                                            th:class="${#numbers.formatInteger(istat.index+''+istatAC.index,5) == #numbers.formatInteger(istat.index+''+0,5)? 'active':''}"
+                                                            th:each="img, istatAC : ${item.anhChinhs}"
+                                                            th:if="${not #lists.isEmpty(item.anhChinhs)}">
+                                                        </li>
+                                                        <li th:data-target="'#carouselProductManageIndicators'+${istat.index}"
+                                                            th:data-slide-to="${istat.index}" class="active"
+                                                            th:if="${#lists.isEmpty(item.anhChinhs)}">
+                                                        </li>
+                                                    </ol>
+                                                    <div class="carousel-inner">
+                                                        <div th:class="${#numbers.formatInteger(istat.index+''+istatAC.index,5) == #numbers.formatInteger(istat.index+''+0,5)? 'carousel-item active' : 'carousel-item'}"
+                                                            th:each="img, istatAC : ${item.anhChinhs}"
+                                                            th:if="${not #lists.isEmpty(item.anhChinhs)}">
+                                                            <img class="d-block img-responsive"
+                                                                th:src="${'/admin/product/images/'+img}"
+                                                                alt="First slide" style="width: 150px; height: 150px;">
+                                                        </div>
+                                                        <div class="carousel-item active">
+                                                            <img class="d-block h-100"
+                                                                th:if="${#lists.isEmpty(item.anhChinhs)}"
+                                                                th:src="${'/admin/product/images/default.png'}"
+                                                                alt="First slide" style="width: 150px;">
+                                                        </div>
+                                                    </div>
+                                                    <a class="carousel-control-prev"
+                                                        th:href="'#carouselProductManageIndicators'+${istat.index}"
+                                                        role="button" data-slide="prev"
+                                                        th:if="${not #lists.isEmpty(item.anhChinhs)}">
+                                                        <span class="carousel-control-prev-icon"
+                                                            aria-hidden="true"></span>
+                                                        <span class="sr-only">Previous</span>
+                                                    </a>
+                                                    <a class="carousel-control-next"
+                                                        th:href="'#carouselProductManageIndicators'+${istat.index}"
+                                                        role="button" data-slide="next"
+                                                        th:if="${not #lists.isEmpty(item.anhChinhs)}">
+                                                        <span class="carousel-control-next-icon"
+                                                            aria-hidden="true"></span>
+                                                        <span class="sr-only">Next</span>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td style="vertical-align: middle;" th:text="${item.sanPham.tenSanPham}"></td>
+                                        <td style="vertical-align: middle;"
+                                            th:text="${#numbers.formatDecimal(item.sanPham.gia, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">
+                                        </td>
+                                        <td style="vertical-align: middle;"
+                                            th:text="${#numbers.formatDecimal(item.tongSoLuong, 0, 'COMMA', 0, 'POINT')}">
+                                        </td>
+                                        <!-- <td style="vertical-align: middle;"
+                                            th:text="${item.sanPham.kieuDang.tenKieuDang}"></td>
+                                        <td style="vertical-align: middle;"
+                                            th:text="${item.sanPham.chatLieu.tenChatLieu}"></td>
+                                        <td style="vertical-align: middle;"
+                                            th:text="${item.sanPham.loaiSanPham.TenLoaiSanPham}"></td>
+                                        <td style="vertical-align: middle;"
+                                            th:text="${item.sanPham.phongCach.tenPhongCach}"></td> -->
+                                        <td style="vertical-align: middle;">
+                                            <div class="btn-group">
+                                                <a class="btn btn-outline-info btn-sm" id="info" data-toggle="popover"
+                                                    data-trigger="hover" data-placement="top"
+                                                    data-content="Sản phẩm chi tiết"
+                                                    th:href="@{'/admin/product/info/' + ${item.sanPham.id}}">
+                                                    <img th:src="@{/admin/img/icons/info.svg}"></a>
+
+                                                <a class="btn btn-outline-primary btn-sm" data-toggle="popover"
+                                                    data-trigger="hover" data-placement="top"
+                                                    data-content="Cập nhật sản phẩm"
+                                                    th:href="@{'/admin/product/edit/' + ${item.sanPham.id}}"
+                                                    disabled><img th:src="@{/admin/img/icons/edit.svg}"></a>
+
+                                                <a class="btn btn-outline-danger btn-sm" th:data-id="${item.sanPham.id}"
+                                                    data-toggle="popover" data-trigger="hover" data-placement="top"
+                                                    data-content="Xóa sản phẩm"
+                                                    th:data-name="${item.sanPham.tenSanPham}" page-name="productManage"
+                                                    onclick="showConfirmModalDeleteDialog(this.getAttribute('data-id'), this.getAttribute('data-name'), this.getAttribute('page-name'))"><img
+                                                        th:src="@{/admin/img/icons/trash.svg}"></a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="card-footer text-muted">
+                            <div class="input-group mt-2 mb-3">
+                                <label class="input-group-text bg-white" for="inputGroupSelect01">kích thước
+                                    trang:</label>
+                                <select class="form-select" name="size" id="size" onchange="this.form.submit()">
+                                    <option th:selected="${sanPhamPage.size == 10}" value="10">10</option>
+                                    <option th:selected="${sanPhamPage.size == 30}" value="30">30</option>
+                                    <option th:selected="${sanPhamPage.size == 50}" value="50">50</option>
+                                    <option th:selected="${sanPhamPage.size == 70}" value="70">70</option>
+                                    <option th:selected="${sanPhamPage.size == 100}" value="100">100</option>
+                                </select>
+                            </div>
+
+                            <nav aria-label="Page navigation example" th:if="${sanPhamPage.totalPages >0}">
+                                <ul class="pagination justify-content-center">
+                                    <li th:class="${1 == sanPhamPage.number + 1}? 'page-item active' : 'page-item'">
+                                        <button id="firstPageProductManage" class="page-link">
+                                            Trang đầu
+                                        </button>
+                                    </li>
+                                    <li class="page-item disabled" th:if="${sanPhamPage.number + 1 - 2 > 1}">
+                                        <a class="page-link" href="#">...</a>
+                                    </li>
+                                    <li th:each="pageNumber : ${#numbers.sequence(sanPhamPage.number + 1 > 2 ? sanPhamPage.number + 1 - 2 : 1, sanPhamPage.number + 1 + 2 < sanPhamPage.totalPages ? sanPhamPage.number + 1 + 2 : sanPhamPage.totalPages)}"
+                                        th:class="${pageNumber == sanPhamPage.number + 1}? 'page-item active' : 'page-item'">
+                                        <button th:id="pageNumberProductManage+${pageNumber}" class="page-link"
+                                            th:text="${pageNumber}">
+                                        </button>
+                                        <script th:inline="javascript">
+                                            $(document).ready(function () {
+                                                $('#pageNumberProductManage[[${pageNumber}]]').on("click", function () {
+                                                    var num = parseInt("[[${pageNumber}]]");
+                                                    $('#inputPageProductManage').attr("value", num);
+                                                    $('#flexUrlTableFormProductManage').submit();
+                                                })
+                                            });
+                                        </script>
+                                    </li>
+                                    <li class="page-item disabled"
+                                        th:if="${sanPhamPage.number + 1 + 2 < sanPhamPage.totalPages}">
+                                        <a class="page-link" href="#">...</a>
+                                    </li>
+                                    <li
+                                        th:class="${ sanPhamPage.totalPages == sanPhamPage.number + 1}? 'page-item active' : 'page-item'">
+                                        <button class="page-link" id="lastPageProductManage">
+                                            Trang cuối
+                                        </button>
+                                    </li>
+                                    <script th:inline="javascript">
+                                        $(document).ready(function () {
+                                            $('#firstPageProductManage').on("click", function () {
+                                                var num = 1;
+                                                $('#inputPageProductManage').attr("value", num);
+                                                $('#flexUrlTableFormProductManage').submit();
+                                            })
+                                            $('#lastPageProductManage').on("click", function () {
+                                                var num = parseInt("[[${sanPhamPage.totalPages}]]");
+                                                $('#inputPageProductManage').attr("value", num);
+                                                $('#flexUrlTableFormProductManage').submit();
+                                            })
+                                        });
+                                    </script>
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <!-- Modal delete -->
+        <div class="modal fade" id="deleteModalId" tabindex="-1" role="dialog" aria-labelledby="modelTitleId"
+            aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Xác nhận xóa sản phẩm</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        Bạn có muốn xóa "<span id="productName"></span>"?
+                    </div>
+                    <div class="modal-footer">
+                        <a type="button" class="btn btn-outline-dark" data-dismiss="modal">Đóng</a>
+                        <a id="yesOptionDeleteModalId" onclick="submitDeleteProduct()" type="button"
+                            class="btn btn-danger text-light">Xóa</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal isShow product -->
+        <div class="modal fade" id="isShowModalId" tabindex="-1" role="dialog" aria-labelledby="modelTitleId"
+            aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Xác nhận thay đổi trạng thái hiển thị sản phẩm</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        Bạn có muốn thay đổi trạng thái hiển thị của sản phẩm đã chọn?
+                    </div>
+                    <div class="modal-footer">
+                        <a type="button" id="notChangeIsShow" class="btn btn-outline-dark" data-dismiss="modal">Đóng</a>
+                        <a id="yesOptionChangeIsShow" type="button" class="btn btn-danger">Đồng ý</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal delete all -->
+        <div class="modal fade" id="confirmationDeleteIds" tabindex="-1" role="dialog" aria-labelledby="modelTitleId"
+            aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Xác nhận xóa hết sản phẩm</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        Bạn có muốn xóa hết sản phẩm đã chọn?
+                    </div>
+                    <div class="modal-footer">
+                        <a type="button" class="btn btn-outline-dark" data-dismiss="modal">Đóng</a>
+                        <a onclick="flexUrlSubmit('deleteAllByIdsProductManage', 'post', 'ProductManage')" type="button"
+                            class="btn btn-danger text-light">Xóa</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- modal show productDetail -->
+        <div class="modal fade" id="infoProductDetail" tabindex="-1" role="dialog" aria-labelledby="modelTitleId"
+            aria-hidden="true">
+            <div class="modal-dialog modal-xl" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Chi tiết sản phẩm</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="col-sm-12">
+                            <div class="row">
+                                <div class="col-sm-6 row">
+                                    <label>Người tạo: <p id="infoProductDetailContentString0"></p></label>
+                                </div>
+                                <div class="col-sm-6 row">
+                                    <label>Ngày tạo: <p id="infoProductDetailContentString1"></p></label>
+                                </div>
+                                <div class="col-sm-6 row">
+                                    <label>Người cập nhật cuối: <p id="infoProductDetailContentString2"></p></label>
+                                </div>
+                                <div class="col-sm-6 row">
+                                    <label>Ngày cập nhật cuối: <p id="infoProductDetailContentString3"></p></label>
+                                </div>
+                                <div class="col-sm-12 row">
+                                    <label>Mô tả: <p id="infoProductDetailContentString3"></p></label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <a type="button" class="btn btn-outline-dark" data-dismiss="modal">Đóng</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+            $(document).ready(function () {
+                $('[data-toggle="popover"]').popover();
+            });
+        </script>
+    </section>
+</body>
+
+</html>

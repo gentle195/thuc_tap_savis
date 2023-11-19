@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{customer/layouts/index}">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Male_Fashion Template">
+    <meta name="keywords" content="Male_Fashion, unica, creative, html">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Leopard Studio</title>
+    <script th:src="@{/customer/js/view/shop-details.js}"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.min.js"></script>
+    <!-- CSS của jQuery UI (nếu cần) -->
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.1/themes/base/jquery-ui.css">
+    <style>
+        label.msActive:after {
+            border: 1px solid black;
+        }
+    </style>
+    <script th:src="@{/admin/js/banHang/MuaNgay/MuaNgayJS.js}"></script>
+</head>
+
+<body>
+    <!-- Shop Details Section Begin -->
+    <section class="shop-details" layout:fragment="content">
+        <form id="flexUrlTableFormShopDetails" th:object="${shopDetails}">
+            <input type="hidden" th:field="*{sanPhamId}">
+            <div class="product__details__pic">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="product__details__breadcrumb">
+                                <a th:href="@{/customer/home}">Trang chủ</a>
+                                <a th:href="@{/customer/shop}">Danh sách sản phẩm</a>
+                                <span>Chọn chi tiết sản phẩm</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-3 col-md-3">
+                            <div class="row">
+                                <ul class="nav nav-tabs" role="tablist">
+                                    <li class="nav-item" th:each="img, istat : ${shopDetails.anhChinhs1}"
+                                        th:id="'nav-item-s1-'+${istat.index}" name="nav-item-img">
+                                        <a class="nav-link" data-toggle="tab" role="tab"
+                                            th:tab-id="'tabs-s1-'+${istat.index}" th:id="'imgActiveS1'+${istat.index}"
+                                            th:classappend="${istat.index == 0? 'active':''}"
+                                            th:nav-id="'nav-item-s1-'+${istat.index}"
+                                            onmouseover="changeTab(this.getAttribute('tab-id'),this.getAttribute('nav-id'))">
+                                            <div class="product__thumb__pic set-bg"
+                                                th:data-setbg="${'/customer/images/'+img}">
+                                            </div>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-md-9">
+                            <div class="tab-content">
+                                <div class="tab-pane" th:id="'tabs-s1-'+${istat.index}" role="tabpanel"
+                                    th:classappend="${istat.index == 0? 'active':''}" name="tab-pane-img"
+                                    th:each="img, istat : ${shopDetails.anhChinhs1}">
+                                    <div class="product__details__pic__item">
+                                        <img th:src="${'/customer/images/'+img}" alt="">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-content">
+                                <div class="tab-pane" th:id="'tabs-s2-'+${istat.index}" role="tabpanel"
+                                    name="tab-pane-img" th:each="img, istat : ${shopDetails.anhChinhs2}">
+                                    <div class="product__details__pic__item">
+                                        <img th:src="${'/customer/images/'+img}" alt="">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-3">
+                            <div class="row">
+                                <div class="col-lg-7"></div>
+                                <div class="col-lg-5">
+                                    <div class="align-items-end">
+                                        <ul class="nav nav-tabs" role="tablist">
+                                            <li class="nav-item" th:each="img, istat : ${shopDetails.anhChinhs2}"
+                                                th:id="'nav-item-s2-'+${istat.index}" name="nav-item-img">
+                                                <a class="nav-link" data-toggle="tab" role="tab"
+                                                    th:tab-id="'tabs-s2-'+${istat.index}"
+                                                    th:id="'imgActiveS2'+${istat.index}"
+                                                    th:nav-id="'nav-item-s2-'+${istat.index}"
+                                                    onmouseover="changeTab(this.getAttribute('tab-id'),this.getAttribute('nav-id'))">
+                                                    <div class="product__thumb__pic set-bg"
+                                                        th:data-setbg="${'/customer/images/'+img}">
+                                                    </div>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="product__details__content">
+                <div class="container">
+                    <div class="row d-flex justify-content-center">
+                        <div class="col-lg-8">
+                            <div class="product__details__text">
+                                <h4 th:text="${shopDetails.tenSanPham}"></h4>
+                                <h3 th:text="${#numbers.formatDecimal(shopDetails.gia, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"
+                                    style="vertical-align: middle;"></h3>
+                                <div class="product__details__option" th:data-id="${shopDetails.sanPhamId}">
+                                    <div class="product__details__option__size">
+                                        <span>Kích cỡ:</span>
+                                        <label th:for="${tenKichCo}" name="kichCoIdsName" class="chonKichCo"
+                                            th:id="'KichCoIdsRadio'+${istat.index}"
+                                            th:input-id="'tenKichCoRadioId'+${istat.index}" input-name="kichCoId"
+                                            onclick="chooseOptionLabel(this.getAttribute('name'),this.getAttribute('id'),this.getAttribute('input-name'),this.getAttribute('input-id'))"
+                                            th:each="item, istat : ${shopDetails.lstKichCo}">[[${item.tenKichCo}]]
+                                            <input type="radio" th:field="*{kichCoId}" th:value="${item.id}"
+                                                th:id="'tenKichCoRadioId'+${istat.index}" hidden>
+                                        </label>
+                                    </div>
+                                    <div class="product__details__option__color">
+                                        <span>Màu sắc:</span>
+                                        <label class="chonMauSac"
+                                            onclick="chooseOptionColorLabel(this.getAttribute('id'),this.getAttribute('name'), this.getAttribute('input-name'), this.getAttribute('input-id'))"
+                                            th:for="'mauSacInpId'+${istat.index}" th:id="labelMS+${istat.index}"
+                                            th:style="'background-color:'+ ${ms.maMauSac}"
+                                            th:each="ms, istat : ${shopDetails.lstMauSac}" th:name="labelMSName"
+                                            th:input-name="mauSacId" th:input-id="'mauSacInpId'+${istat.index}">
+                                            <input type="radio" th:value="${ms.id}" th:id="'mauSacInpId'+${istat.index}"
+                                                th:field="*{mauSacId}" hidden>
+                                        </label>
+                                    </div>
+                                </div>
+                                <p>Số lượng hiện có: <span class="soLuongHienCoCus"
+                                        th:id="'soLuongHienCoCus' + ${shopDetails.sanPhamId}"></span></p>
+                                <div class="product__details__cart__option">
+                                    <div class="quantity">
+                                        <div class="pro-qty">
+                                            <input type="text" class="daucatmoi" th:field="*{soLuong}">
+                                        </div>
+                                    </div>
+                                    <a id="muaNgaySanPham" th:data-id="${shopDetails.sanPhamId}" style="color: white;"
+                                        class="btn primary-btn">Đặt mua ngay</a>
+                                    <input type="hidden" id="auth" th:value="${#authentication.name}">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="product__details__tab">
+                                <ul class="nav nav-tabs" role="tablist">
+                                    <li class="nav-item">
+                                        <a class="nav-link active" data-toggle="tab" href="#tabs-5" role="tab">Mô tả</a>
+                                    </li>
+                                </ul>
+                                <div class="tab-content">
+                                    <div class="tab-pane active" id="tabs-5" role="tabpanel">
+                                        <div class="product__details__tab__content">
+                                            <div class="product__details__tab__content__item">
+                                                <textarea class="form-control" th:text="${shopDetails.moTa}" name=""
+                                                    id="moTaVal" cols="30" rows="10" readonly
+                                                    style="border:hidden; background-color: white;"></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </section>
+
+</body>
+
+</html>

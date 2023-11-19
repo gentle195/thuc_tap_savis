@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{admin/layouts/index.html}">
+
+<head>
+    <title>Chi tiết sản phẩm</title>
+    <script type="text/javascript" th:src="@{/admin/js/product/product.js}"></script>
+</head>
+
+<body>
+    <section layout:fragment="content" class="container-fluid">
+        <div id="messageSuccess" th:if="${messageSuccess}" class="toast" role="alert" aria-live="assertive"
+            aria-atomic="true" data-delay="3000">
+            <div class="toast-header">
+                <svg class="bd-placeholder-img rounded mr-2" width="20" height="20" xmlns="http://www.w3.org/2000/svg"
+                    preserveAspectRatio="xMidYMid slice" focusable="false" role="img">
+                    <rect width="100%" height="100%" fill="#007aff"></rect>
+                </svg>
+                <!-- <img src="..." class="rounded mr-2" alt="..."> -->
+                <strong class="pr-3 mr-auto">Thông báo hệ thống</strong>
+                <small>Now</small>
+                <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="toast-body" th:text="${messageSuccess}"></div>
+        </div>
+        <div id="messageDanger" th:if="${messageDanger}" class="toast" role="alert" aria-live="assertive"
+            aria-atomic="true" data-delay="3000">
+            <div class="toast-header">
+                <svg class="bd-placeholder-img rounded mr-2" width="20" height="20" xmlns="http://www.w3.org/2000/svg"
+                    preserveAspectRatio="xMidYMid slice" focusable="false" role="img">
+                    <rect width="100%" height="100%" fill="red"></rect>
+                </svg>
+                <!-- <img src="..." class="rounded mr-2" alt="..."> -->
+                <strong class="pr-3 mr-auto">Thông báo hệ thống</strong>
+                <small>Now</small>
+                <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="toast-body" th:text="${messageDanger}"></div>
+        </div>
+        <div id="toastAjax" class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-delay="2000">
+        </div>
+        <div class="container-fluid">
+            <h1 class="h3 mb-2 text-gray-800">Chi tiết sản phẩm</h1>
+            <hr>
+            <div class="card shadow mb-4 mt-4">
+                <div class="modal-body">
+                    <div class="col-sm-12">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <label for="">Tên sản phẩm:</label>
+                                <input type="text" class="form-control" placeholder="Tên sản phẩm"
+                                    th:value="${sanPham.tenSanPham}" readonly />
+                            </div>
+                            <div class="col-sm-6">
+                                <label for="">Giá:</label>
+                                <input type="text" class="form-control" name="gia" id="gia"
+                                    th:value="${#numbers.formatDecimal(sanPham.gia, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"
+                                    readonly />
+                            </div>
+                            <div class="col-sm-3 mt-3">
+                                <div class="col-sm-12">
+                                    <div class="row">
+                                        <label for="">Loại sản phẩm:</label>
+                                        <input type="text" class="form-control" th:value="${sanPham.tenLoaiSanPham}"
+                                            readonly />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-3 mt-3">
+                                <div class="col-sm-12">
+                                    <div class="row">
+                                        <label for="">Tên kiểu dáng:</label>
+                                        <input type="text" class="form-control" th:value="${sanPham.tenKieuDang}"
+                                            readonly />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-3 mt-3">
+                                <div class="col-sm-12">
+                                    <div class="row">
+                                        <label for="">Tên chất liệu:</label>
+                                        <input type="text" class="form-control" th:value="${sanPham.tenChatLieu}"
+                                            readonly />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-3 mt-3">
+                                <div class="col-sm-12">
+                                    <div class="row ">
+                                        <label for="">Tên phong cách:</label>
+                                        <input type="text" class="form-control" th:value="${sanPham.tenPhongCach}"
+                                            readonly />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-12 mt-3">
+                                <div class="col-sm-12">
+                                    <div class="row ">
+                                        <label for="moTa">Mô tả sản phẩm:</label>
+                                        <textarea class="form-control" name="moTa" id="moTa" th:field="${sanPham.moTa}"
+                                            placeholder="Mô tả chi tiết sản phẩm..." readonly></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card shadow mb-4 mt-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold">
+                        Bảng sản phẩm chi tiết
+                    </h6>
+                    <div class="btn-group-sm">
+                        <div class="float-right">
+                            <a class="btn btn-secondary text-light" th:href="@{/admin/product}">Quay lại</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover" id="dataTable" width="100%" cellspacing="0">
+                            <thead class="text-nowrap text-center">
+                                <tr>
+                                    <th>#</th>
+                                    <th>Kích cỡ</th>
+                                    <th>Màu sắc</th>
+                                    <th>Số lượng</th>
+                                    <th>Người tạo</th>
+                                    <th>Ngày tạo</th>
+                                    <th>Người chỉnh sửa</th>
+                                    <th>Ngày chỉnh sửa</th>
+                                    <th>Có hiển thị</th>
+                                </tr>
+                                <tr th:if="${not #lists.isEmpty(sanPhamChiTiets)}">
+                                    <td colspan="9">
+                                        <h4><i>Không có sản phẩm nào phù hợp</i></h4>
+                                    </td>
+                                </tr>
+                            </thead>
+                            <tbody class="text-center">
+                                <tr th:each="item, istat : ${sanPham.sanPhamChiTiets}">
+                                    <td th:text="${istat.index + 1}"></td>
+                                    <td th:text="${item.kichCo.tenKichCo}"></td>
+                                    <td th:text="${item.mauSac.tenMauSac}"></td>
+                                    <td th:text="${#numbers.formatDecimal(item.soLuong, 0, 'COMMA', 0, 'POINT')}"></td>
+                                    <td th:text="${item.nguoiTao}"></td>
+                                    <td th:text="${item.ngayTao}"></td>
+                                    <td th:text="${item.nguoiCapNhat}"></td>
+                                    <td th:text="${item.ngayCapNhat}"></td>
+                                    <td class="text-center">
+                                        <div class="custom-control custom-switch align-items-center">
+                                            <input type="checkbox" class="custom-control-input"
+                                                th:id="customSwitch + ${item.id}" th:data-id="${item.id}"
+                                                th:checked="${item.coHienThi? 'true' : 'false'}" readonly
+                                                onclick="changeIsShowProductDetail('changeIsShow',this.getAttribute('id'),this.getAttribute('data-id'), this.getAttribute('checked'))">
+                                            <label class="custom-control-label"
+                                                th:for="customSwitch +  ${item.id}"></label>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold">
+                        Ảnh của sản phẩm
+                    </h6>
+                </div>
+                <div class="file-input" th:if="${not #lists.isEmpty(imgs)}">
+                    <div class="file-preview">
+                        <button type="button" class="close fileinput-remove" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                        <div class=" file-drop-zone clearfix">
+                            <div class="file-preview-thumbnails clearfix">
+                                <div class="file-preview-frame krajee-default  kv-preview-thumb rotatable"
+                                    th:each="img, istatHAMS : ${imgs}">
+                                    <div class="kv-file-content">
+                                        <img th:src="${'/admin/product/images/' + img.tenAnh}" th:id="${img.tenAnh}"
+                                            style="width: auto; height: auto; max-width: 100%; max-height: 100%; image-orientation: from-image;"
+                                            alt="">
+                                    </div>
+                                    <div class="file-thumbnail-footer">
+                                        <div class="file-footer-caption" title="63ea4beff683aa1e4b6dec64e1ae8e60.jfif">
+                                            <div class="file-caption-info">
+                                                ảnh sản phẩm</div>
+                                            <div class="file-size-info"> <samp></samp></div>
+                                        </div>
+                                        <div class="file-thumb-progress kv-hidden">
+                                            <div class="progress">
+                                                <div class="progress-bar bg-info progress-bar-info progress-bar-striped active progress-bar-animated"
+                                                    role="progressbar" aria-valuenow="101" aria-valuemin="0"
+                                                    aria-valuemax="100" style="width: 101%;">
+                                                    Initializing …
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="file-upload-indicator" title="Not uploaded yet"><i
+                                                class="bi-plus-lg text-warning"></i></div>
+                                        <div class="file-actions">
+                                            <div class="file-footer-buttons">
+                                                <button type="button" data-toggle="popover" data-trigger="hover"
+                                                    data-placement="top" data-content="Ảnh chính"
+                                                    th:classappend="${img.laAnhChinh == true? 'active': ''}"
+                                                    class="btn btn-sm btn-kv btn-default btn-outline-warning"><i
+                                                        class="bi bi-star"></i>
+                                                </button>
+                                                <button type="button" data-toggle="popover" data-trigger="hover"
+                                                    data-placement="top" data-content="Có hiển thị"
+                                                    th:classappend="${img.coHienThi == true? 'active': ''}"
+                                                    class="btn btn-sm btn-kv btn-default btn-outline-info"><i
+                                                        class="bi bi-back"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <div class="clearfix"></div>
+                                    </div>
+
+                                    <div class="kv-zoom-cache">
+                                        <div class="file-preview-frame krajee-default  kv-zoom-thumb rotatable"
+                                            id="zoom-thumb-inp-add-2-21238_63ea4beff683aa1e4b6dec64e1ae8e60.jfif"
+                                            data-fileindex="-1"
+                                            data-fileid="21238_63ea4beff683aa1e4b6dec64e1ae8e60.jfif"
+                                            data-filename="63ea4beff683aa1e4b6dec64e1ae8e60.jfif.jpg"
+                                            data-template="image" data-zoom="{zoomData}">
+                                            <div class="kv-file-content">
+                                                <img src="" alt="">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="file-preview-status text-center text-success"></div>
+                            <div class="kv-fileinput-error file-error-message" style="display: none;"></div>
+                        </div>
+                    </div>
+                    <div class="kv-upload-progress kv-hidden" style="display: none;">
+                        <div class="progress">
+                            <div class="progress-bar bg-success progress-bar-success progress-bar-striped active progress-bar-animated"
+                                role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"
+                                style="width: 0%;">
+                                0%
+                            </div>
+                        </div>
+                    </div>
+                    <div class="clearfix"></div>
+                    <div class="file-caption icon-visible">
+                        <div class="input-group ">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+            $(document).ready(function () {
+                $('[data-toggle="popover"]').popover();
+            });
+        </script>
+        <script th:inline="javascript">
+            window.onload = function () {
+                var messageSuccess = '[[${messageSuccess}]]';
+                var messageDanger = '[[${messageDanger}]]';
+                $('#toastsCustomCss').attr("style", "position: absolute; top: 70px; right: 0;z-index: 10000;");
+                if (messageSuccess.length !== 0) {
+                    $("#messageSuccess").toast("show");
+                }
+                if (messageDanger.length !== 0) {
+                    $("#messageDanger").toast("show");
+                }
+            }
+        </script>
+    </section>
+</body>
+
+</html>

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="zxx" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+<meta charset="UTF-8">
+<meta name="description" content="Male_Fashion Template">
+<meta name="keywords" content="Male_Fashion, unica, creative, html">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<title>Đăng ký</title>
+<script type="application/x-javascript">
+	
+	
+	 addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } 
+
+
+</script>
+<!-- Custom Theme files -->
+<!-- //Custom Theme files -->
+<!-- web font -->
+<link th:href="@{//fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i}" rel="stylesheet">
+<link rel="stylesheet" th:href="@{https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css}" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+<link rel="stylesheet" th:href="@{/customer/login/style-register.css}" type="text/css">
+</head>
+<body>
+	<div class="main-w3layouts wrapper">
+		<h1>Creative SignUp Form</h1>
+		<div class="main-agileinfo">
+			<div class="agileits-top">
+				<div class="row pb-3">
+					<div class="col-md-12">
+						<th:block th:if="${message != null}">
+						<h3>
+							<i class="pull-left pt-3" th:text="${message}"></i>
+						</h3>
+						</th:block>
+						
+					</div>
+					
+				</div>
+				<form th:action="@{/security/register/create}" method="post" th:object="${khachHangDTO}">
+					<small th:if="${#fields.hasErrors('hoTen')}" th:errors="*{hoTen}" class="text-danger"></small>
+					<input class="text" type="text" name="hoTen" placeholder="Họ tên ?" th:field="*{hoTen}" required=""> 
+					
+					<small th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="text-danger"></small>
+					<input class="text email" type="email" name="email" placeholder="Email ?" th:field="*{email}" required=""> 
+					
+					<small th:if="${#fields.hasErrors('soDienThoai')}" th:errors="*{soDienThoai}" class="text-danger"></small>
+					<input class="text w3lpass" type="text" name="soDienThoai" placeholder="Số điện thoại" th:field="*{soDienThoai}" required=""> 
+					
+					<small th:if="${#fields.hasErrors('city')}" th:errors="*{city}" class="text-danger"></small>
+					<select class="custom-select select-address" th:field="*{city}" id="city" >
+						<option class="select-items" value="" selected="selected">chọn thành phố</option>
+					</select> 
+					
+					<small th:if="${#fields.hasErrors('district')}" th:errors="*{district}" class="text-danger"></small>
+					<select class="custom-select select-address" th:field="*{district}" id="district">
+						<option class="select-items" value=""  selected="selected">chọn quận</option>
+					</select> 
+					
+					<small th:if="${#fields.hasErrors('ward')}" th:errors="*{ward}" class="text-danger"></small>
+					<select class="custom-select select-address" th:field="*{ward}" id="ward">
+						<option class="select-items" value="" selected="selected">chọn phường</option>
+					</select> 
+					
+					<small th:if="${#fields.hasErrors('soNha')}" th:errors="*{soNha}" class="text-danger"></small>
+					<input class="custom-select" type="text" placeholder="Số nhà" th:field="*{soNha}" required="">
+					<div class="wthree-text pt-3">
+						<label class="anim"> <input type="checkbox" class="checkbox" name="trangThai" th:field="*{trangThai}" th:value="*{trangThai}" th:checked="*{trangThai == 1}" required=""> <span>Tôi đồng ý với điều khoản !</span>
+						</label>
+						<div class="clear"></div>
+					</div>
+					<input type="submit" value="SIGNUP">
+				</form>
+				<p>
+					Don't have an Account? <a th:href="@{/security/login/form}"> Login Now!</a>
+				</p>
+			</div>
+		</div>
+		<!-- copyright -->
+		<div class="colorlibcopy-agile">
+			<p>
+				© 2018 Colorlib Signup Form. All rights reserved | Design by <a href="https://colorlib.com/" target="_blank">Colorlib</a>
+			</p>
+		</div>
+		<!-- //copyright -->
+		<ul class="colorlib-bubbles">
+			<li></li>
+			<li></li>
+			<li></li>
+			<li></li>
+			<li></li>
+			<li></li>
+			<li></li>
+			<li></li>
+			<li></li>
+			<li></li>
+		</ul>
+	</div>
+	<script th:src="@{/customer/js/jquery-3.3.1.min.js}"></script>
+	<script th:src="@{/customer/js/cloudflare-ajax-axios.js}"></script>
+	<script th:src="@{/customer/js/call-api-address.js}"></script>
+</body>
+</html>

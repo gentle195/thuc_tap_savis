@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/layouts/index}">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Chinh sửa khách hàng</title>
+    <link th:href="@{/admin/css/khachhang/style.css}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <meta charset="UTF-8">
+    <title>Chinh sửa khách hàng</title>
+</head>
+
+<body>
+<div class="container-fluid" layout:fragment="content">
+    <div class="row ">
+        <div class="col-md-12">
+            <h1 class="h3 mb-2 text-gray-800">QUẢN LÝ KHÁCH HÀNG</h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card shadow ">
+                <div class="card-header  py-3">
+                    <div class="row">
+                        <div class="col-md-6 pt-4">
+                            <div class="row ">
+                                <div class="col-md-8">
+                                    <th:block th:if="${message == 'create_success'}">
+                                        <span class="text-success">Thêm mới thành công !</span>
+                                    </th:block>
+                                    <th:block th:if="${message == 'update_address_success'}">
+                                        <span class="text-success">Cập nhật địa chỉ thành công !</span>
+                                    </th:block>
+                                    <th:block th:if="${message == 'update_success'}">
+                                        <span class="  text-success">Cập nhật thành công !</span>
+                                    </th:block>
+                                    <th:block th:if="${message == 'create_address_success'}">
+                                        <span class="  text-success">Thêm mới địa chi thành công !</span>
+                                    </th:block>
+                                    <th:block th:if="${message == 'duplicate_email'}">
+                                        <span class="  text-danger">Email [[${email}]] đã tồn tại !</span>
+                                    </th:block>
+                                    <th:block th:if="${message == 'update_duplicate_email'}">
+                                        <span class="text-danger ">Email [[${email}]] đã được đăng ký !</span>
+                                    </th:block>
+                                    <div class="position-fixed bottom-0 right-0 p-3"
+                                         style="z-index: 5; right: 0; top: 0; height: 130px; width: 300px">
+                                        <div id="liveToast" class="toast hide" role="alert" aria-live="assertive"
+                                             aria-atomic="true" data-delay="2000"></div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <strong><a th:href="@{|/admin/khach-hang/danh-sach|}"><i
+                                            class="fas fa-list"></i> Danh sách khách hàng</a></strong>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 pt-4">
+                            <div class="row">
+                                <div class="col-md-7">
+                                    <th:block th:if="${diaChiId == null }">
+                                        <strong>Danh sách địa chỉ khách hàng</strong>
+                                    </th:block>
+                                    <th:block th:if="${diaChiId != null }">
+                                        <strong>Cập nhật địa chỉ khách hàng</strong>
+                                    </th:block>
+                                </div>
+                                <div class="col-md-5">
+                                    <div class="row">
+                                        <th:block th:if="${model.id != null && diaChiId == null}">
+                                            <div class="col-md-6"></div>
+                                            <div class="col-md-3">
+                                                <button id="btnDelete" type="button" onclick="xacNhanXoaDiaChi()"
+                                                        class="dt-button buttons-html5 btn btn-white btn-danger btn-bold"
+                                                        data-toggle="tooltip" title='Xóa'>
+														<span> <i class="fas fa-trash-alt"></i>
+														</span>
+                                                </button>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <button type="button" data-toggle="modal"
+                                                        data-target="#staticBackdrop"
+                                                        class="dt-button buttons-html5 btn btn-white btn-success btn-bold"
+                                                        title='Thêm mới'>
+														<span> <i class="fa fa-plus-circle bigger-110 purple"></i>
+														</span>
+                                                </button>
+                                            </div>
+                                        </th:block>
+                                        <th:block th:if="${diaChiId != null }">
+                                            <div class="col-md-12 offset-6">
+                                                <a th:href="@{|/admin/khach-hang/danh-sach/chinh-sua?id=${diaChiDTO.khachHangId}&page=${diaChiDTO.page}|}"
+                                                   class=" btn-outline-default" style="font-weight: bold;"><i
+                                                        class="fas fa-long-arrow-alt-left"></i> Quay lại</a>
+                                            </div>
+                                        </th:block>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="  card-body">
+            <div class="row">
+                <form class="col-md-6 pt-3 border-right " id="formSubmitKhachHang" method="get"
+                      th:object="${model}">
+                    <div class="form-group pt-2">
+                        <label for="email">Email <span class="text-danger">(*)</span>
+                        </label> <input type="email" th:field="*{email}" name="email" class="form-control"
+                                        id="emailKhachHang" aria-describedby="emailHelp">
+                    </div>
+                    <div class="form-group pt-2">
+                        <label for="hoTen">Họ tên<span class="text-danger">(*)</span>
+                        </label> <input type="text" class="form-control" name="hoTen" th:field="*{hoTen}"
+                                        id="hoTenKhachHang" aria-describedby="emailHelp">
+                    </div>
+                    <div class="form-group pt-2">
+                        <label for="soDienThoai">Số điện thoại<span class="text-danger">(*)</span>
+                        </label> <input type="text" class="form-control" name="soDienThoai"
+                                        th:field="*{soDienThoai}" id="soDienThoaiKhachHang">
+                    </div>
+                    <div class="form-group pt-2">
+                        <label for="trangThai">Trang thái<span class="text-danger">(*)</span>
+                        </label> <select class="custom-select" id="trangThaiKhachHang" th:field="*{trangThai}">
+                        <option value="1" selected="selected">Đang hoạt động</option>
+                        <option value="0">Ngừng hoạt động</option>
+                    </select>
+                    </div>
+                    <div class="form-group pt-2">
+                        <input type="hidden" class="form-control" th:field="*{matKhau}">
+                        <input type="hidden" class="form-control" th:field="*{id}" id="khachHangId">
+                    </div>
+                    <th:block th:if="*{id == null}">
+                        <button type="submit" id="btnCapNhatHoacThemMoiKhachHang"
+                                class="btn btn-primary">Tạo
+                        </button>
+                    </th:block>
+                    <th:block th:if="*{id != null}">
+                        <button type="submit" id="btnCapNhatHoacThemMoiKhachHang" class="btn btn-primary">Cập
+                            nhật
+                        </button>
+                    </th:block>
+                </form>
+                <div class="col-md-6">
+                    <th:block th:if="${diaChiId == null && model.id != null}">
+                        <div class="row pt-3" th:object="${diaChiDTO}">
+                            <div class="col-md-12">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered" width="100%" cellspacing="0">
+                                        <thead>
+                                        <tr>
+                                            <th><input type="checkbox" value="" id="checkAllDiachi"
+                                                       name="checkAllDiachi"/></th>
+                                            <th>STT</th>
+                                            <th>Địa Chỉ</th>
+                                            <th>Họ Tên</th>
+                                            <th>Số điện thoại</th>
+                                            <th>Thao tác</th>
+                                            <th>Địa chỉ mặc định</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody th:each="item, stt : *{listDiaChiDTO}">
+                                        <tr>
+                                            <td><input type="checkbox" th:value="${item.id}"
+                                                       id="checkbox_${item.id}"/></td>
+                                            <td>[[${stt.count}]]</td>
+                                            <td>[[${item.diaChi}]]</td>
+                                            <td>[[${item.hoTen}]]</td>
+                                            <td>[[${item.soDienThoai}]]</td>
+                                            <td><a class="btn btn-outline-primary"
+                                                   th:href="@{|/admin/khach-hang/danh-sach/chinh-sua?id=${diaChiDTO.khachHangId}&page=${diaChiDTO.page}&diaChiId=${item.id}|}"
+                                                   title="Cập nhật"> <i class="fas fa-user-edit"></i>
+                                            </a>
+                                            </td>
+                                            <td>
+                                                <div>
+                                                    <!--                                                    <input type="radio"-->
+                                                    <!--                                                           class="diaChiRadio"-->
+                                                    <!--                                                           th:field="*{listDiaChiDTO[__${stt.index}__].laDiaChiMacDinh}"-->
+                                                    <!--                                                           th:value="true"-->
+                                                    <!--                                                           name="diaChiMacDinhGroup"-->
+                                                    <!--                                                           th:attr="data-id=${item.id}"/>-->
+                                                    <input type="radio"
+                                                           class="diaChiRadio"
+                                                           th:id="'radio_' + ${item.id}"
+                                                           th:name="'diaChiMacDinhGroup_' + ${item.id}"
+                                                           th:checked="${item.laDiaChiMacDinh}"
+                                                           th:value="${item.id}"
+                                                           th:attr="data-id=${item.id}"/>
+                                                </div>
+                                            </td>
+
+                                            <input type="hidden" name="idKhachHang" id="idKhachHang"
+                                                   th:value="${model.id}">
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                    <div class="row">
+                                        <div class="col-sm-12 text-center offset-3">
+                                            <th:block th:if="${model.id != null && diaChiId == null } ">
+                                                <th:block th:if="*{totalPages >  1  } ">
+                                                    <nav aria-label="Page navigation example">
+                                                        <ul class="pagination">
+                                                            <li
+                                                                    th:class="*{page > 1 ? 'page-item' : 'page-item disabled'}">
+                                                                <a class="page-link"
+                                                                   th:href="@{|/admin/khach-hang/danh-sach/chinh-sua?id=${model.id}&page=1|}"
+                                                                   aria-label="First"> <span aria-hidden="true">Đầu
+																			tiên</span>
+                                                                </a>
+                                                            </li>
+                                                            <li
+                                                                    th:class="*{page > 1 ? 'page-item' : 'page-item disabled'}">
+                                                                <a class="page-link"
+                                                                   th:href="@{|/admin/khach-hang/danh-sach/chinh-sua?id=${model.id}&page=*{page - 1}|}"
+                                                                   aria-label="Previous"> <span
+                                                                        aria-hidden="true">Quay lại</span>
+                                                                </a>
+                                                            </li>
+                                                            <th:block th:if="*{totalPages <= 10}">
+                                                                <li th:each="i :*{#numbers.sequence(1,totalPages)}"
+                                                                    th:class="${diaChiDTO.page != i ? 'page-item' : 'page-item disabled'}">
+                                                                    <a class="page-link"
+                                                                       th:href="@{|/admin/khach-hang/danh-sach/chinh-sua?id=${model.id}&page=${i}|}">[[${i}]]</a>
+                                                                </li>
+                                                            </th:block>
+                                                            <th:block th:if="*{totalPages > 10}">
+                                                                <th:block
+                                                                        th:if="*{page <= 5 || page > totalPages - 4}">
+                                                                    <li th:each="i :*{#numbers.sequence(1,5)}"
+                                                                        th:class="${diaChiDTO.page != i ? 'page-item' : 'page-item disabled'}">
+                                                                        <a class="page-link"
+                                                                           th:href="@{|/admin/khach-hang/danh-sach/chinh-sua?id=${model.id}&page=${i}|}">[[${i}]]</a>
+                                                                    </li>
+                                                                    <a class="page-link"
+                                                                       th:href="@{|/admin/khach-hang/danh-sach/danh-sach?id=${model.id}&page=6|}">....</a>
+                                                                    <li th:each="i :*{#numbers.sequence(totalPages - 4,totalPages)}"
+                                                                        th:class="${diaChiDTO.page != i ? 'page-item' : 'page-item disabled'}">
+                                                                        <a class="page-link"
+                                                                           th:href="@{|/admin/khach-hang/danh-sach/chinh-sua?id=${model.id}&page=${i}|}">[[${i}]]</a>
+                                                                    </li>
+                                                                </th:block>
+                                                            </th:block>
+                                                            <li
+                                                                    th:class="*{page < totalPages ? 'page-item' : 'page-item disabled'}">
+                                                                <a class="page-link"
+                                                                   th:href="@{|/admin/khach-hang/danh-sach/chinh-sua?id=${model.id}&page=*{page + 1}|}"
+                                                                   aria-label="Next"> <span aria-hidden="true">Đi
+																			tiếp</span>
+                                                                </a>
+                                                            </li>
+                                                            <li
+                                                                    th:class="*{page < totalPages ? 'page-item' : 'page-item disabled'}">
+                                                                <a class="page-link"
+                                                                   th:href="@{|/admin/khach-hang/danh-sach/chinh-sua?id=${model.id}&page=*{totalPages}|}"
+                                                                   aria-label="Next"> <span aria-hidden="true">Cuối
+																			cùng</span>
+                                                                </a>
+                                                            </li>
+                                                        </ul>
+                                                    </nav>
+                                                </th:block>
+                                            </th:block>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </th:block>
+                    <th:block th:if="${diaChiId != null }">
+                        <div class="row pt-4">
+                            <div class="col-md-12">
+                                <div class="row">
+                                    <div class="col-md-12 pt-3">
+                                        <div class="form-group pt-2">
+                                            <label for="city">Địa chỉ cũ :</label>
+                                            <strong>[[${diaChiDTO.diaChi}]]</strong>
+                                        </div>
+                                    </div>
+                                </div>
+                                <form th:action="@{/admin/khach-hang/dia-chi/cap-nhat}" th:object="${diaChiDTO}"
+                                      method="POST">
+                                    <div class="row pt-5">
+                                        <div class="col-md-6 pt-3">
+                                            <div class="form-group pt-2">
+                                                <label for="city">Thành phố/Tỉnh<span
+                                                        class="text-danger">(*)</span></label> <select
+                                                    th:filed="*{city}" name="city" class="custom-select" id="city">
+                                            </select> <small th:if="${#fields.hasErrors('city')}"
+                                                             th:errors="*{city}" class="text-danger"></small>
+                                            </div>
+                                            <div class="form-group pt-2">
+                                                <label for="ward">Xã/Phường<span
+                                                        class="text-danger">(*)</span></label> <select
+                                                    th:filed="*{ward}" name="ward" class="custom-select" id="ward">
+                                            </select> <small th:if="${#fields.hasErrors('ward')}"
+                                                             th:errors="*{ward}" class="text-danger"></small>
+                                            </div>
+                                            <div class="form-group pt-2">
+                                                <label for="hoTen">Họ tên<span
+                                                        class="text-danger">(*)</span></label> <input name="hoTen"
+                                                                                                      th:field="*{hoTen}"
+                                                                                                      type="text"
+                                                                                                      class="form-control"
+                                                                                                      id="hoTen">
+                                                <small th:if="${#fields.hasErrors('hoTen')}" th:errors="*{hoTen}"
+                                                       class="text-danger"></small>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 pt-3">
+                                            <div class="form-group pt-2">
+                                                <label for="district">Quận/Huyện<span
+                                                        class="text-danger">(*)</span></label> <select
+                                                    th:filed="*{district}" name="district" class="custom-select"
+                                                    id="district">
+                                            </select> <small th:if="${#fields.hasErrors('district')}"
+                                                             th:errors="*{district}" class="text-danger"></small>
+                                            </div>
+                                            <div class="form-group pt-2">
+                                                <label for="soNha">Số nhà<span
+                                                        class="text-danger">(*)</span></label> <input name="soNha"
+                                                                                                      th:filed="*{soNha}"
+                                                                                                      type="text"
+                                                                                                      class="form-control"
+                                                                                                      id="soNha">
+                                                <small th:if="${#fields.hasErrors('soNha')}" th:errors="*{soNha}"
+                                                       class="text-danger"></small>
+                                            </div>
+                                            <div class="form-group pt-2">
+                                                <label for="soDienThoai">Số điện thoại<span
+                                                        class="text-danger">(*)</span></label> <input
+                                                    th:field="*{soDienThoai}" type="text" class="form-control"
+                                                    id="soDienThoai"> <small
+                                                    th:if="${#fields.hasErrors('soDienThoai')}"
+                                                    th:errors="*{soDienThoai}" class="text-danger"></small>
+                                            </div>
+                                            <div class="form-group pt-2">
+                                                <input type="hidden" th:field="*{khachHangId}" class="form-control">
+                                                <input type="hidden" th:field="*{page}" class="form-control"> <input
+                                                    type="hidden" th:field="*{id}" class="form-control">
+                                            </div>
+                                            <div class="form-group pt-2"></div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group"></div>
+                                    <button type="submit" class="btn btn-primary">Cập nhật</button>
+                                </form>
+                            </div>
+                        </div>
+                    </th:block>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade bd-example-modal-lg" id="staticBackdrop" data-backdrop="static" data-keyboard="false"
+         tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="false">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title " id="staticBackdropLabel">Thêm mới địa chỉ</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form class="col-md-12" id="formSubmitDiaChi" th:object="${model}">
+                        <div class="row pt-4">
+                            <div class="col-md-6">
+                                <div class="form-group pt-2">
+                                    <label for="city">Thành phố/Tỉnh<span class="text-danger">(*)</span></label>
+                                    <select name="city" class="custom-select" id="city">
+                                        <option selected="selected">---Chọn thành phố---</option>
+                                    </select>
+                                </div>
+                                <div class="form-group pt-2">
+                                    <label for="ward">Xã/Phường<span class="text-danger">(*)</span></label> <select
+                                        name="ward" class="custom-select" id="ward">
+                                    <option selected="selected">---Chọn xã---</option>
+                                </select>
+                                </div>
+                                <div class="form-group pt-2">
+                                    <label for="hoTen">Họ tên<span class="text-danger">(*)</span></label> <input
+                                        name="hoTen" type="text" class="form-control" id="hoTen">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group pt-2">
+                                    <label for="district">Quận/Huyện<span class="text-danger">(*)</span></label>
+                                    <select name="district" class="custom-select" id="district">
+                                        <option selected="selected">---Chọn thành huyện---</option>
+                                    </select>
+                                </div>
+                                <div class="form-group pt-2">
+                                    <label for="soNha">Số nhà<span class="text-danger">(*)</span></label> <input
+                                        name="soNha" type="text" class="form-control" id="soNha">
+                                </div>
+                                <div class="form-group pt-2">
+                                    <label for="soDienThoai">Số điện thoại<span
+                                            class="text-danger">(*)</span></label> <input name="soDienThoai"
+                                                                                          type="text"
+                                                                                          class="form-control"
+                                                                                          id="soDienThoai">
+                                </div>
+                            </div>
+                            <input type="hidden" name="khachHangId" class="form-control" th:value="${model.id}">
+                            <div class="form-group pt-2"></div>
+                            <button type="submit" id="btnThemMoiDiaChi" class="btn btn-primary">Thêm</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer"></div>
+            </div>
+        </div>
+    </div>
+    <script th:src="@{/admin/js/jquery.validation.min.js}"></script>
+    <script th:src="@{/admin/js/cloudflare-ajax-axios.js}"></script>
+    <script type="text/javascript" th:src="@{/admin/js/khachhang/khachHang.js}"></script>
+    <script type="text/javascript" th:src="@{/admin/js/diachi/diaChi.js}"></script>
+</div>
+</body>
+
+</html>

@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/layouts/index.html}">
+<head>
+    <title>Discount Codes</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-alpha1/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
+    <script th:src="@{/admin/js/khuyenmai/khuyenmai.js}"></script>
+
+</head>
+<body>
+
+<section layout:fragment="content">
+    <div id="toastsCustomCss">
+        <div id="msgSuccess" th:if="${msgSuccess}" class="toast" role="alert" aria-live="assertive"
+             aria-atomic="true" data-delay="3000">
+            <div class="toast-header">
+                <svg class="bd-placeholder-img rounded mr-2" width="20" height="20"
+                     xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" focusable="false"
+                     role="img">
+                    <rect width="100%" height="100%" fill="#007aff"></rect>
+                </svg>
+                <!-- <img src="..." class="rounded mr-2" alt="..."> -->
+                <strong class="mr-auto">Thông báo</strong>
+                <small>Now</small>
+                <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="toast-body" th:text="${msgSuccess}"></div>
+        </div>
+        <div id="msgDanger" th:if="${msgDanger}" class="toast" role="alert" aria-live="assertive"
+             aria-atomic="true" data-delay="3000">
+            <div class="toast-header">
+                <svg class="bd-placeholder-img rounded mr-2" width="20" height="20"
+                     xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" focusable="false"
+                     role="img">
+                    <rect width="100%" height="100%" fill="red"></rect>
+                </svg>
+                <!-- <img src="..." class="rounded mr-2" alt="..."> -->
+                <strong class="mr-auto">Thông báo</strong>
+                <small>Now</small>
+                <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="toast-body" th:text="${msgDanger}"></div>
+        </div>
+    </div>
+	
+	<h1 class="h3 mb-2 text-center">Quản lý khuyến mại</h1>
+	<hr>
+    <div class="container-fluid mt-4">
+    	<div class="card">
+    		<div class="card-body">
+		        <div class="row">
+		            <div class="col-7">
+		                <div class="input-group mb-3">
+		                    <input type="text" class="form-control" placeholder="Tên mã giảm giá" id="search" th:value="${keyword}">
+		                    <button class="btn btn-primary" type="button" onclick="submit()">Tìm kiếm</button>
+		                </div>
+		            </div>
+		        </div>
+		        <div class="row">
+		            <div class="col-1">
+		                <label class="col-form-label" for="status" style="white-space: nowrap;">Trạng thái:</label>
+		            </div>
+		            <div class="col-2">
+		                <select class="form-select" aria-label="Default select example" id="status">
+		                    <option value="ALL" selected>Tất cả</option>
+		                    <option value="ON" th:selected="${status == 'ON'}">Đang Bật</option>
+		                    <option value="OFF" th:selected="${status == 'OFF'}">Đang Tắt</option>
+		                </select>
+		            </div>
+		            <div class="col-2">
+		                <div class="input-group date">
+		                    <label class="col-form-label " for="dateFrom">Từ:</label>
+		                    <input type="date" class="form-control" id="dateFrom" th:value="${dateFrom}"/>
+		                </div>
+		            </div>
+		            <div class="col-2">
+		                <div class="input-group date">
+		                    <label class="col-form-label " for="dateTo">Đến:</label>
+		                    <input type="date" class="form-control" id="dateTo" th:value="${dateTo}"/>
+		                </div>
+		            </div>
+		            <div class="col-2">
+		                <label class="col-form-label " for="discountRange" style="white-space: nowrap;">
+		                	Lọc theo % giảm: 
+		                </label>
+		           	</div>
+		            <div class="col-2">
+		                <div id="discountRange"></div>
+		                <span id="selectedRange"></span>
+		                <input id="startRange" type="hidden" th:value="${start}">
+		                <input id="endRange" type="hidden" th:value="${end}">
+		            </div>
+		        </div>
+			</div>
+		</div>
+		        <br>
+        <div class="row">
+        	<div class="col-10 text-end">
+            	<a th:href="@{/admin/voucher/create}" class="btn btn-success">Tạo mã giảm giá</a>
+        	</div>
+        	<div class="col-1">
+        		<label class="col-form-label " for="size" style="white-space: nowrap;">Số phần tử: </label>
+        	</div>
+        	<div class="col-1">
+                <select class="form-select" aria-label="Default select example" id="size" onchange="submit()">
+                    <option value="10" selected>10</option>
+                    <option value="20" th:selected="${size == 20}">20</option>
+                    <option value="50" th:selected="${size == 50}">50</option>
+                </select>
+	         </div>
+        </div>
+        
+        <div class="row mt-4">
+            <div class="col-12 table-responsive">
+                <table class="table table-bordered table-hover" id="voucherTable" width="100%" cellspacing="0">
+                    <thead>
+                    <!--                    <thead class="text-nowrap">-->
+                    <tr>
+                        <th class="text-center">Số thứ tự</th>
+                        <th class="text-center">Mã giảm giá</th>
+                        <th class="text-center">Phần trăm giảm</th>
+                        <th class="text-center">Tiền giảm tối đa</th>
+                        <th class="text-center">Thời gian</th>
+                        <th class="text-center">Trạng thái</th>
+                        <th class="text-center">Kích hoạt</th>
+                        <th class="text-center">Hành động</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="voucher, index : ${vouchers}">
+                        <td th:text="${index.index + 1}" class="text-center"></td>
+                        <td th:text="${voucher.tenKhuyenMai}" class="text-center"></td>
+                        <td th:text="${voucher.phanTramGiam + '%'}" class="text-center"></td>
+                        <td th:text="${#numbers.formatDecimal(voucher.giaTriToiThieu, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"
+                            class="text-center"></td>
+                        <!--                        <td th:text="${#numbers.formatCurrency(voucher.giaTriToiThieu)}" class="text-center"></td>-->
+                        <td class="text-center">
+                            <span th:text="${#dates.format(voucher.ngayBatDau, 'dd/MM/yyyy')}"></span>
+                            <span> - </span>
+                            <span th:text="${#dates.format(voucher.ngayKetThuc, 'dd/MM/yyyy')}"></span>
+                        </td>
+                        <td th:text="${voucher.trangThai ? 'Đang hoạt động': 'Hết hiệu lực'}" class="text-center">
+                        <td class="text-center">
+                            <a th:href="@{/admin/voucher/toggle/{id}(id=${voucher.id})}">
+                                <i th:class="${voucher.trangThai ? 'bi bi-toggle-on' : 'bi bi-toggle-off'}"
+                                   style="font-size: 25px;"></i>
+                            </a>
+                        </td>
+                        <td class="text-center">
+                            <a th:href="@{/admin/voucher/edit/{id}(id=${voucher.id})}" class="btn btn-warning btn-sm">
+                                <!-- <i class="bi bi-pencil"></i> -->
+                                <i class="fas fa-edit text-primary"></i>
+                            </a>
+                            <a class="btn btn-outline-danger btn-sm" th:data-id="${voucher.id}"
+                               data-toggle="popover" data-trigger="hover" data-placement="top"
+                               data-content="Xóa voucher"
+                               onclick="showConfirmModalDeleteDialogVoucher(this.getAttribute('data-id'))">
+                                <!-- <img th:src="@{/admin/img/icons/trash.svg}"> -->
+                                <i class="fas fa-trash"></i>
+                            </a>
+
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+                <div class="row">
+	                <nav aria-label="Page navigation example">
+	                    <ul class="pagination justify-content-center pagination-sm">
+	                        <li th:if="${vouchers.totalPages > 0}" class="page-link"
+	                            th:each="pageNumber : ${pageNumbers}">
+	                            <a href="#"
+	                               th:onclick="'submit('+${pageNumber}+')'"
+	                               th:text="${pageNumber}"
+	                               th:class="${pageNumber==vouchers.number + 1} ? active"
+	                               class="page-link"
+	                               style="text-decoration: none; font-size: 17px;"
+	                            ></a>
+	                        </li>
+	                    </ul>
+	                </nav>
+				</div>
+            </div>
+            <div class="alert alert-warning container mt-3 text-center" th:if="${vouchers.totalPages == 0}"
+                 style="background-color: transparent; border: none;">
+                <img src="/admin/img/noData2.png" alt="Không có sản phẩm" style="width: 300px; height: 300px;">
+                <p class="empty-message" style="margin-top: 20px; font-size: 1.8em;">KHÔNG CÓ DỮ LIỆU</p>
+            </div>
+
+        </div>
+    </div>
+    <script th:inline="javascript">
+        var msgSuccess = '[[${msgSuccess}]]';
+        var msgDanger = '[[${msgDanger}]]';
+        console.log(msgSuccess);
+        console.log(msgDanger)
+        $('#toastsCustomCss').attr("style", "position: absolute; top: 70px; right: 0;z-index: 10000;");
+        if (msgSuccess.length !== 0) {
+            $("#msgSuccess").toast("show");
+        }
+        if (msgDanger.length !== 0) {
+            $("#msgDanger").toast("show");
+        }
+
+    </script>
+    <div class="modal fade" id="deleteModalIdVoucher" tabindex="-1" role="dialog" aria-labelledby="modelTitleId"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Xác nhận xóa voucher</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Bạn có muốn xóa voucher này không?
+                </div>
+                <div class="modal-footer">
+                    <a type="button" class="btn btn-outline-dark" data-dismiss="modal">Đóng</a>
+                    <a id="yesOptionDeleteModalIdVoucher" onclick="submitDeleteVoucher()" type="button"
+                       class="btn btn-danger text-light">Xóa</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript" th:src="@{/admin/js/khuyenmai/khuyenmai.js}"></script>
+</section>
+</body>
+</html>

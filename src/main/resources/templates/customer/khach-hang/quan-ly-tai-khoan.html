@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="zxx" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{customer/layouts/index}">
+
+<head>
+	<meta charset="UTF-8">
+	<title>Quản lý tài khoản</title>
+</head>
+
+<body>
+	<div class="container-fluid rounded bg-white mt-5 mb-5" layout:fragment="content">
+		<div class="position-fixed bottom-0 right-0 p-3"
+			style="z-index: 5; right: 0; top: 0; height: 130px ;width: 300px">
+			<div id="liveToast" class="toast hide" role="alert" aria-live="assertive" aria-atomic="true"
+				data-delay="2000">
+
+			</div>
+		</div>
+		<div class="row" th:object="${khachHangDTO}">
+			<div class="col-md-3 border-right">
+				<div class="d-flex flex-column align-items-center text-center p-3 py-5">
+					<span class="text-black-50"> Họ Tên : [[*{hoTen}]] </span> <span class="text-black-50"> Email :
+						[[*{email}]] </span> <span class="text-black-50"> Tổng đơn hàng : <th:block
+							th:if="*{soLanMua != null}">
+							[[*{soLanMua}]]
+						</th:block>
+						<th:block th:if="*{soLanMua == null}">
+							0
+						</th:block>
+					</span> <span class="text-black-50"> Ngày tạo tài khoản : [[*{ngayTao}]] </span>
+				</div>
+			</div>
+			<div class="col-md-3 border-right">
+				<div class="p-3 py-5">
+					<th:block th:if="${message != null}">
+						<span class="text-success">[[${message}]]</span>
+					</th:block>
+					<div class="d-flex justify-content-between align-items-center mb-3">
+						<h4 class="text-right">Thông tin người dùng</h4>
+						<button data-toggle="modal" data-target="#doiMatKhauTaiKhoan" class="btn btn-secondary">Đổi mật
+							khẩu</button>
+						<div class="modal top fade" id="doiMatKhauTaiKhoan" tabindex="-1"
+							aria-labelledby="exampleModalLabel" aria-hidden="true" data-mdb-backdrop="true"
+							data-mdb-keyboard="true">
+							<div class="modal-dialog" style="width: 300px;">
+								<div class="modal-content ">
+									<th:block th:if="${message_not_have_email != null}">
+										<i class="pull-left text-danger" th:text="${message_not_have_email}"></i>
+									</th:block>
+									<div class="modal-header h5 text-white bg-secondary justify-content">Đổi mật khẩu
+									</div>
+									<div class="modal-body ">
+										<form method="POST" id="formDoiMatKhauTaiKhoan">
+											<span id='message'></span>
+											<div class="col-md-12  pt-2">
+												<label class="labels">Mật khẩu mới<span
+														class="text-danger">(*)</span></label> <input type="password"
+													name="password" class="form-control" placeholder="Nhập mật khẩu mới"
+													id="password">
+											</div>
+											<div class="col-md-12  pt-2">
+												<label class="labels">Xác nhận mật khẩu<span
+														class="text-danger">(*)</span></label> <input type="password"
+													name="confirm_password" class="form-control"
+													placeholder="Xác nhận lại mật khẩu mới" id="confirm_password">
+											</div>
+											<input type="hidden" name="email" th:value="*{email}" class="form-control">
+											<div class="col-md-12  pt-2">
+												<button type="submit" id="btnDoiMatKhauTaiKhoan"
+													class="btn btn-secondary w-100">Đổi mật khẩu</button>
+											</div>
+										</form>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="row mt-3">
+						<form th:action="@{/customer/quan-ly-tai-khoan/cap-nhat}" method="POST">
+							<div class="col-md-12">
+								<label class="labels">Email<span class="text-danger">(*)</span></label> <input
+									type="email" th:field="*{email}" readonly="readonly" class="form-control"
+									placeholder="Nhập địa chỉ email">
+							</div>
+							<br>
+							<div class="col-md-12">
+								<label class="labels">Họ tên<span class="text-danger">(*)</span></label> <small
+									th:if="${#fields.hasErrors('hoTen')}" th:errors="*{hoTen}"
+									class="text-danger"></small> <input type="text" th:field="*{hoTen}"
+									class="form-control" placeholder="Họ tên" value="">
+							</div>
+							<br> <br>
+							<div class="col-md-12">
+								<label class="labels">Số điện thoại<span class="text-danger">(*)</span></label>
+								<small th:if="${#fields.hasErrors('soDienThoai')}" th:errors="*{soDienThoai}"
+									class="text-danger"></small>
+								<input type="text" th:field="*{soDienThoai}" class="form-control" disabled="disabled"
+									placeholder="Số điện thoại" value="">
+								<input type="hidden" th:field="*{id}" class="form-control" value=""> <input
+									type="hidden" th:field="*{page}" class="form-control" value=""> <input type="hidden"
+									th:field="*{trangThai}" class="form-control" value=""> <input type="hidden"
+									th:field="*{soNha}" class="form-control"> <input type="hidden"
+									th:field="*{district}" class="form-control"> <input type="hidden" th:field="*{city}"
+									class="form-control"> <input type="hidden" th:field="*{ward}" class="form-control">
+							</div>
+							<br>
+							<div class="col-md-12">
+								<button class="btn btn-secondary" type="submit">
+									<i class="fa fa-download" aria-hidden="true"></i>
+								</button>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-6 border-right p-3 py-5">
+				<div class="row">
+					<div class="col-md-10">
+						<div class="d-flex justify-content-between align-items-center mb-3">
+							<h4 class="text-right">Danh sách địa chỉ</h4>
+						</div>
+					</div>
+					<div class="col-md-2">
+						<button type="button" data-toggle="modal" data-target="#themMoiDiaChiKhachHangDangNhapModal"
+							class="dt-button buttons-html5 btn btn-white btn-success btn-bold" title='Thêm mới'>
+							<span> <i class="fa fa-plus-circle bigger-110 purple"></i>
+							</span>
+						</button>
+						<button id="btnDelete" type="button" onclick="xacNhanXoaDiaChiDangNhap()"
+							class="dt-button buttons-html5 btn btn-white btn-danger btn-bold" data-toggle="tooltip"
+							title='Xóa'>
+							<span> <i class="fas fa-trash-alt"></i>
+							</span>
+						</button>
+					</div>
+				</div>
+				<th:block th:if="*{!listDiaChiDTO.isEmpty}">
+					<div class="row">
+						<table class="table">
+							<thead>
+								<tr>
+									<th><input type="checkbox" value="" id="checkAllDiachi" name="checkAllDiachi" />
+									</th>
+									<th scope="col">#</th>
+									<th scope="col">Địa chỉ</th>
+									<th scope="col">Họ tên</th>
+									<th scope="col">Số điện thoại</th>
+									<th scope="col">Thao tác</th>
+								</tr>
+							</thead>
+							<tbody th:each="item : *{listDiaChiDTO}">
+								<tr>
+									<td><input type="checkbox" th:value="${item.id}" id="checkbox_${item.id}" /></td>
+									<th scope="row">[[${itemStat.index+1}]]</th>
+									<td>[[${item.diaChi}]]</td>
+									<td>[[${item.hoTen}]]</td>
+									<td>[[${item.soDienThoai}]]</td>
+									<td><a type="button" data-toggle="modal" class="btn btn-secondary "
+											title="Cập nhật địa chỉ" th:attr="data-target='#capNhatDiaChi'+${item.id}">
+											<i class="fas fa-edit"></i>
+										</a>
+										<div class="modal fade bd-example-modal-lg"
+											th:attr="id='capNhatDiaChi'+${item.id}" data-backdrop="static"
+											data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
+											aria-hidden="false">
+											<div class="modal-dialog modal-lg">
+												<div class="modal-content">
+													<div class="modal-header">
+														<h5 class="modal-title " id="staticBackdropLabel">Cập nhật địa
+															chỉ</h5>
+														<button type="button" class="close" data-dismiss="modal"
+															aria-label="Close">
+															<span aria-hidden="true">&times;</span>
+														</button>
+													</div>
+													<div class="modal-body">
+														<form class="col-md-12"
+															th:action="@{/customer/quan-ly-tai-khoan/cap-nhat-dia-chi}"
+															method="POST">
+															<div class="row pt-4">
+																<div class="col-md-12">
+																	<div class="form-group pt-2">
+																		<label for="city">Địa chỉ<span
+																				class="text-danger">(*)</span></label>
+																		<input th:name="diaChi" type="text"
+																			class="form-control"
+																			th:value="${item.diaChi}">
+																	</div>
+																</div>
+																<div class="col-md-12">
+																	<div class="row">
+																		<div class="col-md-6 form-group pt-2">
+																			<label for="soDienThoai">Số điện thoại<span
+																					class="text-danger">(*)</span></label>
+																			<input th:name="soDienThoai" type="text"
+																				th:value="${item.soDienThoai}"
+																				class="form-control">
+																		</div>
+																		<div class="col-md-6 form-group pt-2">
+																			<label for="hoTen">Họ tên<span
+																					class="text-danger">(*)</span></label>
+																			<input th:name="hoTen" type="text"
+																				class="form-control"
+																				th:value="${item.hoTen}">
+																			<input th:name="idDiaChi" type="hidden"
+																				class="form-control"
+																				th:value="${item.id}">
+																			<input th:name="idKhachHang" type="hidden"
+																				class="form-control" th:value="*{id}">
+																		</div>
+																	</div>
+																</div>
+															</div>
+															<div class="form-group pt-2"></div>
+															<button type="submit" class="btn btn-primary">Cập
+																nhật</button>
+														</form>
+													</div>
+													<div class="modal-footer"></div>
+												</div>
+											</div>
+										</div>
+									</td>
+									<td>
+										<div>
+											<!--                                                    <input type="radio"-->
+											<!--                                                           class="diaChiRadio"-->
+											<!--                                                           th:field="*{listDiaChiDTO[__${stt.index}__].laDiaChiMacDinh}"-->
+											<!--                                                           th:value="true"-->
+											<!--                                                           name="diaChiMacDinhGroup"-->
+											<!--                                                           th:attr="data-id=${item.id}"/>-->
+											<input type="radio" class="diaChiRadio" th:id="'radio_' + ${item.id}"
+												th:name="'diaChiMacDinhGroup_' + ${item.id}"
+												th:checked="${item.laDiaChiMacDinh}" th:value="${item.id}"
+												th:attr="data-id=${item.id}" />
+										</div>
+										<input type="hidden" id="idKhachHang" th:value="*{id}">
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					<div class="row offset-3">
+						<div class="col-md-12">
+							<nav aria-label="Page navigation example">
+								<ul class="pagination">
+									<li th:class="*{page > 1 ? 'page-item' : 'page-item disabled'}"><a class="page-link"
+											th:href="@{|/customer/quan-ly-tai-khoan?page=1|}" aria-label="First"> <span
+												aria-hidden="true">Đầu tiên</span>
+										</a></li>
+									<li th:class="*{page > 1 ? 'page-item' : 'page-item disabled'}"><a class="page-link"
+											th:href="@{|/customer/quan-ly-tai-khoan?page=*{page - 1}|}"
+											aria-label="Previous"> <span aria-hidden="true">Quay lại</span>
+										</a></li>
+									<th:block th:if="*{totalPages <= 10}">
+										<li th:each="i :*{#numbers.sequence(1,totalPages)}"
+											th:class="${khachHangDTO.page != i    ? 'page-item' : 'page-item disabled'}">
+											<a class="page-link"
+												th:href="@{|/customer/quan-ly-tai-khoan?page=${i}|}">[[${i}]]</a>
+										</li>
+									</th:block>
+									<th:block th:if="*{totalPages > 10}">
+										<th:block th:if="*{page <= 5 || page  > totalPages - 4}">
+											<li th:each="i :*{#numbers.sequence(1,5)}"
+												th:class="${khachHangDTO.page != i  ? 'page-item' : 'page-item disabled'}">
+												<a class="page-link"
+													th:href="@{|/customer/quan-ly-tai-khoan?page=${i}|}">[[${i}]]</a>
+											</li>
+											<a class="page-link"
+												th:href="@{|/customer/quan-ly-tai-khoan?page=6|}">....</a>
+											<li th:each="i :*{#numbers.sequence(totalPages - 4,totalPages)}"
+												th:class="${khachHangDTO.page != i  ? 'page-item' : 'page-item disabled'}">
+												<a class="page-link"
+													th:href="@{|/customer/quan-ly-tai-khoan?page=${i}|}">[[${i}]]</a>
+											</li>
+										</th:block>
+									</th:block>
+									<li th:class="*{page < totalPages ? 'page-item' : 'page-item disabled'}"><a
+											class="page-link"
+											th:href="@{|/customer/quan-ly-tai-khoan?page=*{page + 1}|}"
+											aria-label="Next"> <span aria-hidden="true">Đi tiếp</span>
+										</a></li>
+									<li th:class="*{page < totalPages ? 'page-item' : 'page-item disabled'}"><a
+											class="page-link"
+											th:href="@{|/customer/quan-ly-tai-khoan?page=*{totalPages}|}"
+											aria-label="Next"> <span aria-hidden="true">Cuối cùng</span>
+										</a></li>
+								</ul>
+							</nav>
+						</div>
+					</div>
+				</th:block>
+				<th:block th:if="*{listDiaChiDTO.isEmpty}">
+					<tbody>
+						<tr>
+							<td><span class="text-center">Không có dữ liệu phù hợp !</span></td>
+						</tr>
+					</tbody>
+				</th:block>
+			</div>
+		</div>
+		<div class="modal fade bd-example-modal-lg" id="themMoiDiaChiKhachHangDangNhapModal" data-backdrop="static"
+			data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="false">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title " id="staticBackdropLabel">Thêm mới địa chỉ</h5>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body">
+						<form class="col-md-12" id="formThemMoiDiaChiDangNhap">
+							<div class="row pt-4">
+								<div class="col-md-12">
+									<div class="form-group pt-2">
+										<label for="city">Địa chỉ<span class="text-danger">(*)</span></label>
+										<input name="diaChi" id="diaChi" type="text" class="form-control">
+									</div>
+								</div>
+								<div class="col-md-12">
+									<div class="row">
+										<div class="col-md-6 form-group pt-2">
+											<label for="soDienThoai">Số điện thoại<span
+													class="text-danger">(*)</span></label>
+											<input name="soDienThoai" id="soDienThoai" type="text" class="form-control">
+										</div>
+										<div class="col-md-6 form-group pt-2">
+											<label for="hoTen">Họ tên<span class="text-danger">(*)</span></label>
+											<input name="hoTen" id="hoTen" type="text" class="form-control">
+											<input name="khachHangId" type="hidden" class="form-control"
+												th:value="${khachHangDTO.id}">
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="form-group pt-2"></div>
+							<button type="submit" id="btnThemMoiDiaChiDangNhap" class="btn btn-primary">Thêm
+								mới</button>
+							<button type="reset" class="btn btn-primary">Xóa sạch</button>
+						</form>
+					</div>
+					<div class="modal-footer"></div>
+				</div>
+			</div>
+		</div>
+		<script th:src="@{/customer/js/jquery.validation.min.js}"></script>
+		<script th:src="@{/customer/js/khach-hang/quan-ly-tai-khoan.js}"></script>
+	</div>
+</body>
+
+</html>

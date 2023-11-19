@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zxx" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{customer/layouts/index}">
+<head>
+    <meta charset="UTF-8">
+    <title>Đã hủy</title>
+    <link rel="stylesheet" th:href="@{/customer/css/HoaDon/ChiTietCustomer/danhSach.css}">
+    <script th:src="@{/customer/js/HoaDon/jsChungHDCtomer.js}"></script>
+</head>
+<body>
+<section class="Customer_ChoGiaoHang" layout:fragment="content">
+    <div class="tab-buttons">
+        <button class="tab-button" onclick="redirectToChoxacNhanCustomer()">Chờ xác nhận</button>
+        <button class="tab-button" onclick="redirectToChoGiaoHangCustomer()">Chờ giao hàng</button>
+        <button class="tab-button" onclick="redirectToDangGiaoCustomer()">Đang giao</button>
+        <button class="tab-button" onclick="redirectToDaGiaoCustomer()">Đã giao</button>
+        <button class="tab-button active" onclick="redirectToDahuyCustomer()">Đã hủy</button>
+    </div>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="table-max">
+                    <table class="table" id="user-table-DangGiaoCustomer">
+                        <thead>
+                        <tr>
+                            <th scope="col">STT</th>
+                            <th scope="col">Mã đơn</th>
+                            <th scope="col">Người nhận</th>
+                            <th scope="col">Số điện thoại</th>
+                            <th scope="col">Thành tiền</th>
+                            <th scope="col">Trạng thái</th>
+                            <th scope="col" colspan="2">Thao tác</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="customerDH, stt: ${DaHuyCustomer}">
+                            <th scope="row" th:text="${stt.count}"></th>
+                            <td th:text="${customerDH.maDon}"></td>
+                            <td th:text="${customerDH.nguoiNhan}"></td>
+                            <td th:text="${customerDH.sdtNguoiNhan}"></td>
+                            <td th:text="${#numbers.formatDecimal(customerDH.tongTienHoaDon, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"></td>
+                            <td th:text="${customerDH.trangThai.name}"></td>
+                            <td>
+                                <div class="button-group">
+                                    <input type="hidden" id="idCustomerDH" th:value="${customerDH.id}">
+
+                                    <button class="action-button chiTietHoaDonCus" type="submit" id="chiTietHoaDonCusDH">
+                                        <i class="fa fa-info" aria-hidden="true"></i>
+                                    </button>
+
+                                    <script th:inline="javascript">
+                                        $(document).ready(function () {
+                                            $("#chiTietHoaDonCusDH").click(function () {
+                                                const id = $("#idCustomerDH").val();
+                                                window.location.href = "/customer/DonHang/ChiTietHoaDon/DaHuy/hoa-don-id=" + id;
+                                            });
+                                        });
+                                    </script>
+
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <div th:if="${!#lists.isEmpty(DaHuyCustomer)}">
+                        <ul class="pagination">
+                            <li th:each="pageNumber : ${#numbers.sequence(1, pageDaHuy)}">
+                                <a th:href="@{/customer/DonHang/DaHuy(page=${pageNumber})}" th:text="${pageNumber}"
+                                   th:class="${pageNumber == page ? 'active-page' : ''}"></a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+</html>

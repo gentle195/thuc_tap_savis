@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/layouts/index}">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Bán hàng tại quầy</title>
+    <link rel="icon" href="path_to_favicon/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" th:href="@{/admin/css/banHang/CssBanHangTaiQuay.css}">
+    <script th:src="@{/admin/js/banHang/banHangTaiQuay/banHang.js}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.3/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.3.2/html2canvas.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/numeral.js/2.0.6/numeral.min.js"></script>
+
+<!--    <script th:inline="javascript">-->
+<!--        document.addEventListener('DOMContentLoaded', function () {-->
+<!--            // Xử lý sự kiện click vào nút "In Hóa Đơn"-->
+<!--            const buttonInHoaDon = document.getElementById('buttonInHoaDon');-->
+<!--            if (buttonInHoaDon) {-->
+<!--                buttonInHoaDon.addEventListener('click', function () {-->
+<!--                    // Lấy ID của hóa đơn-->
+<!--                    const hoaDonId = buttonInHoaDon.getAttribute('data-id');-->
+
+
+<!--                    // Tạo tên file PDF mới bằng UUID-->
+<!--                    const pdfFileName = generateUuid() + '.pdf';-->
+
+<!--                    // Gọi API để in hóa đơn và lưu file PDF vào thư mục dự án-->
+<!--                    fetch('/in-hoa-don/' + hoaDonId + '?pdfFileName=' + pdfFileName)-->
+<!--                        .then(response => response.blob())-->
+<!--                        .then(pdfBlob => {-->
+<!--                            const pdfUrl = URL.createObjectURL(pdfBlob);-->
+<!--                            const newWindow = window.open(pdfUrl, '_blank');-->
+<!--                            if (newWindow) {-->
+<!--                                newWindow.document.title = 'Hoa Don ID: ' + hoaDonId;-->
+<!--                                console.log("in thanh cong")-->
+<!--                            } else {-->
+<!--                                alert('Vui lòng cho phép trình duyệt mở popup để xem và lưu hóa đơn.');-->
+<!--                            }-->
+<!--                        })-->
+<!--                        .catch(error => console.error('Lỗi khi tạo file PDF:', error));-->
+<!--                });-->
+<!--            }-->
+
+<!--            // Hàm tạo UUID (chuỗi ngẫu nhiên) để tạo tên file PDF mới-->
+<!--            function generateUuid() {-->
+<!--                let uuid = '', i, random;-->
+<!--                for (i = 0; i < 32; i++) {-->
+<!--                    random = Math.random() * 36 | 0; // Thay đổi thành toString(36)-->
+<!--                    if (i === 8 || i === 12 || i === 16 || i === 20) {-->
+<!--                        uuid += '-';-->
+<!--                    }-->
+<!--                    uuid += (i === 12 ? 4 : (i === 16 ? (random & 3 | 8) : random))-->
+<!--                        .toString(36); // Thay đổi thành toString(36)-->
+<!--                }-->
+<!--                return uuid;-->
+<!--            }-->
+<!--        });-->
+<!--    </script>-->
+
+    <script th:inline="javascript">
+        $(document).ready(function () {
+            $(".tienKhachDua-input").on("input", function () {
+                const inputValue = $(this).val();
+                if (!/^[,\d]*$/.test(inputValue)) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Vui lòng chỉ nhập số',
+                        showConfirmButton: false,
+                        timer: 2000
+                    });
+
+                    $(this).val("");
+                    return;
+                }
+
+                const tienTraLaiInput = $("#tienTralai").val();
+                let tienKhachDuaInput = parseInt($(this).val());
+                let tienKhachDuaInputFomat = parseFloat($("#tienKhachDuaInput").val().replace(/[^\d]/g, ""));
+                const tienTienChuoi = $("#tongTienHoaDon-taiQuay").text(); // Ví dụ chuỗi số tiền
+                const tienThanhToan = parseFloat(tienTienChuoi.replace(/[^\d]/g, '').trim());
+
+                const tienGiam = parseFloat($("#discount-taiQuay").text().replace(/[^\d]/g, ""));
+                const tienFomat = tienKhachDuaInput.toLocaleString("vi-VN", {style: "currency", currency: "VND"});
+                let tienTraLai;
+                if (!isNaN(tienKhachDuaInput)) {
+                    tienTraLai = tienKhachDuaInputFomat - tienThanhToan;
+                    if (tienTraLai >= 0) {
+                        $("#tienTralai").text(
+                            tienTraLai.toLocaleString("vi-VN", {style: "currency", currency: "VND"})
+                        );
+                        $("#tienThieu").text(
+                            "0 VNĐ"
+                        );
+                    } else if (tienTraLai < 0) {
+                        $("#tienThieu").text(
+                            tienTraLai.toLocaleString("vi-VN", {style: "currency", currency: "VND"})
+                        );
+                        $("#tienTralai").text(
+                            "0 VNĐ"
+                        );
+                    }
+                } else {
+                    tienKhachDuaInputFomat = 0;
+                    tienTraLai = tienKhachDuaInputFomat - tienThanhToan;
+                    if (tienTraLai >= 0) {
+                        $("#tienTralai").text(
+                            tienTraLai.toLocaleString("vi-VN", {style: "currency", currency: "VND"})
+                        );
+                        $("#tienThieu").text(
+                            "0 VNĐ"
+                        );
+                    } else if (tienTraLai < 0) {
+                        $("#tienThieu").text(
+                            tienTraLai.toLocaleString("vi-VN", {style: "currency", currency: "VND"})
+                        );
+                        $("#tienTralai").text(
+                            "0 VNĐ"
+                        );
+                    }
+                }
+
+            });
+        });
+    </script>
+</head>
+
+<body>
+<div class="container-fluid" layout:fragment="content">
+    <div class="px-0 px-lg-0" th:each="hoaDonBanHangTaiQuay : ${hoaDon}">
+        <input type="hidden" id="idHoaDonBanHangTaiQuay" th:value="${hoaDon.id}">
+        <div class="pb-5">
+            <!-- Shopping cart table -->
+            <div class="table-responsive">
+                <table class="table" id="table-BanHangTaiQuay">
+                    <thead>
+                    <tr>
+                        <th scope="col" class="border-0 bg-light">
+                            <div class="p-2 px-3 text-uppercase">STT</div>
+                        </th>
+                        <th scope="col" class="border-0 bg-light">
+                            <div class="p-2 px-3 text-uppercase">Sản phẩm</div>
+                        </th>
+                        <th scope="col" class="border-0 bg-light">
+                            <div class="py-2 text-uppercase">Giá tiền</div>
+                        </th>
+                        <th scope="col" class="border-0 bg-light">
+                            <div class="py-2 text-uppercase">Số lượng</div>
+                        </th>
+                        <th scope="col" class="border-0 bg-light">
+                            <div class="py-2 text-uppercase">Thành tiền</div>
+                        </th>
+                        <th scope="col" class="border-0 bg-light">
+                            <div class="py-2 text-uppercase">Thao tác</div>
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="hoaDonCT, stt : ${hoaDonChiTiet}">
+                        <td class="border-0 align-middle" th:text="${(pageHDCT - 1) * sizeHDCT + stt.count}"></td>
+
+                        <th scope="row" class="border-0">
+                            <div class="p-2">
+                                <img th:src="${'/customer/images/' + tenAnhChinhList[stt.index]}" alt=""
+                                     width="70" class="img-fluid rounded shadow-sm">
+                                <div class="ml-3 d-inline-block align-middle">
+                                    <h5 class="mb-0" th:text="${hoaDonCT.sanPhamChiTiet.sanPham.tenSanPham}"></h5>
+                                    <div class="ThongTinSP">
+                                        <span th:text="${hoaDonCT.sanPhamChiTiet.mauSac.tenMauSac}"></span>
+                                        <span>/</span>
+                                        <span th:text="${hoaDonCT.sanPhamChiTiet.kichCo.tenKichCo}"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </th>
+                        <td class="border-0 align-middle"><strong
+                                th:text="${#numbers.formatDecimal(hoaDonCT.donGia, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"></strong>
+                        </td>
+                        <td class="border-0 align-middle">
+                            <strong>
+                                <div>
+                                    <input class="quantity-input" type="number" min="1"
+                                           th:value="${hoaDonCT.soLuong}"
+                                           th:attr="data-so-luong-hien-co=${hoaDonCT.sanPhamChiTiet.soLuong}">
+
+                                    <button class="btn btn-dark px-4 rounded-pill save-btn" th:data-id="${hoaDonCT.id}"
+                                            style="display: none;">Lưu
+                                    </button>
+                                    <button class="btn btn-dark px-4 rounded-pill cancel-btn" style="display: none;">
+                                        Hủy
+                                    </button>
+
+                                    <p class="soLuongSPCT" style="display: none;">Số lượng hiện có:
+                                        <span class="soLuongHienCoTable"
+                                              th:text="${hoaDonCT.sanPhamChiTiet.soLuong}"></span>
+                                    </p>
+                                </div>
+                            </strong>
+                        </td>
+                        <td class="border-0 align-middle"><strong
+                                th:text="${#numbers.formatDecimal(hoaDonCT.tongTien, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"></strong>
+                        </td>
+                        <td class="border-0 align-middle">
+                            <div class="button-group">
+                                <button class="text-dark xoaHDCT" th:attr="data-id=${hoaDonCT.id}"
+                                        th:data-target="'#modalXoaHDCT-' + ${hoaDonCT.id}">
+                                    <i class="fa fa-trash" aria-hidden="true"></i>
+                                </button>
+                                <br>
+                                <div class="modal fade XoaHDCT" th:id="'modalXoaHDCT-' + ${hoaDonCT.id}"
+                                     tabindex="-1" aria-labelledby="XoaHDCTModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="XoaHDCTModalLabel">Xóa sản phẩm
+                                                </h5>
+                                                <button type="button" class="btn-close"
+                                                        data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                Xác nhận xóa sản phẩm khỏi giỏ hàng
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button"
+                                                        class="btn btn-primary btn-dong-y">Đồng ý
+                                                </button>
+                                                <button type="button" class="btn btn-secondary btn-khong"
+                                                        data-bs-dismiss="modal">Không
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+
+                <div th:if="${hoaDonChiTiet.isEmpty()}" class="full-width-row">
+                    <td colspan="12" class="text-center">
+                        <div class="empty-content">
+                            <img src="/admin/img/gioHangTrong.png" alt="Không có sản phẩm">
+                        </div>
+                    </td>
+                </div>
+            </div>
+
+            <br>
+            <div class="button-group" style="float: right">
+                <button class="btn btn-dark px-4 rounded-pill" onclick="quayLai()">
+                    <i class="fas fa-arrow-left"></i>
+                    Danh sách
+                </button>
+
+                <a class="btn btn-dark px-4 rounded-pill"
+                   th:href="@{'/admin/banHang/danhSachSanPham/' + ${hoaDonBanHangTaiQuay.id}}">
+                    <i class="fas fa-fw fa-shopping-cart"></i>
+                    Thêm sản phẩm
+                </a>
+            </div>
+        </div>
+
+        <div class="row py-5 p-4 bg-white rounded shadow-sm">
+            <div class="col-lg-6">
+                <div class="bg-light rounded-pill px-4 py-3 text-uppercase font-weight-bold">Khuyến mãi</div>
+                <div class="p-4">
+                    <p class="font-italic mb-4">Áp dụng khuyến mãi cho hóa đơn</p>
+                    <div class="input-group mb-4 border rounded-pill p-2">
+                        <select name="couponCode" class="form-control border-0">
+                            <option value="">Chọn mã giảm giá</option>
+                            <option th:each="giamGiaTaiQuay: ${giamGia}" th:value="${giamGiaTaiQuay.tenKhuyenMai}"
+                                    th:text="${giamGiaTaiQuay.tenKhuyenMai}" class="option">
+                            </option>
+                        </select>
+                        <div class="input-group-append border-0">
+                            <button id="themMaGiamGia" type="button" class="btn btn-dark px-4 rounded-pill"><i
+                                    class="fa fa-gift mr-2"></i>Áp dụng
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-light rounded-pill px-4 py-3 text-uppercase font-weight-bold">Tiền khách đưa và tiền trả
+                    lại
+                </div>
+                <div class="p-4">
+                    <p class="font-italic mb-4">Nhập tiền khách đưa và hiển thị tiền thiếu và tiền thừa</p>
+                    <div class="input-group mb-4 border rounded-pill p-2">
+                        <input type="text" placeholder="Nhập tiền khách đưa" aria-describedby="button-addon3"
+                               class="form-control border-0 tienKhachDua-input" id="tienKhachDuaInput">
+                    </div>
+                    <li class="d-flex justify-content-between py-3 border-bottom"><strong
+                            class="text-muted">Tiền thiếu</strong><strong id="tienThieu">0 VNĐ</strong></li>
+
+                    <li class="d-flex justify-content-between py-3 border-bottom"><strong
+                            class="text-muted">Tiền trả lại</strong><strong id="tienTralai">0 VNĐ</strong></li>
+                    <!--Fomat tiền khi nhập-->
+                    <script th:inline="javascript">
+                        const inputElement = document.getElementById('tienKhachDuaInput');
+
+                        inputElement.addEventListener('input', function (event) {
+                            // Lấy giá trị từ input
+                            const inputValue = event.target.value;
+
+                            // Lọc chỉ giữ lại các ký tự số và dấu thập phân
+                            const numericValue = parseFloat(inputValue.replace(/[^\d.]/g, ''));
+
+                            // Kiểm tra nếu giá trị là số hợp lệ
+                            if (!isNaN(numericValue)) {
+                                // Định dạng giá trị thành số giống như tiền tệ
+                                const formattedValue = formatCurrency(numericValue);
+
+                                // Đặt lại giá trị cho input
+                                event.target.value = formattedValue;
+                            }
+                        });
+
+                        function formatCurrency(value) {
+                            // Kiểm tra nếu giá trị là số hợp lệ
+                            if (!isNaN(value)) {
+                                // Định dạng giá trị thành số giống như tiền tệ
+                                const formattedCurrency = numeral(value).format('0,0');
+                                return formattedCurrency;
+                            } else {
+                                return ""; // Trả về chuỗi rỗng nếu không hợp lệ
+                            }
+                        }
+                    </script>
+                </div>
+
+                <div class="bg-light rounded-pill px-4 py-3 text-uppercase font-weight-bold">Thông tin khách hàng
+                </div>
+                <div class="p-4">
+                    <p class="font-italic mb-4">Chọn khách hàng có trong danh sách</p>
+                    <div class="input-group mb-4 border rounded-pill p-2">
+                        <select name="couponCode" class="form-control border-0" id="KhachHang-select">
+                            <option value="">Chọn khách hàng</option>
+                            <option th:each="khachHang: ${khachHang}" th:value="${khachHang.id}"
+                                    th:text="${khachHang.hoTen} + ' - ' + ${khachHang.soDienThoai}" class="option">
+                            </option>
+                        </select>
+                    </div>
+
+                    <p class="font-italic mb-4">Hoặc nhập thông tin khách hàng</p>
+                    <div class="input-group mb-4 border rounded-pill p-2">
+                        <input type="text" placeholder="Nhập tên khách hàng" aria-describedby="button-addon3"
+                               class="form-control border-0" id="hoTenKhachHang">
+                    </div>
+
+                    <div class="input-group mb-4 border rounded-pill p-2">
+                        <input type="text" placeholder="Nhập số điện thoại khách hàng" aria-describedby="button-addon3"
+                               class="form-control border-0" id="SDTKhachHang">
+                    </div>
+                </div>
+
+                <div class="input-group-append border-0" style="float: right">
+                    <button id="themThongTinKhachHang" type="button" class="btn btn-dark px-4 rounded-pill"><i
+                            class="fa fa-save mr-2"></i>Thêm thông tin
+                    </button>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="bg-light rounded-pill px-4 py-3 text-uppercase font-weight-bold">Thông tin hóa đơn</div>
+                <div class="p-4">
+                    <p class="font-italic mb-4">Thông tin của hóa đơn</p>
+                    <ul class="list-unstyled mb-4">
+                        <li class="d-flex justify-content-between py-3 border-bottom"><strong
+                                class="text-muted">Mã đơn</strong><strong th:text="${hoaDon.maDon}"></strong></li>
+
+                        <li class="d-flex justify-content-between py-3 border-bottom"><strong
+                                class="text-muted">Ngày tạo</strong><strong
+                                th:text="${#dates.format(hoaDon.ngayTao, 'dd/MM/yyyy')}"></strong></li>
+
+                        <li class="d-flex justify-content-between py-3 border-bottom"><strong
+                                class="text-muted">Giảm giá đã áp dụng</strong><strong id="tenGiamGia-TaiQuay"
+                                                                                       th:text="${hoaDon.khuyenMai != null ? hoaDon.khuyenMai.tenKhuyenMai : 'Không có'}"></strong>
+                        </li>
+
+                        <li class="d-flex justify-content-between py-3 border-bottom"><strong
+                                class="text-muted">Khách hàng</strong><strong id="tenKhachHangTaiQuay"
+                                th:text="${hoaDon.khachHang != null ? hoaDon.khachHang.hoTen : (hoaDon.nguoiNhan != null ? hoaDon.nguoiNhan : 'Không có')}"></strong>
+                        </li>
+
+                        <li class="d-flex justify-content-between py-3 border-bottom"><strong
+                                class="text-muted">Số điện thoại khách hàng</strong><strong id="SDTKhachHangTaiQuay"
+                                th:text="${hoaDon.khachHang != null ? hoaDon.khachHang.soDienThoai : (hoaDon.sdtNguoiNhan != null ? hoaDon.sdtNguoiNhan : 'Không có')}"></strong>
+                        </li>
+
+                        <li class="d-flex justify-content-between py-3 border-bottom"><strong
+                                class="text-muted">Tạm tính</strong><strong id="tongTienHang-taiQuay"
+                                                                            th:text="${#numbers.formatDecimal(hoaDon.tongTienDonHang, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"></strong>
+                        </li>
+
+                        <li class="d-flex justify-content-between py-3 border-bottom"><strong
+                                class="text-muted">Tiền giảm</strong><strong id="discount-taiQuay"
+                                                                             th:text="${hoaDon.khuyenMai != null ? #numbers.formatDecimal(hoaDon.tongTienDonHang - hoaDon.tongTienHoaDon, 0, 'COMMA', 0, 'POINT') : '0'} + ' VNĐ'"></strong>
+                        </li>
+
+                        <li class="d-flex justify-content-between py-3 border-bottom"><strong
+                                class="text-muted">Tiền thanh toán</strong>
+                            <h5 class="font-weight-bold" id="tongTienHoaDon-taiQuay"
+                                th:text="${#numbers.formatDecimal(hoaDon.tongTienHoaDon, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"></h5>
+                        </li>
+                    </ul>
+
+                    <div class="button-group" style="float: right">
+                        <button type="submit" class="btn btn-dark px-4 rounded-pill HuyDonBanTaiQuay"
+                                th:attr="data-id=${hoaDon.id}">
+                            <i class="fas fa-trash"></i> Hủy đơn
+                        </button>
+                        <!--Modal hủy đơn-->
+                        <div class="modal fade HuyDonTaiQuay" tabindex="-1"
+                             aria-labelledby="HuyDonTaiQuayModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="HuyDonTaiQuayModalLabel">Xác nhận hủy hóa đơn
+                                        </h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        Xác nhận hủy hóa đơn?
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-primary btn-dong-y">Đồng ý</button>
+                                        <button type="button" class="btn btn-secondary btn-khong"
+                                                data-bs-dismiss="modal">Không
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-dark px-4 rounded-pill" id="thanhToanHoaDonTaiQuay"
+                                th:attr="data-id=${hoaDon.id}">
+                            <i class="bi bi-currency-dollar"></i> Thanh toán
+                        </button>
+                        <!--Modal thanh toán-->
+                        <div class="modal fade thanhToanTaiQuay" tabindex="-1"
+                             aria-labelledby="thanhToanTaiQuayModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="thanhToanTaiQuayModalLabel">Xác nhận thanh toán
+                                            hóa
+                                            đơn</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        Thanh toán hóa đơn?
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-primary btn-dong-y">Đồng ý</button>
+                                        <button type="button" class="btn btn-secondary btn-khong"
+                                                data-bs-dismiss="modal">Không
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+</body>
+
+</html>

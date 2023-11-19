@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{admin/layouts/index.html}">
+
+<head>
+    <script type="text/javascript" th:src="@{/admin/js/chatLieu/chatLieu.js}"></script>
+</head>
+
+<body>
+    <section layout:fragment="content" class="container-fluid" style="">
+        <div id="toastsCustomCss">
+            <div id="messageSuccess" th:if="${messageSuccess}" class="toast" role="alert" aria-live="assertive"
+                aria-atomic="true" data-delay="3000">
+                <div class="toast-header">
+                    <svg class="bd-placeholder-img rounded mr-2" width="20" height="20"
+                        xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" focusable="false"
+                        role="img">
+                        <rect width="100%" height="100%" fill="#007aff"></rect>
+                    </svg>
+                    <!-- <img src="..." class="rounded mr-2" alt="..."> -->
+                    <strong class="pr-3 mr-auto">Thông báo</strong>
+                    <small>Now</small>
+                    <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="toast-body" th:text="${messageSuccess}"></div>
+            </div>
+            <div id="messageDanger" th:if="${messageDanger}" class="toast" role="alert" aria-live="assertive"
+                aria-atomic="true" data-delay="3000">
+                <div class="toast-header">
+                    <svg class="bd-placeholder-img rounded mr-2" width="20" height="20"
+                        xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" focusable="false"
+                        role="img">
+                        <rect width="100%" height="100%" fill="red"></rect>
+                    </svg>
+                    <!-- <img src="..." class="rounded mr-2" alt="..."> -->
+                    <strong class="pr-3 mr-auto">Thông báo</strong>
+                    <small>Now</small>
+                    <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="toast-body" th:text="${messageDanger}"></div>
+            </div>
+        </div>
+        <!-- Begin Page Content -->
+        <div>
+            <!-- Page Heading -->
+            <h1 class="h3 mb-2 text-gray-800">Quản lý chất liệu</h1>
+            <hr>
+            <form th:action="@{/admin/chat-lieu}" id="flexUrlTableFormChatLieu" enctype="multipart/form-data"
+                method="get">
+                <input type="number" name="page" id="inputPageChatLieu" hidden>
+                <div class="card shadow mb-1 pt-sm-2 pb-sm-3">
+                    <div class="col-lg-12">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <label for="tenChatLieu">Tên chất liệu:</label>
+                                <input type="text" class="form-control" id="tenChatLieu" placeholder="Tên chất liệu"
+                                    name="tenChatLieuSearch">
+                            </div>
+                            <div class="col-sm-2 offset-10 mt-2">
+                                <div class="float-right">
+                                    <a class="btn btn-primary text-light"
+                                        onclick="flexUrlSubmit('', 'get', 'ChatLieu')">Tìm
+                                        kiếm <i class="bi bi-search"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- DataTales Example -->
+                <div class="card shadow mb-4 mt-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold">
+                            <div class="btn-group-sm">
+                                <div class="float-right">
+                                    <a class="btn btn-primary mr-sm-1 text-light"
+                                        onclick="openPopupCreateOrUpdate('create')">Thêm
+                                        mới <i class="bi bi-bookmark-plus"></i></a>
+                                </div>
+                            </div>
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover" id="dataTable" width="100%" cellspacing="0">
+                                <thead class="text-nowrap text-center">
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Tên Chất liệu</th>
+                                        <th>Số sản phẩm cùng Chất liệu</th>
+                                        <th>Thao tác</th>
+                                    </tr>
+                                    <tr th:if="${!resultPage.hasContent()}">
+                                        <td colspan="11">
+                                            <h4><i>Không có chất liệu nào phù hợp</i></h4>
+                                        </td>
+                                    </tr>
+                                </thead>
+                                <tbody class="text-center">
+                                    <tr th:each="item, istat : ${chatLieus}">
+                                        <td style="vertical-align: middle;"
+                                            th:text="${resultPage.number * resultPage.size + istat.index + 1}"></td>
+                                        <td style="vertical-align: middle;" th:text="${item.tenChatLieu}"
+                                            id="tenChatLieuStr"></td>
+                                        <td style="vertical-align: middle;" th:text="${item.soSanPhamCungChatLieu}">
+                                        </td>
+                                        <td style="vertical-align: middle;">
+                                            <div class="btn-group">
+                                                <a class="btn btn-outline-info btn-sm" id="info" data-toggle="popover"
+                                                    data-trigger="hover" data-placement="top"
+                                                    data-content="Chi tiết chất liệu"
+                                                    th:href="@{'/admin/chat-lieu/info/' + ${item.id}}">
+                                                    <img th:src="@{/admin/img/icons/info.svg}"></a>
+
+                                                <a class="btn btn-outline-primary btn-sm" data-toggle="popover"
+                                                    data-trigger="hover" data-placement="top"
+                                                    data-content="Cập nhật chất liệu" th:cl-id="${item.id}"
+                                                    th:cl-name="${item.tenChatLieu}"
+                                                    onclick="openPopupCreateOrUpdate('update',this.getAttribute('cl-id'),this.getAttribute('cl-name'))"><img
+                                                        th:src="@{/admin/img/icons/edit.svg}"></a>
+
+                                                <a class="btn btn-outline-danger btn-sm" th:data-id="${item.id}"
+                                                    data-toggle="popover" data-trigger="hover" data-placement="top"
+                                                    data-content="Xóa chất liệu" th:data-name="${item.tenChatLieu}"
+                                                    page-name="ChatLieu"
+                                                    onclick="showConfirmModalDeleteDialog(this.getAttribute('data-id'), this.getAttribute('data-name'), this.getAttribute('page-name'))"><img
+                                                        th:src="@{/admin/img/icons/trash.svg}"></a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="card-footer text-muted">
+                            <div class="input-group mt-2 mb-3">
+                                <label class="input-group-text bg-white" for="inputGroupSelect01">kích thước
+                                    trang:</label>
+                                <select class="form-select" name="size" id="size" onchange="this.form.submit()">
+                                    <option th:selected="${resultPage.size == 10}" value="10">10</option>
+                                    <option th:selected="${resultPage.size == 30}" value="30">30</option>
+                                    <option th:selected="${resultPage.size == 50}" value="50">50</option>
+                                    <option th:selected="${resultPage.size == 70}" value="70">70</option>
+                                    <option th:selected="${resultPage.size == 100}" value="100">100</option>
+                                </select>
+                            </div>
+
+                            <nav aria-label="Page navigation example" th:if="${resultPage.totalPages >0}">
+                                <ul class="pagination justify-content-center">
+                                    <li th:class="${1 == resultPage.number + 1}? 'page-item active' : 'page-item'">
+                                        <button id="firstPageChatLieu" class="page-link">
+                                            Trang đầu
+                                        </button>
+                                    </li>
+                                    <li class="page-item disabled" th:if="${resultPage.number + 1 - 2 > 1}">
+                                        <a class="page-link" href="#">...</a>
+                                    </li>
+                                    <li th:each="pageNumber : ${#numbers.sequence(resultPage.number + 1 > 2 ? resultPage.number + 1 - 2 : 1, resultPage.number + 1 + 2 < resultPage.totalPages ? resultPage.number + 1 + 2 : resultPage.totalPages)}"
+                                        th:class="${pageNumber == resultPage.number + 1}? 'page-item active' : 'page-item'">
+                                        <button th:id="pageNumberChatLieu+${pageNumber}" class="page-link"
+                                            th:text="${pageNumber}">
+                                        </button>
+                                        <script th:inline="javascript">
+                                            $(document).ready(function () {
+                                                $('#pageNumberChatLieu[[${pageNumber}]]').on("click", function () {
+                                                    var num = parseInt("[[${pageNumber}]]");
+                                                    $('#inputPageChatLieu').attr("value", num);
+                                                    $('#flexUrlTableFormChatLieu').submit();
+                                                })
+                                            });
+                                        </script>
+                                    </li>
+                                    <li class="page-item disabled"
+                                        th:if="${resultPage.number + 1 + 2 < resultPage.totalPages}">
+                                        <a class="page-link" href="#">...</a>
+                                    </li>
+                                    <li
+                                        th:class="${ resultPage.totalPages == resultPage.number + 1}? 'page-item active' : 'page-item'">
+                                        <button class="page-link" id="lastPageChatLieu">
+                                            Trang cuối
+                                        </button>
+                                    </li>
+                                    <script th:inline="javascript">
+                                        $(document).ready(function () {
+                                            $('#firstPageChatLieu').on("click", function () {
+                                                var num = 1;
+                                                $('#inputPageChatLieu').attr("value", num);
+                                                $('#flexUrlTableFormChatLieu').submit();
+                                            })
+                                            $('#lastPageChatLieu').on("click", function () {
+                                                var num = parseInt("[[${resultPage.totalPages}]]");
+                                                $('#inputPageChatLieu').attr("value", num);
+                                                $('#flexUrlTableFormChatLieu').submit();
+                                            })
+                                        });
+                                    </script>
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <!-- Modal create Or update -->
+        <div class="modal fade" id="createOrUpdateModalId" tabindex="-1" role="dialog" aria-labelledby="modelTitleId"
+            aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="CreateOrUpdateTitle"></h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="col-sm-12">
+                            <form method="post" id="formCreateOrUpdate" action="/admin/chat-lieu/createOrUpdate">
+                                <label for="tenChatLieu">Tên chất liệu:</label>
+                                <input type="text" class="form-control" id="tenChatLieuCreateOrUpdate"
+                                    placeholder="Tên chất liệu" name="tenChatLieuCreateOrUpdate">
+                                <input type="number" name="chatLieuIdCreateOrUpdate" id="chatLieuIdCreateOrUpdate"
+                                    hidden>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <a type="button" class="btn btn-outline-dark" data-dismiss="modal">Đóng</a>
+                        <a id="yesOptionCreateOrUpdateModalId" onclick="submitCreateOrUpdate()" type="button"
+                            class="btn btn-primary text-light">Thêm mới</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Modal delete -->
+        <div class="modal fade" id="deleteModalId" tabindex="-1" role="dialog" aria-labelledby="modelTitleId"
+            aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Xác nhận xóa chất liệu</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        Bạn có muốn xóa "<span id="productName"></span>"?
+                    </div>
+                    <div class="modal-footer">
+                        <a type="button" class="btn btn-outline-dark" data-dismiss="modal">Đóng</a>
+                        <a id="yesOptionDeleteModalId" onclick="submitDeleteProduct()" type="button"
+                            class="btn btn-danger text-light">Xóa</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal delete all -->
+        <div class="modal fade" id="confirmationDeleteIds" tabindex="-1" role="dialog" aria-labelledby="modelTitleId"
+            aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Xác nhận xóa hết sản phẩm</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        Bạn có muốn xóa hết sản phẩm đã chọn?
+                    </div>
+                    <div class="modal-footer">
+                        <a type="button" class="btn btn-outline-dark" data-dismiss="modal">Đóng</a>
+                        <a onclick="flexUrlSubmit('deleteAllByIdsChatLieu', 'post', 'ChatLieu')" type="button"
+                            class="btn btn-danger text-light">Xóa</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            $(document).ready(function () {
+                $('[data-toggle="popover"]').popover();
+            });
+        </script>
+        <script th:inline="javascript">
+            window.onload = function () {
+                var messageSuccess = '[[${messageSuccess}]]';
+                var messageDanger = '[[${messageDanger}]]';
+                $('#toastsCustomCss').attr("style", "position: absolute; top: 70px; right: 0;z-index: 10000;");
+                if (messageSuccess.length !== 0) {
+                    $("#messageSuccess").toast("show");
+                }
+                if (messageDanger.length !== 0) {
+                    $("#messageDanger").toast("show");
+                }
+            }
+        </script>
+    </section>
+</body>
+
+</html>

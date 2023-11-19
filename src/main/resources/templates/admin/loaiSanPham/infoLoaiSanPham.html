@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{admin/layouts/index.html}">
+
+<head>
+    <script type="text/javascript" th:src="@{/admin/js/chatLieu/chatLieu.js}"></script>
+</head>
+
+<body>
+    <section layout:fragment="content" class="container-fluid">
+        <div id="toastsCustomCss">
+            <div id="messageSuccess" th:if="${messageSuccess}" class="toast" role="alert" aria-live="assertive"
+                aria-atomic="true" data-delay="3000">
+                <div class="toast-header">
+                    <svg class="bd-placeholder-img rounded mr-2" width="20" height="20"
+                        xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" focusable="false"
+                        role="img">
+                        <rect width="100%" height="100%" fill="#007aff"></rect>
+                    </svg>
+                    <!-- <img src="..." class="rounded mr-2" alt="..."> -->
+                    <strong class="pr-3 mr-auto">Thông báo</strong>
+                    <small>Now</small>
+                    <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="toast-body" th:text="${messageSuccess}"></div>
+            </div>
+            <div id="messageDanger" th:if="${messageDanger}" class="toast" role="alert" aria-live="assertive"
+                aria-atomic="true" data-delay="3000">
+                <div class="toast-header">
+                    <svg class="bd-placeholder-img rounded mr-2" width="20" height="20"
+                        xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" focusable="false"
+                        role="img">
+                        <rect width="100%" height="100%" fill="red"></rect>
+                    </svg>
+                    <!-- <img src="..." class="rounded mr-2" alt="..."> -->
+                    <strong class="pr-3 mr-auto">Thông báo</strong>
+                    <small>Now</small>
+                    <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="toast-body" th:text="${messageDanger}"></div>
+            </div>
+        </div>
+        <!-- Begin Page Content -->
+        <div class="card shadow mb-1 pt-sm-2 pb-sm-3">
+            <div class="col-lg-12">
+                <div class="row" th:object="${loaiSanPham}">
+                    <div class="col-sm-4 mt-2">
+                        <label for="tenChatLieu">Tên loại sản phẩm:</label>
+                        <input type="text" class="form-control" th:field="*{tenLoaiSanPham}" placeholder="Tên sản phẩm"
+                            readonly>
+                    </div>
+                    <div class="col-sm-4 mt-2">
+                        <label for="tenChatLieu">Tên người tạo:</label>
+                        <input type="text" class="form-control" th:field="*{nguoiTao}" placeholder="Tên sản phẩm"
+                            readonly>
+                    </div>
+                    <div class="col-sm-4 mt-2">
+                        <label for="tenChatLieu">Ngày tạo:</label>
+                        <input type="text" class="form-control" th:field="*{ngayTao}" placeholder="Tên sản phẩm"
+                            readonly>
+                    </div>
+                    <div class="col-sm-4 mt-2">
+                        <label for="tenChatLieu">Tên người sửa cuối:</label>
+                        <input type="text" class="form-control" th:field="*{nguoiCapNhat}" placeholder="Tên sản phẩm"
+                            readonly>
+                    </div>
+                    <div class="col-sm-4 mt-2">
+                        <label for="tenChatLieu">Ngày sửa cuối cuối:</label>
+                        <input type="text" class="form-control" th:field="*{ngayCapNhat}" placeholder="Tên sản phẩm"
+                            readonly>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+</body>
+
+</html>

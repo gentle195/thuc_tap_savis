@@ -1,0 +1,122 @@
+<!--<!DOCTYPE html>-->
+<!--<html lang="en" xmlns:th="http://www.thymeleaf.org">-->
+
+<!--<head>-->
+<!--    <link th:href="@{/admin/vendor/fontawesome-free/css/all.min.css}" rel="stylesheet" type="text/css">-->
+<!--    <link th:href="@{/admin/css/sb-admin-2.min.css}" rel="stylesheet">-->
+<!--</head>-->
+
+<!--<body>-->
+<!--<ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar"-->
+<!--    th:fragment="sidebar">-->
+<!--    &lt;!&ndash; Sidebar - Brand &ndash;&gt;-->
+<!--    <a class="sidebar-brand d-flex align-items-center justify-content-center" th:href="@{/admin/thong-ke}">-->
+<!--        <div class="sidebar-brand-icon rotate-n-15">-->
+
+<!--        </div>-->
+<!--        <div class="sidebar-brand-text ">-->
+<!--            Leopard <sup>Studio</sup>-->
+<!--        </div>-->
+<!--    </a>-->
+<!--    &lt;!&ndash; Divider &ndash;&gt;-->
+<!--    <hr class="sidebar-divider my-0">-->
+<!--    &lt;!&ndash; Nav Item - Dashboard &ndash;&gt;-->
+<!--    <li class="nav-item active"><a class="nav-link" th:href="@{/admin/thong-ke}">-->
+<!--        <i class="fas fa-fw fa-tachometer-alt"></i> <span>Thống kê</span></a></li>-->
+<!--    &lt;!&ndash; Divider &ndash;&gt;-->
+<!--    <hr class="sidebar-divider">-->
+<!--    &lt;!&ndash; Heading &ndash;&gt;-->
+<!--    <div class="sidebar-heading">Bán hàng</div>-->
+<!--    &lt;!&ndash; Nav Item - Pages Collapse Menu &ndash;&gt;-->
+<!--    <li class="nav-item active">-->
+<!--        <a class="nav-link" th:href="@{/admin/BanHangTaiQuay}">-->
+<!--            <i class="fas fa-fw fa-shopping-cart"></i> Bán hàng tại quầy-->
+<!--        </a>-->
+<!--    </li>-->
+<!--    <hr class="sidebar-divider">-->
+
+<!--    <div class="sidebar-heading">Quản lý</div>-->
+<!--    <li class="nav-item active"><a class="nav-link collapsed" href="#" data-toggle="collapse"-->
+<!--                                   data-target="#quanLySanPham" aria-expanded="true" aria-controls="collapsePages">-->
+<!--        <span><i class="fas fa-tshirt"></i>QUẢN LÝ SẢN PHẨM</span></a>-->
+<!--        <div id="quanLySanPham" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">-->
+<!--            <div class="bg-white py-2 collapse-inner rounded">-->
+<!--                <h6 class="collapse-header">Thao tác</h6>-->
+<!--                <a class="collapse-item" th:href="@{/admin/product}">Quản lý sản phẩm</a>-->
+<!--                <a class="collapse-item" th:href="@{/admin/kich-co}">Quản lý kích cỡ</a>-->
+<!--                <a class="collapse-item" th:href="@{/admin/mau-sac}">Quản lý màu sắc</a>-->
+<!--                <a class="collapse-item" th:href="@{/admin/kieu-dang}">Quản lý kiểu dáng</a>-->
+<!--                <a class="collapse-item" th:href="@{/admin/chat-lieu}">Quản lý chất liệu</a>-->
+<!--                <a class="collapse-item" th:href="@{/admin/loai-san-pham}">Quản lý loại sản phẩm</a>-->
+<!--                <a class="collapse-item" th:href="@{/admin/phong-cach}">Quản lý phong cách</a>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </li>-->
+<!--    &lt;!&ndash;        <li class="nav-item">&ndash;&gt;-->
+<!--    &lt;!&ndash;            <a class="nav-link" th:href="@{/admin/DonHang/TatCaDon}">&ndash;&gt;-->
+<!--    &lt;!&ndash;                <i class="fas fa-fw fa-file-invoice"></i> Quản lý hóa đơn&ndash;&gt;-->
+<!--    &lt;!&ndash;            </a>&ndash;&gt;-->
+<!--    &lt;!&ndash;        </li>&ndash;&gt;-->
+<!--    <li class="nav-item nav-item active"><a class="nav-link collapsed" href="#" data-toggle="collapse"-->
+<!--                                            data-target="#quanLyHoaDon" aria-expanded="true"-->
+<!--                                            aria-controls="collapsePages">-->
+<!--        <span><i class="fas fa-money-bill"></i>QUẢN LÝ HÓA ĐƠN</span>-->
+<!--    </a>-->
+<!--        <div id="quanLyHoaDon" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">-->
+<!--            <div class="bg-white py-2 collapse-inner rounded">-->
+<!--                <h6 class="collapse-header">Thao tác</h6>-->
+<!--                <a class="collapse-item" th:href="@{/admin/DaThanhToan/danhSach}">Đơn tại quầy</a>-->
+<!--                <a class="collapse-item" th:href="@{/admin/DonHang/ChoXacNhanDonHang/danhSach}">Đơn đặt hàng</a>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </li>-->
+<!--    <li th:if="${#request.isUserInRole('ROLE_ADMIN')}" class="nav-item nav-item active"><a-->
+<!--            class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#quanLyNguoiDung"-->
+<!--            aria-expanded="true" aria-controls="collapsePages">-->
+<!--        <span><i class="fas fa-user"></i>QUẢN LÝ NHÂN VIÊN</span>-->
+<!--    </a>-->
+<!--        <div id="quanLyNguoiDung" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">-->
+<!--            <div class="bg-white py-2 collapse-inner rounded">-->
+<!--                <h6 class="collapse-header">Thao tác</h6>-->
+
+<!--                <a class="collapse-item" th:href="@{/admin/NhanVien/danhSach}">Danh sách</a>-->
+
+<!--                <a class="collapse-item" th:href="@{/NhanVien/themMoi}">Tạo mới</a>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </li>-->
+<!--    <li class="nav-item nav-item active"><a class="nav-link collapsed" href="#" data-toggle="collapse"-->
+<!--                                            data-target="#quanLyKhuyenMai" aria-expanded="true"-->
+<!--                                            aria-controls="collapsePages">-->
+<!--        <span><i class="fas fa-ad"></i>QUẢN LÝ KHUYẾN MẠI</span>-->
+<!--    </a>-->
+<!--        <div id="quanLyKhuyenMai" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">-->
+<!--            <div class="bg-white py-2 collapse-inner rounded">-->
+<!--                <h6 class="collapse-header">Thao tác</h6>-->
+<!--                <a class="collapse-item" th:href="@{/admin/voucher}">Danh sách</a>-->
+<!--                <a class="collapse-item" th:href="@{/admin/voucher/create}">Tạo mới</a>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </li>-->
+<!--    <li class="nav-item nav-item active"><a class="nav-link collapsed" href="#" data-toggle="collapse"-->
+<!--                                            data-target="#quanLyKhachHang" aria-expanded="true"-->
+<!--                                            aria-controls="collapsePages">-->
+<!--        <span><i class="fas fa-users"></i>QUẢN LÝ KHÁCH HÀNG</span>-->
+<!--    </a>-->
+<!--        <div id="quanLyKhachHang" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">-->
+<!--            <div class="bg-white py-2 collapse-inner rounded">-->
+<!--                <h6 class="collapse-header">Thao tác</h6>-->
+<!--                <a class="collapse-item" th:href="@{/admin/khach-hang/danh-sach}">Danh sách</a>-->
+<!--                <a class="collapse-item" th:href="@{/admin/khach-hang/danh-sach/chinh-sua}">Tạo mới</a>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </li>-->
+<!--    <hr class="sidebar-divider d-none d-md-block">-->
+<!--    <div class="text-center d-none d-md-inline">-->
+<!--        <button class="rounded-circle border-0" id="sidebarToggle"></button>-->
+<!--    </div>-->
+
+<!--</ul>-->
+<!--</body>-->
+
+<!--</html>-->

@@ -1,0 +1,258 @@
+
+.pagination {
+    list-style-type: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.pagination li {
+    margin: 0 5px;
+}
+
+.pagination li a {
+    display: inline-block;
+    padding: 5px 10px;
+    text-decoration: none;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    background-color: #f2f2f2;
+    color: #333;
+}
+
+.pagination li a:hover {
+    background-color: #e0e0e0;
+}
+
+.pagination .active a {
+    background-color: #2d2e33;
+    cursor: default;
+}
+
+.pagination-empty {
+    display: none;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f5f5f5;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 20px;
+}
+
+h1 {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    text-align: center;
+    margin-top: 20px;
+    margin-bottom: 30px;
+}
+
+.table {
+    background-color: #fff;
+}
+
+.table thead th {
+    font-weight: bold;
+    background-color: #f2f2f2;
+    color: #333;
+    border-top: none;
+}
+
+.table tbody td {
+    border-top: none;
+}
+
+.table tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.table tbody tr:hover {
+    background-color: #f2f2f2;
+}
+
+.btn {
+    padding: 8px 12px;
+    font-size: 14px;
+    border-radius: 4px;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    border: none;
+}
+
+.btn-primary:hover {
+    background-color: #0069d9;
+}
+
+.btn-warning {
+    background-color: #ffc107;
+    border: none;
+}
+
+.btn-warning:hover {
+    background-color: #e0a800;
+}
+
+.btn-danger {
+    background-color: #dc3545;
+    border: none;
+}
+
+.btn-danger:hover {
+    background-color: #c82333;
+}
+
+.modal-title {
+    font-weight: bold;
+    color: #333;
+}
+
+/* CSS cho modal */
+.modal-content {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.modal-header {
+    background-color: #f8f9fa;
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+}
+
+.modal-title {
+    font-size: 18px;
+    font-weight: bold;
+    margin: 0;
+}
+
+.modal-body {
+    padding: 20px;
+}
+
+.modal-footer {
+    background-color: #f8f9fa;
+    padding: 10px;
+    border-top: 1px solid #ccc;
+    text-align: right;
+}
+
+/* CSS cho các phần tử trong modal */
+.modal-body p {
+    margin-bottom: 10px;
+}
+
+.modal-body span {
+    font-weight: bold;
+}
+
+.modal-footer button {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 8px 16px;
+    cursor: pointer;
+}
+
+.modal-footer button:hover {
+    background-color: #0069d9;
+}
+
+.modal-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 9999;
+}
+
+.modal-container {
+    width: 800px;
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+.modal-title {
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.modal-body {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.modal-footer {
+    text-align: center;
+}
+
+.modal-wrapper:before {
+    content: "";
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 420px;
+    height: 420px;
+    border: 2px solid #ccc;
+    border-radius: 50%;
+    z-index: -1;
+}
+
+.modal-body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.modal-body p {
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+/* css tìm kiếm */
+.search-input {
+    width: 300px;
+    /* Độ dài thanh tìm kiếm */
+    border-radius: 0;
+    float: left;
+}
+
+.search-button {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+/* css thêm sửa xóa */
+.action-icons {
+    display: flex;
+    gap: 5px;
+}
+
+.vandai1 {
+    display: flex;
+    gap: 5px;
+    justify-content: flex-end;
+    justify-content: space-between;
+}
+
+

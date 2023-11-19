@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+<head>
+</head>
+
+<body>
+    <section class="hero" th:fragment="section-start">
+        <div class="hero__slider owl-carousel">
+            <div class="hero__items set-bg" th:data-setbg="@{/customer/images/hero/hero-1.jpg}">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-xl-5 col-lg-7 col-md-8">
+                            <div class="hero__text">
+                                <h6>Lựa chọn ngay sản phẩm phù hợp với bạn</h6>
+<!--                                <h2>Bộ sưu tập mùa thu-->
+                                </h2>
+                                <p>Một nhãn hiệu chuyên nghiệp tạo ra những thứ thiết yếu sang trọng. Được chế tác một
+                                    cách có đạo đức với cam kết vững chắc về chất lượng vượt trội.</p>
+                                <a th:href="@{/customer/shop}" class="primary-btn">Mua ngay <span
+                                        class="arrow_right"></span></a>
+<!--                                <div class="hero__social">-->
+<!--                                    <a href="#"><i class="fa fa-facebook"></i></a>-->
+<!--                                    <a href="#"><i class="fa fa-twitter"></i></a>-->
+<!--                                    <a href="#"><i class="fa fa-pinterest"></i></a>-->
+<!--                                    <a href="#"><i class="fa fa-instagram"></i></a>-->
+<!--                                </div>-->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="hero__items set-bg" th:data-setbg="@{/customer/images/hero/hero-2.jpg}">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-xl-5 col-lg-7 col-md-8">
+                            <div class="hero__text">
+                                <h6>Lựa chọn ngay sản phẩm phù hợp với bạn</h6>
+<!--                                <h2>Bộ sưu tập mùa đông</h2>-->
+                                <p>Một nhãn hiệu chuyên nghiệp tạo ra những thứ thiết yếu sang trọng. Được chế tác một
+                                    cách có đạo đức với cam kết vững chắc về chất lượng vượt trội.</p>
+                                <a th:href="@{/customer/shop}" class="primary-btn">Mua ngay <span
+                                        class="arrow_right"></span></a>
+<!--                                <div class="hero__social">-->
+<!--                                    <a href="#"><i class="fa fa-facebook"></i></a>-->
+<!--                                    <a href="#"><i class="fa fa-twitter"></i></a>-->
+<!--                                    <a href="#"><i class="fa fa-pinterest"></i></a>-->
+<!--                                    <a href="#"><i class="fa fa-instagram"></i></a>-->
+<!--                                </div>-->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+
+</html>

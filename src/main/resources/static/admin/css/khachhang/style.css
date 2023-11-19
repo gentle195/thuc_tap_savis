@@ -1,0 +1,61 @@
+#emailKhachHang-error ,
+#matKhauKhachHang-error ,
+#hoTenKhachHang-error ,
+#soDienThoaiKhachHang-error ,
+#hoTen-error,
+#city-error,
+#soNha-error,
+#district-error,
+#ward-error,
+#soDienThoai-error
+ {
+	color : red ;
+	font-size : 12px;
+	width: 100% ;
+	margin-top : 10px ;
+	padding-left: 10px ;
+}
+#emailKhachHang ,
+#matKhauKhachHang ,
+#hoTenKhachHang ,
+#soDienThoaiKhachHang ,
+#hoTen,
+#city,
+#soNha,
+#district,
+#ward,
+#soDienThoai
+{
+	color : black ;
+	font-size : 12px;
+	width: 100% ;
+	margin-top : 10px ;
+	padding-left: 10px ;
+}
+#emailKhachHang-error {
+	color : red ;
+	font-size : 12px;
+	width: 100% ;
+	margin-top : 10px ;
+	padding-left: 10px ;
+}
+#emailKhachHang-error {
+	color : red ;
+	font-size : 12px;
+	width: 100% ;
+	margin-top : 10px ;
+	padding-left: 10px ;
+}
+#emailKhachHang-error {
+	color : red ;
+	font-size : 12px;
+	width: 100% ;
+	margin-top : 10px ;
+	padding-left: 10px ;
+}
+body{
+	background-color :white ;
+	font-size: 18px ;
+	color: black ;
+}
+

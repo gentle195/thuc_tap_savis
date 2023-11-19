@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/layouts/index.html}">
+<head>
+    <title>Discount Codes</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-alpha1/dist/css/bootstrap.min.css">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/numeral.js/2.0.6/numeral.min.js"></script>
+
+</head>
+<body>
+
+<section layout:fragment="content">
+    <div class="container-fluid">
+        <style>
+            .error-input {
+                color: red;
+            }
+        </style>
+        <form method="post" th:object="${voucher}">
+        <div class="card mb-4 mb-xl-0">
+        	<div class="card-header" style="text-align: center;">
+        		<h2 th:if="${voucher != null && voucher.id > 0}">Sửa mã giảm giá</h2>
+        		<h2 th:unless="${voucher != null && voucher.id > 0}">Thêm mã giảm giá</h2>
+        	</div>
+            	<div class="card-body">
+		            <input type="hidden" id="id" th:field="*{id}"/>
+		            <div class="form-group row">
+		                <label class="col-sm-3 col-form-label text-end" for="tenKhuyenMai">Tên khuyến mãi <span class="text-danger">(*)</span>:</label>
+		                <div class="col-sm-9">
+		                    <input type="text" class="form-control" id="tenKhuyenMai" th:field="*{tenKhuyenMai}"/>
+		                    <p th:if="${#fields.hasErrors('tenKhuyenMai')}" th:errorclass="error-input"
+		                       th:errors="*{tenKhuyenMai}"></p>
+		                </div>
+		            </div>
+		            <div class="form-group row">
+		                <label class="col-sm-3 col-form-label text-end" for="ngayBatDau">Ngày bắt đầu <span class="text-danger">(*)</span>:</label>
+		                <div class="col-sm-3">
+		                    <input type="date" class="form-control" id="ngayBatDau" th:field="*{ngayBatDau}"/>
+		                    <p th:if="${#fields.hasErrors('ngayBatDau')}" th:errorclass="error-input" th:errors="*{ngayBatDau}"></p>
+		
+		                </div>
+		                <label class="col-sm-3 col-form-label text-end" for="ngayKetThuc">Ngày kết thúc <span class="text-danger">(*)</span>:</label>
+		                <div class="col-sm-3">
+		                    <input type="date" class="form-control" id="ngayKetThuc" th:field="*{ngayKetThuc}"/>
+		                    <p th:if="${#fields.hasErrors('ngayKetThuc')}" th:errorclass="error-input" th:errors="*{ngayKetThuc}"></p>
+		
+		                </div>
+		            </div>
+		            <div class="form-group row">
+		                <label class="col-sm-3 col-form-label text-end" for="phanTramGiam">Phần trăm giảm <span class="text-danger">(*)</span>:</label>
+		                <div class="col-sm-3">
+		                    <input type="number" class="form-control" id="phanTramGiam" th:field="*{phanTramGiam}"/>
+		                    <p th:if="${#fields.hasErrors('phanTramGiam')}" th:errorclass="error-input"
+		                       th:errors="*{phanTramGiam}"></p>
+		                </div>
+		                <label class="col-sm-3 col-form-label text-end" for="giaTriToiThieu">Tiền giảm tối đa <span class="text-danger">(*)</span>:</label>
+		
+		                <div class="col-sm-3">
+		                    <input type="text" class="form-control" id="giaTriToiThieu" />
+		                    <input type="hidden" class="form-control" id="giaTriToiThieuVal" th:field="*{giaTriToiThieu}"/>
+		                    <p th:if="${#fields.hasErrors('giaTriToiThieu')}" th:errorclass="error-input"
+		                       th:errors="*{giaTriToiThieu}"></p>
+							<script th:inline="javascript">
+								var inputElement = document.getElementById('giaTriToiThieu');
+								inputElement.addEventListener('input', function (event) {
+									if (inputElement.value) {
+										var numericValue = parseFloat(event.target.value.replace(/[^\d.]/g, ''));
+										if (!isNaN(numericValue)) {
+											var formattedValue = formatCurrency(numericValue);
+											document.getElementById('giaTriToiThieuVal').value = numericValue;
+											event.target.value = formattedValue;
+										} else {
+											return event.target.value = "";
+										}
+									} else {
+										document.getElementById('giaTriToiThieuVal').value = "";
+									}
+								});
+
+								function formatCurrency(value) {
+									if (!isNaN(value)) {
+										return numeral(value).format('0,0');
+									} else {
+										return "";
+									}
+								}
+
+								$(document).ready(function () {
+									var numericValueGia = document.getElementById('giaTriToiThieuVal').value;
+									document.getElementById('giaTriToiThieu').value = formatCurrency(numericValueGia);
+								})
+							</script>
+
+						</div>
+		            </div>
+		            <div class="form-group row">
+		                <div class="col-sm-12 text-end">
+		                    <button type="submit" class="btn btn-primary">Lưu</button>
+		                 	<button type="button" class="btn btn-secondary" onclick="window.location.href='http://localhost:8080/admin/voucher';">Hủy bỏ</button>
+		                </div>
+		            </div>
+            	</div>
+            </div>
+        </form>
+    </div>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

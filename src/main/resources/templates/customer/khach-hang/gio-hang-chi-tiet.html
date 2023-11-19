@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="zxx" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{customer/layouts/index}">
+<head>
+    <meta charset="UTF-8">
+    <title>Giỏ hàng</title>
+    <style>
+        .shopping__cart__table {
+            max-height: 450px;
+            overflow-y: auto;
+        }
+
+        .create-invoice-button {
+            background-color: black;
+            color: white;
+            font-size: 1.1em;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .create-invoice-button:hover {
+            background-color: #333;
+        }
+
+        .centered {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        .breadcrumb__text{
+            margin-bottom: 50px;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+        }
+    </style>
+    <script th:src="@{/admin/js/banHang/banHangOnline/datHang.js}"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.18/dist/sweetalert2.min.js"></script>
+</head>
+<body>
+<section class="shopping-cart spad" layout:fragment="content" th:object="${gioHangDTO}">
+    <section class=" mb-3">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="breadcrumb__text">
+                        <h2 style="text-align: center">GIỎ HÀNG</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <div class="container-fluid">
+        <th:block th:if="${message != null}">
+            <span class="text-danger">[[${message}]]</span>
+        </th:block>
+        <div class="row pt-3">
+            <div class="col-lg-8">
+                <form th:action="@{/customer/gio-hang-chi-tiet}" method="POST">
+                    <div class="shopping__cart__table">
+                        <table>
+                            <th:block th:if="*{!listGioHangChiTiets.isEmpty()}">
+                                <thead>
+                                <tr>
+                                    <th>
+                                        <input type="checkbox" value="" th:id="checkAll" name="checkAll"/>
+                                    </th>
+                                    <th>SẢN PHẨM</th>
+                                    <th>KÍCH CỠ</th>
+                                    <th>MÀU SẮC</th>
+                                    <th>SỐ LƯỢNG</th>
+                                    <th>TỔNG</th>
+                                    <th></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="item : *{listGioHangChiTiets}">
+                                    <td>
+                                        <input type="checkbox" class="form-checkbox" th:value="${item.id}"/>
+                                    </td>
+                                    <td class="product__cart__item">
+                                        <div class="product__cart__item__pic">
+                                            <img style="height: 50px ; width: 50px" alt=""
+                                                 th:src="@{|/uploads/images/${item.sanPhamChiTietDTO.sanPhamDTO.tenHinhAnh}|}">
+                                        </div>
+                                        <div class="product__cart__item__text">
+                                            <h6>[[${item.sanPhamChiTietDTO.sanPhamDTO.tenSanPham}]]</h6>
+                                            <h5>[[${#numbers.formatDecimal(item.sanPhamChiTietDTO.sanPhamDTO.gia, 0,
+                                                'COMMA', 0, 'POINT')}]] VNĐ</h5>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="cart__price">[[${item.sanPhamChiTietDTO.tenKichCo}]]</div>
+                                    </td>
+                                    <td class="cart__price">
+                                        <div class="quantity">[[${item.sanPhamChiTietDTO.tenMauSac}]]</div>
+                                    </td>
+                                    <td class="quantity__item">
+                                        <div class="quantity">
+                                            <input type="hidden" id="cartId" th:name="ids" th:value="${item.id}">
+                                            <input type="hidden" id="donGia" th:name="donGias"
+                                                   th:value="${item.sanPhamChiTietDTO.sanPhamDTO.gia}">
+                                            <input type="hidden" id="thanhTien" th:value="${item.thanhTien}">
+                                            <div class="pro-qty-2">
+                                                <input type="number" th:name="soLuongs" th:value="${item.soLuong}">
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="cart__price">[[${#numbers.formatDecimal(item.thanhTien, 0, 'COMMA', 0,
+                                        'POINT')}]] VNĐ
+                                    </td>
+                                    <td class="cart__close">
+                                        <button type="button" data-toggle="modal"
+                                                th:attr="data-target='#xoaGioHang'+${item.id}">
+                                            <i class="fa fa-close"></i>
+                                        </button> <!-- Modal -->
+                                        <div class="modal fade bd-example-modal-sm" th:attr="id='xoaGioHang'+${item.id}"
+                                             tabindex="-1" role="dialog" aria-labelledby="exampleModalLabell"
+                                             aria-hidden="true">
+                                            <div class="modal-dialog" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="exampleModalLabell">Xóa giỏ
+                                                            hàng</h5>
+                                                        <button type="button" class="close" data-dismiss="modal"
+                                                                aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <span>Bạn có muốn xóa sản phẩm [[${item.sanPhamChiTietDTO.sanPhamDTO.tenSanPham}]] khỏi giỏ hàng ?</span>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <a type="button"
+                                                           th:href="@{|/customer/gio-hang-chi-tiet/xoa-gio-hang?id=${item.id}|}"
+                                                           class="btn btn-danger">Xóa</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </th:block>
+                        </table>
+
+                        <div class="alert alert-warning container mt-3 text-center"
+                             th:if="*{listGioHangChiTiets.isEmpty()}"
+                             style="background-color: transparent; border: none;">
+                            <img src="/admin/img/gioHangTrong.png" alt="Không có sản phẩm"
+                                 style="width: 350px; height: 200px;">
+                            <br>
+                            <p class="empty-message" style="margin-top: 20px; font-size: 1.8em;">Bạn chưa có sản phẩm
+                                nào trong giỏ hàng!</p>
+                        </div>
+                    </div>
+                    <div class="row">
+
+                        <div class="col-lg-4 col-md-4 col-sm-4">
+                            <div class="continue__btn">
+                                <a th:href="@{/customer/shop}">Mua sắm</a>
+                            </div>
+                        </div>
+                        <th:block th:if="*{!listGioHangChiTiets.isEmpty()}">
+                            <div class="col-lg-4 col-md-4 col-sm-4">
+                                <div class="continue__btn update__btn">
+                                    <a type="button" class="btn btn-outline-danger" data-toggle="modal"
+                                       data-target="#xoaSachGioHang"> <i class="fa fa-trash-o" aria-hidden="true"> </i>Xóa
+                                        sạch
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-sm-4">
+                                <div class="continue__btn update__btn">
+                                    <button type="submit" class="btn btn-outline-primary">
+                                        <i class="fa fa-spinner "></i>Cập nhật giỏ hàng
+                                    </button>
+                                </div>
+                            </div>
+                        </th:block>
+                    </div>
+                </form>
+            </div>
+            <div class="col-lg-4">
+                <div class="cart__total">
+                    <ul>
+                        <li>Tổng tiền <span>  VNĐ </span> <span id="tongTienGioHang"></span>
+                        </li>
+                    </ul>
+                    <form id="form-tao-moi">
+                        <button type="button" class="create-invoice-button" onclick="taoHoaDon()">
+                            <i class="fas fa-plus"></i> Đặt hàng
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade bd-example-modal-sm" id="xoaSachGioHang" tabindex="-1" role="dialog"
+         aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modalXoaSachGioHang" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Làm sạch giỏ hàng</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <span>Bạn có muốn xóa tất cả sản phẩm khỏi giỏ hàng ?</span>
+                </div>
+                <div class="modal-footer">
+                    <button id="xoaSachGioHang-button" type="button" onclick="xoaSachGiohang()" class="btn btn-danger">Xóa</button>
+                    <input id="idGioHang" type="hidden" th:value="${gioHangDTO.id}">
+                </div>
+            </div>
+        </div>
+    </div>
+    <script th:src="@{/customer/js/khach-hang/gio-hang.js}"></script>
+    <script th:inline="javascript">
+
+    </script>
+</section>
+</body>
+</html>

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zxx" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{customer/layouts/index}">
+<head>
+    <meta charset="UTF-8">
+    <title>Chờ xác nhận</title>
+    <link rel="stylesheet" th:href="@{/customer/css/HoaDon/ChiTietCustomer/danhSach.css}">
+    <script th:src="@{/customer/js/HoaDon/ChoXacNhanCustomer.js}"></script>
+    <script th:src="@{/customer/js/HoaDon/jsChungHDCtomer.js}"></script>
+</head>
+<body>
+<section class="Customer_ChoGiaoHang" layout:fragment="content">
+    <div class="tab-buttons">
+        <button class="tab-button active" onclick="redirectToChoxacNhanCustomer()">Chờ xác nhận</button>
+        <button class="tab-button" onclick="redirectToChoGiaoHangCustomer()">Chờ giao hàng</button>
+        <button class="tab-button" onclick="redirectToDangGiaoCustomer()">Đang giao</button>
+        <button class="tab-button" onclick="redirectToDaGiaoCustomer()">Đã giao</button>
+        <button class="tab-button" onclick="redirectToDahuyCustomer()">Đã hủy</button>
+    </div>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="table-max">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th scope="col">STT</th>
+                            <th scope="col">Mã đơn</th>
+                            <th scope="col">Người nhận</th>
+                            <th scope="col">Số điện thoại</th>
+                            <th scope="col">Thành tiền</th>
+                            <th scope="col">Trạng thái</th>
+                            <th scope="col" colspan="2">Thao tác</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="customerXN, stt: ${choXacNhanCustomer}">
+                            <th scope="row" th:text="${stt.count}"></th>
+                            <td th:text="${customerXN.maDon}"></td>
+                            <td th:text="${customerXN.nguoiNhan}"></td>
+                            <td th:text="${customerXN.sdtNguoiNhan}"></td>
+                            <td th:text="${#numbers.formatDecimal(customerXN.tongTienHoaDon, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"></td>
+                            <td th:text="${customerXN.trangThai.name}"></td>
+                            <td>
+                                <div class="button-group">
+                                    <input type="hidden" id="idCustomerXN" th:value="${customerXN.id}">
+
+                                    <button class="action-button chiTietHoaDonCus" type="submit" id="chiTietHoaDonCusXN">
+                                        <i class="fa fa-info" aria-hidden="true"></i>
+                                    </button>
+
+                                    <script th:inline="javascript">
+                                        $(document).ready(function () {
+                                            $("#chiTietHoaDonCusXN").click(function () {
+                                                const id = $("#idCustomerXN").val();
+                                                window.location.href = "/customer/DonHang/ChiTietHoaDon/ChoXacNhan/hoa-don-id=" + id;
+                                            });
+                                        });
+                                    </script>
+
+                                    <button class="action-button HuyDonCus" th:attr="data-id=${customerXN.id}">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+
+                                    <br>
+                                    <div class="modal fade huyModalCustomer" th:attr="data-id=${customerXN.id}"
+                                         tabindex="-1" aria-labelledby="huyDonModalLabel"
+                                         aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="huyDonModalLabel">Hủy đơn hàng</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                            aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    Hủy đơn hàng?
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-primary btn-dong-y">Đồng ý
+                                                    </button>
+                                                    <button type="button" class="btn btn-secondary btn-khong"
+                                                            data-bs-dismiss="modal">Không
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <div th:if="${!#lists.isEmpty(choXacNhanCustomer)}">
+                        <ul class="pagination">
+                            <li th:each="pageNumber : ${#numbers.sequence(1, pageChoXacNhan)}">
+                                <a th:href="@{/customer/DonHang/ChoXacNhan(page=${pageNumber})}" th:text="${pageNumber}"
+                                   th:class="${pageNumber == page ? 'active-page' : ''}"></a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+</html>

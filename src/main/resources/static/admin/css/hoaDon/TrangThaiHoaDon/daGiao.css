@@ -1,0 +1,466 @@
+.fas.fa-history:before {
+    content: "\f1da"; /* Mã Unicode tương ứng với biểu tượng "fa-history" */
+}
+.table tbody tr:hover {
+    background-color: #e2e8f0;
+}
+
+.pagination {
+    list-style-type: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.pagination li {
+    margin: 0 5px;
+}
+
+.pagination li a {
+    display: inline-block;
+    padding: 5px 10px;
+    text-decoration: none;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    background-color: #f2f2f2;
+    color: #333;
+}
+
+.pagination li a:hover {
+    background-color: #e0e0e0;
+}
+
+.pagination .active a {
+    background-color: #ccc;
+    cursor: default;
+}
+
+.pagination-empty {
+    display: none;
+}
+
+h1 {
+    text-align: center;
+    font-size: 32px;
+    font-weight: bold;
+    color: #4c9aff;
+    margin-top: 20px;
+    padding-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    border: none;
+}
+
+h1:before {
+    content: "";
+    display: block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: #4c9aff;
+    position: absolute;
+    bottom: -5px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.action-button {
+    padding: 5px 10px;
+    font-size: 14px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.action-button:hover {
+    background-color: #0056b3;
+}
+
+.action-button:focus {
+    outline: none;
+}
+
+.XacNhanDon {
+    padding: 5px 10px;
+    font-size: 14px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.alert-warning {
+    margin-top: 1rem;
+}
+
+.modal-title {
+    text-align: center;
+    margin-left: 160px;
+    color: #1ab7ea;
+}
+
+.tab-pane {
+    display: none;
+    /* Ẩn tất cả các bảng */
+}
+
+.tab-pane.show {
+    display: block;
+    /* Hiển thị bảng tương ứng với tab hiện tại */
+}
+
+body {
+    margin-top: 20px;
+}
+
+.timeline-steps {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap
+}
+
+.timeline-steps .timeline-step {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    margin: 1rem
+}
+
+@media (min-width: 768px) {
+    .timeline-steps .timeline-step:not(:last-child):after {
+        content: "";
+        display: block;
+        border-top: .25rem dotted #3b82f6;
+        width: 3.46rem;
+        position: absolute;
+        left: 7.5rem;
+        top: .3125rem
+    }
+
+    .timeline-steps .timeline-step:not(:first-child):before {
+        content: "";
+        display: block;
+        border-top: .25rem dotted #3b82f6;
+        width: 3.8125rem;
+        position: absolute;
+        right: 7.5rem;
+        top: .3125rem
+    }
+}
+
+.timeline-steps .timeline-content {
+    width: 10rem;
+    text-align: center
+}
+
+.timeline-steps .timeline-content .inner-circle {
+    border-radius: 1.5rem;
+    height: 1rem;
+    width: 1rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #3b82f6
+}
+
+.timeline-steps .timeline-content .inner-circle:before {
+    content: "";
+    background-color: #3b82f6;
+    display: inline-block;
+    height: 3rem;
+    width: 3rem;
+    min-width: 3rem;
+    border-radius: 6.25rem;
+    opacity: .5
+}
+
+.button-group {
+    display: flex;
+    gap: 5px;
+}
+
+.button-group button {
+    flex: 1;
+    height: 30px;
+    padding: 5px;
+    font-size: 14px;
+    border-radius: 5px;
+    width: 15px;
+    background-color: #4c9aff;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.button-group-a button:hover {
+    background-color: #357ae8;
+    color: #fff;
+}
+
+.button-group-a button {
+    flex: 1;
+    height: 30px;
+    width: 50px;
+    padding: 2px 8px;
+    font-size: 12px;
+    border-radius: 5px;
+    background-color: #4c9aff;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.button-group-a button:hover {
+    background-color: #357ae8;
+    color: #fff;
+}
+
+.hduong1 {
+    display: flex;
+    gap: 5px;
+}
+
+.hduong1 button {
+    flex: 1;
+    height: 40px;
+    padding: 5px;
+    font-size: 14px;
+    border-radius: 5px;
+    width: 150px;
+    background-color: #4c9aff;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.hduong1 button:hover {
+    background-color: #357ae8;
+    color: #fff;
+}
+
+.modal-header .btn-close {
+    display: none;
+}
+
+.modal-header .close {
+    display: none;
+}
+
+.hduong {
+    display: flex;
+    gap: 5px;
+    float: left;
+    padding: 5px;
+}
+
+.custom-input {
+    width: 400px;
+    height: 40px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    padding: 10px;
+    font-size: 16px;
+}
+
+.custom-input:focus {
+    outline: none;
+    border-color: #4c9aff;
+    box-shadow: 0 0 5px rgba(76, 154, 255, 0.5);
+}
+
+.hduong1 {
+    display: flex;
+    gap: 5px;
+    float: right;
+}
+
+.b1 {
+    width: 150px;
+    height: 40px;
+    font-size: 16px;
+    border-radius: 5px;
+    border: none;
+    background-color: #4c9aff;
+    color: #fff;
+    cursor: pointer;
+}
+
+.b1:hover {
+    background-color: #357ae8;
+}
+
+.btnTimKiem {
+    background-color: #4c9aff;
+}
+
+.btnTimKiem:hover {
+    background-color: #357ae8;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table th,
+.table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.table thead th {
+    background-color: #f1f1f1;
+    font-weight: bold;
+}
+
+.table tbody tr:hover {
+    background-color: #f9f9f9;
+}
+
+.custom-tabs .nav-link {
+    position: relative;
+    padding: 10px 20px;
+    color: #333;
+    font-weight: bold;
+    background-color: #f2f2f2;
+    border-radius: 30px;
+    transition: background-color 0.3s;
+}
+
+.custom-tabs .nav-link.active {
+    background-color: #4c9aff;
+    color: #fff;
+}
+
+.custom-tabs .nav-link:hover {
+    background-color: #357ae8;
+    color: #fff;
+}
+
+.custom-tabs .nav-link:before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+    width: 10px;
+    height: 10px;
+    background-color: #fff;
+    border-radius: 50%;
+}
+
+.custom-tabs .nav-link.active:before {
+    background-color: #fff;
+}
+
+.custom-tabs .nav-link:not(.active):before {
+    display: none;
+}
+
+.tab-buttons {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+/* Style cho từng tab button */
+.tab-button {
+    width: 260px; /* Kích thước cố định cho các nút tab */
+    height: 50px;
+    padding: 10px 20px;
+    margin: 0 5px; /* Khoảng cách giữa các nút tab */
+    background-color: #fff;
+    border: 2px solid #ccc;
+    border-radius: 30px;
+    color: #333;
+    font-weight: bold;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+/* Style cho tab button được chọn */
+.tab-button.active {
+    background-color: #4c9aff;
+    color: #fff;
+    border-color: #4c9aff;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+}
+
+/* Hover effect */
+.tab-button:hover {
+    background-color: #f2f2f2;
+    color: #333;
+    transform: scale(1.05);
+}
+
+/* Biểu tượng mũi tên */
+.tab-button::before {
+    content: "→"; /* Sử dụng mũi tên nghiêng sang phải */
+    position: absolute;
+    top: 50%;
+    right: 20px; /* Điều chỉnh vị trí của mũi tên */
+    transform: translateY(-50%);
+    transition: transform 0.3s ease;
+}
+
+/* Hover effect cho biểu tượng mũi tên */
+.tab-button:hover::before {
+    transform: translate(10px, -50%); /* Di chuyển mũi tên khi hover */
+}
+
+
+.pagination {
+    list-style: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.pagination li {
+    margin: 0 5px;
+}
+
+.pagination a {
+    display: block;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    background-color: #f5f5f5;
+    color: #333;
+    text-decoration: none;
+}
+
+.pagination a:hover {
+    background-color: #ddd;
+}
+
+.pagination .active-page {
+    font-weight: bold;
+    background-color: #333;
+    color: #fff;
+}
+
+.btnTimKiem {
+    flex: 1;
+    height: 40px;
+    padding: 5px;
+    font-size: 14px;
+    border-radius: 5px;
+    width: 90px;
+    background-color: #4c9aff;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+    margin-right: 15px;
+}
+
+.btnTimKiem:hover {
+    background-color: #357ae8;
+    color: #fff;
+}

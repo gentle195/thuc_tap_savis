@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/layouts/index.html}">
+<head>
+  <title>Thống kê doanh số</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-alpha1/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
+</head>
+<body>
+<section class="container mt-5" layout:fragment="content">
+	<h1 class="h3 mb-2 text-center">Thống kê</h1>
+	<hr>
+	<div class="row mb-3">
+	    <div class="row" style="margin-bottom: 20px;">
+	      <div class="col-md-2">
+	        <label for="startDateData">Từ ngày:</label>
+	        <input type="date" id="startDateData"  />
+	      </div>
+	      <div class="col-md-2">
+	        <label for="endDateData">Đến ngày:</label>
+	        <input type="date" id="endDateData"  />
+	      </div>
+	    </div>
+	    <div class="row">
+	      <div class="col-md-4">
+	        <div class="card">
+	          <div class="card-body" style="text-align: center;">
+	            <h5 class="card-title">Doanh số</h5>
+	            <p class="card-text" id="doanhSo" style="color: red;">0</p>
+	          </div>
+	        </div>
+	      </div>
+	      <div class="col-md-4">
+	        <div class="card">
+	          <div class="card-body" style="text-align: center;">
+	            <h5 class="card-title">Doanh số hôm nay</h5>
+	            <p class="card-text" id="doanhSoNgay" style="color: red;">0</p>
+	          </div>
+	        </div>
+	      </div>
+	      <div class="col-md-4">
+	        <div class="card">
+	          <div class="card-body" style="text-align: center;">
+	            <h5 class="card-title">Hàng bán được</h5>
+	            <p class="card-text" id="hangBanDuoc" style="color: red;">0</p>
+	          </div>
+	        </div>
+	      </div>
+	    </div>
+
+  </div>
+
+  <div class="row">
+  	<div class="col-md-12 table-responsive">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title" style="text-align: center;">Biểu đồ thống kê</h5>
+          <div>
+            <label for="startDate">Từ ngày:</label>
+            <input type="date" id="startDate" />
+            <label for="endDate">Đến ngày:</label>
+            <input type="date" id="endDate" />
+          </div>
+          <canvas id="myChart" width="400" height="200"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+	<br>
+  <div class="row">
+    <div class="col-md-12 table-responsive">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title" style="text-align: center;">Top 5 sản phẩm bán chạy nhất</h5>
+          <table class="table table-striped">
+            <thead>
+            <tr>
+              <th scope="col">STT</th>
+              <th scope="col">Ảnh</th>
+              <th scope="col">Tên sản phẩm</th>
+              <th scope="col">Giá bán</th>
+              <th scope="col">Số lượng</th>
+              <th scope="col">Phong cách</th>
+              <th scope="col">Kiểu dáng</th>
+              <th scope="col">Chất liệu</th>
+              <th scope="col">Kích cỡ</th>
+              <th scope="col">Màu sắc</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="item, istat : ${bestSeller}">
+              <td th:text="${istat.index + 1}"></td>
+              <td>
+                <img class="d-block img-responsive"
+                     th:src="${'/admin/product/images/'+ item.getAnhChinhs()}"
+                     alt="First slide" style="width: 150px; height: 150px;">
+              </td>
+              <td th:text="${item.getTenSanPham()}"></td>
+              <td th:text="${#numbers.formatDecimal(item.getGiaBan(), 0, 'COMMA', 0, 'POINT')}"></td>
+
+<!--              <td th:text="${item.getGiaBan()}">0</td>-->
+              <td th:text="${item.getDoanhSo()}">0</td>
+              <td th:text="${item.getPhongCach()}">0</td>
+              <td th:text="${item.getKieuDang()}">0</td>
+              <td th:text="${item.getChatLieu()}">0</td>
+              <td th:text="${item.getKichCo()}">0</td>
+              <td th:text="${item.getMauSac()}">0</td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script type="text/javascript" th:src="@{/admin/js/thongke/thongke.js}"></script>
+</section>
+</body>
+</html>

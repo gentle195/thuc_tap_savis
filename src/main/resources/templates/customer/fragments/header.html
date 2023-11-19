@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+</head>
+<body>
+<header class="header" th:fragment="header">
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-3 col-md-3">
+                <div class="header__logo">
+                    <a th:href="@{/customer/home}"><img th:src="@{/admin/img/leopard-logo.png}" alt="" height="50px"
+                                                        width="130px"></a>
+                </div>
+            </div>
+            <div class="col-lg-6 col-md-6 mt-1">
+                <nav class="header__menu mobile-menu">
+                    <ul>
+                        <li th:class="${#request.requestURI} == @{/customer/home}? 'active': '' "><a
+                                th:href="@{/customer/home}">Trang chủ</a></li>
+                        <li th:class="${#request.requestURI} == @{/customer/shop}? 'active': '' "><a
+                                th:href="@{/customer/shop}">Sản phẩm</a></li>
+                    </ul>
+                </nav>
+            </div>
+            <div class="col-lg-3 col-md-3 mt-1">
+                <div class="header__nav__option">
+                    <div class="row">
+                        <div class="col-md-2">
+                            <a th:href="@{/customer/gio-hang-chi-tiet}"><img th:src="@{/customer/images/icon/cart.png}"
+                                                                             alt=""></a>
+                        </div>
+                        <div class="col-md-10">
+                            <th:block th:if="${#request.remoteUser}">
+                                <div class="dropdown pt-1">
+                                    <a class="fw-bold" type="button" data-toggle="dropdown">
+                                        <h5>Xin chào <strong> [[${#request.userPrincipal.principal.fullname}]]</strong>
+                                        </h5>
+                                    </a>
+                                    <div class="dropdown-menu text-center">
+                                        <a class="dropdown-item" th:href="@{/customer/DonHang/ChoXacNhan}">
+                                            <span style="display: inline-block; width: 50px;"></span>
+                                            <i class="fa fa-gift" aria-hidden="true"></i>
+                                            Đơn hàng
+                                        </a>
+
+                                        <a class="dropdown-item" th:href="@{/customer/tai-khoan}">
+                                            <span style="display: inline-block; width: 50px;"></span>
+                                            <i class="fa fa-address-card" aria-hidden="true">
+                                            </i>Tài khoản</a>
+
+                                        <a class="dropdown-item" th:href="@{/security/logoff}">
+                                            <span style="display: inline-block; width: 50px;"></span>
+                                            <i class="fa fa-sign-out" aria-hidden="true"></i>Đăng xuất</a>
+                                    </div>
+                                </div>
+                            </th:block>
+                            <th:block th:unless="${#request.remoteUser}">
+                                <a class="dropdown-item" th:href="@{/security/login/form}">Đăng nhập</a>
+                            </th:block>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+        <div class="canvas__open"><i class="fa fa-bars"></i></div>
+    </div>
+</header>
+</body>
+
+</html>

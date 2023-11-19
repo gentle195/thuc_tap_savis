@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="zxx" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{customer/layouts/index}">
+<head>
+    <meta charset="UTF-8">
+    <title>Đang giao hàng</title>
+    <link rel="stylesheet" th:href="@{/customer/css/HoaDon/ChiTietCustomer/danhSach.css}">
+    <script th:src="@{/customer/js/HoaDon/DangGiaoCustomer.js}"></script>
+    <script th:src="@{/customer/js/HoaDon/jsChungHDCtomer.js}"></script>
+</head>
+<body>
+<section class="Customer_ChoGiaoHang" layout:fragment="content">
+    <div class="tab-buttons">
+        <button class="tab-button" onclick="redirectToChoxacNhanCustomer()">Chờ xác nhận</button>
+        <button class="tab-button" onclick="redirectToChoGiaoHangCustomer()">Chờ giao hàng</button>
+        <button class="tab-button active" onclick="redirectToDangGiaoCustomer()">Đang giao</button>
+        <button class="tab-button" onclick="redirectToDaGiaoCustomer()">Đã giao</button>
+        <button class="tab-button" onclick="redirectToDahuyCustomer()">Đã hủy</button>
+    </div>
+
+    <div class="container-fluid">
+        <div class="hduong1">
+            <button id="HoanThanhTatCa" class="daNhanTatCaCustomer">Đã nhận tất cả</button>
+            <div class="modal fade hoanThanhTatCaModal" tabindex="-1" aria-labelledby="hoanThanhTatCaModalLabel"
+                 aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="hoanThanhTatCaModalLabel">Xác nhận đơn</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            Xác nhận đã nhận tất cả đơn hàng?
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary btn-dong-y">Đồng ý</button>
+                            <button type="button" class="btn btn-secondary btn-khong"
+                                    data-bs-dismiss="modal">Không
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="table-max">
+                    <table class="table" id="user-table-DangGiaoCustomer">
+                        <thead>
+                        <tr>
+                            <th scope="col">STT</th>
+                            <th scope="col">Mã đơn</th>
+                            <th scope="col">Người nhận</th>
+                            <th scope="col">Số điện thoại</th>
+                            <th scope="col">Thành tiền</th>
+                            <th scope="col">Trạng thái</th>
+                            <th scope="col" colspan="2">Thao tác</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="customerDG, stt: ${dangtGiaoCustomer}">
+                            <th scope="row" th:text="${stt.count}"></th>
+                            <td th:text="${customerDG.maDon}"></td>
+                            <td th:text="${customerDG.nguoiNhan}"></td>
+                            <td th:text="${customerDG.sdtNguoiNhan}"></td>
+                            <td th:text="${#numbers.formatDecimal(customerDG.tongTienHoaDon, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"></td>
+                            <td th:text="${customerDG.trangThai.name}"></td>
+                            <td>
+                                <div class="button-group">
+                                    <input type="hidden" id="idCustomerDG" th:value="${customerDG.id}">
+
+                                    <button class="action-button chiTietHoaDonCus" type="submit" id="chiTietHoaDonCusDG">
+                                        <i class="fa fa-info" aria-hidden="true"></i>
+                                    </button>
+
+                                    <script th:inline="javascript">
+                                        $(document).ready(function () {
+                                            $("#chiTietHoaDonCusDG").click(function () {
+                                                const id = $("#idCustomerDG").val();
+                                                window.location.href = "/customer/DonHang/ChiTietHoaDon/DangGiaoHang/hoa-don-id=" + id;
+                                            });
+                                        });
+                                    </script>
+
+                                    <button class="action-button DangGiaoCus" th:attr="data-id=${customerDG.id}">
+                                        <i class="fas fa-check"></i>
+                                    </button>
+                                    <br>
+                                    <div class="modal fade dangGiaoModalCustomer" th:attr="data-id=${customerDG.id}"
+                                         tabindex="-1" aria-labelledby="dangGiaoModalLabel"
+                                         aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="dangGiaoModalLabel">Xác nhận đã nhận
+                                                        được hàng</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                            aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    Đã nhận được đơn hàng?
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-primary btn-dong-y">Đồng ý
+                                                    </button>
+                                                    <button type="button" class="btn btn-secondary btn-khong"
+                                                            data-bs-dismiss="modal">Không
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <div th:if="${!#lists.isEmpty(dangtGiaoCustomer)}">
+                        <ul class="pagination">
+                            <li th:each="pageNumber : ${#numbers.sequence(1, pageDangGiao)}">
+                                <a th:href="@{/customer/DonHang/DangGiaoHang(page=${pageNumber})}"
+                                   th:text="${pageNumber}"
+                                   th:class="${pageNumber == page ? 'active-page' : ''}"></a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+</html>

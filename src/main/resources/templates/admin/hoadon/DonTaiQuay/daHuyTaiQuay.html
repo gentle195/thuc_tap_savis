@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/layouts/index}">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Đã hủy</title>
+    <link rel="stylesheet" th:href="@{/admin/css/hoaDon/donTaiQuay/donTaiQuay.css}">
+    <script th:src="@{/admin/js/hoadon/DonTaiQuay/DaHuyTaiQuay.js}"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.5/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.5/dist/sweetalert2.min.js"></script>
+</head>
+
+<body>
+<div class="container-fluid" layout:fragment="content" th:object="${HoaDonDTO}">
+    <div class="tab-buttons">
+        <button class="tab-button" onclick="redirectToDaThanhToan()">Đã thanh toán</button>
+        <button class="tab-button active" onclick="redirectToDahuyTaiQuay()">Đã hủy</button>
+    </div>
+
+    <h1>Đã hủy</h1>
+
+    <div class="hduong">
+        <input type="text" class="form-control custom-input" placeholder="Tìm kiếm..."
+               id="search-input-daHuy">
+        <div class="input-group-append">
+            <button class="btn btn-primary btnTimKiem" type="button">Tìm kiếm</button>
+        </div>
+
+        <input type="date" class="form-control" id="search-input-date-daHuyTaiQuay">
+        <button class="btn btn-primary" type="button" id="search-button-ngayTao-daHuy">
+            <i class="fas fa-search"></i>
+        </button>
+
+        <div class="col-md-4">
+            <button id="btn-tatCaHoaDonDaHuy" type="button"
+                    class="dt-button buttons-html5 btn btn-white btn-success btn-bold"
+                    data-toggle="tooltip" title='Tất cả hóa đơn'>
+											<span> <i class="fas fa-sync-alt"></i>
+											</span>
+            </button>
+        </div>
+    </div>
+    <table id="user-table-daThanhToan" class="table">
+        <thead>
+        <tr>
+            <th>STT</th>
+            <th scope="col">Mã đơn</th>
+            <th scope="col">Ngày tạo đơn</th>
+            <th scope="col">Tổng tiền</th>
+            <th scope="col">Ghi chú</th>
+            <th scope="col">Thao tác</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="hoaDon, stt : *{listHoaDonDTO}">
+            <td th:text="${(page - 1) * size + stt.count}"></td>
+            <th scope="row" th:text="${hoaDon.maDon}"></th>
+            <td th:text="${#dates.format(hoaDon.ngayTao, 'dd/MM/yyyy')}"></td>
+            <td th:text="${#numbers.formatDecimal(hoaDon.tongTienHoaDon, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"></td>
+            <td th:text="${hoaDon.ghiChu}"></td>
+            <td>
+                <!--XEM CHI TIẾT HÓA ĐƠN-->
+                <div class="btn-group">
+                    <a th:href="@{'/DonTaiQuay/ChiTietHoaDon/DonDaHuy/hoa-don-id=' + ${hoaDon.id}}"
+                       class="btn btn-warning btn-sm"
+                       type="submit">
+                        <i class="fas fa-info-circle"></i>
+                    </a>
+                </div>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div th:if="*{!listHoaDonDTO.isEmpty() and #strings.contains(#httpServletRequest.requestURI, '/danhSach')}">
+        <ul class="pagination">
+            <li th:each="pageNumber : ${#numbers.sequence(1, pagedaHuy)}">
+                <a th:href="@{/admin/DaHuyTaiQuay/danhSach(page=${pageNumber})}" th:text="${pageNumber}"
+                   th:class="${pageNumber == page ? 'active-page' : ''}"></a>
+            </li>
+        </ul>
+    </div>
+
+    <div th:if="*{!listHoaDonDTO.isEmpty() and #strings.contains(#httpServletRequest.requestURI, '/TimKiem')}">
+        <ul class="pagination">
+            <li th:each="pageNumber : ${#numbers.sequence(1, pagedaHuy)}">
+                <a th:with="searchUrl=@{/admin/DaHuyTaiQuay/TimKiem/__${duLieuTimKiem}__(page=${pageNumber})}"
+                   th:href="${searchUrl}" th:text="${pageNumber}"
+                   th:class="${pageNumber == page ? 'active-page' : ''}"></a>
+            </li>
+        </ul>
+    </div>
+
+    <div th:if="*{!listHoaDonDTO.isEmpty() and #strings.contains(#httpServletRequest.requestURI, '/Ngay')}">
+        <ul class="pagination">
+            <li th:each="pageNumber : ${#numbers.sequence(1, pagedaHuy)}">
+                <a th:with="searchUrl=@{/admin/DaHuyTaiQuay/Ngay/__${duLieuTimKiem}__(page=${pageNumber})}"
+                   th:href="${searchUrl}" th:text="${pageNumber}"
+                   th:class="${pageNumber == page ? 'active-page' : ''}"></a>
+            </li>
+        </ul>
+    </div>
+    <div class="alert alert-warning container mt-3 text-center" th:if="*{listHoaDonDTO.isEmpty()}"
+         style="background-color: transparent; border: none;">
+        <img src="/admin/img/noData2.png" alt="Không có sản phẩm" style="width: 300px; height: 300px;">
+        <p class="empty-message" style="margin-top: 20px; font-size: 1.8em;">KHÔNG CÓ DỮ LIỆU</p>
+    </div>
+</div>
+
+</body>
+
+</html>
+
+
+
+
+
+
+
+
+

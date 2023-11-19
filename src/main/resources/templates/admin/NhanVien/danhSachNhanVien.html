@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{admin/layouts/index}">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Quản lý nhân viên</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" th:href="@{/admin/css/nhanVien/nhanVien.css}">
+    <script th:src="@{/admin/js/nhanVien/nhanVien.js}"></script>
+    <style>
+        .button-thongTinNhanVien{
+            margin-right: 6px;
+        }
+        .button-chinhSuaNhanVien{
+            margin-right: 6px;
+        }
+        .button-timKiemNhanVien{
+            margin-right: 6px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid" layout:fragment="content" th:object="${NguoiDungDTO}" style="">
+        <div class="pt-sm-1 pb-sm-2">
+            <h1>Quản lý nhân viên</h1>
+        </div>
+        <div class="card shadow mb-1 pt-sm-2 pb-sm-2">
+            <div class="vandai1 col-lg-12">
+                <div class="col-lg-4">
+                    <div>
+                        <label>Tìm kiếm:</label>
+                        <div class="input-group">
+                            <div class="custom-file">
+                                <input type="text" class="form-control" id="search-input-allHD-name"
+                                    aria-describedby="inputGroupFileAddon04" placeholder="Tìm kiếm">
+                            </div>
+                            <div class="input-group-append">
+                                <button class="btn btn-primary button-timKiemNhanVien" type="button" id="timKiemNhanVien-TatCa">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                                <a href="/admin/NhanVien/danhSach" class="btn btn-secondary">
+                                    <i class="fas fa-sync-alt"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+                    <label for="">Ngày vào làm:</label>
+                    <div class="input-group">
+                        <div class="custom-file">
+                            <input type="date" class="form-control" id="search-input-allHD-date">
+                        </div>
+                        <div class="input-group-append">
+                            <button class="btn btn-primary" type="button" id="timKiemNgay-NhanVien">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!--Tìm kiếm trạng thái -->
+<!--                <div class="col-lg-4 mb-3">-->
+<!--                    <label for="status">Trạng Thái:</label>-->
+<!--                    <div class="input-group">-->
+<!--                        <select id="status" class="custom-select">-->
+<!--                            <option value="active">Đang Hoạt Động</option>-->
+<!--                            <option value="inactive">Không Hoạt Động</option>-->
+<!--                        </select>-->
+<!--                    </div>-->
+<!--                </div>-->
+            </div>
+        </div>
+        <div class="card shadow mb-4 mt-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold">
+                    <div class="btn-group-sm">
+                        <div class="float-right">
+                            <a class="btn btn-primary mr-sm-1 text-light" href="/NhanVien/themMoi">Thêm
+                                mới</a>
+                        </div>
+                    </div>
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table id="user-name-label" class="table table-hover">
+                        <thead class="text-nowrap text-center">
+                            <tr>
+                                <th scope="col">STT</th>
+                                <th scope="col">Ảnh</th>
+                                <th scope="col">Mã nhân viên</th>
+                                <th scope="col">Tên nhân viên</th>
+                                <th scope="col">Trạng thái</th>
+                                <th scope="col">Thao Tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="user, stt : *{listNguoiDungDTO}" class="text-center"
+                                th:data-user-id="${user.id}">
+                                <td th:text="${(page - 1) * size + stt.count}" style="vertical-align: middle;"></td>
+                                <td style="vertical-align: middle;">
+                                    <div th:if="${user.anhNhanVien != null and !user.anhNhanVien.isEmpty()}">
+                                        <img th:src="@{/admin/img/{imageFileName}(imageFileName=${user.anhNhanVien})}"
+                                            class="user-image" width="100px" height="120px">
+                                    </div>
+                                    <div th:unless="${user.anhNhanVien != null and !user.anhNhanVien.isEmpty()}">
+                                        <img th:src="@{/admin/img/noImage.png}" class="user-image" width="100px"
+                                            height="120px">
+                                    </div>
+                                </td>
+                                <td style="vertical-align: middle;" th:text="${user.maNhanVien}"></td>
+                                <td style="vertical-align: middle;" th:text="${user.tenNguoiDung}"></td>
+
+                                <td style="vertical-align: middle;">
+                                    <div class="btn-group">
+                                        <div class="custom-control custom-switch">
+                                            <input type="checkbox" class="custom-control-input"
+                                                th:id="'trangThai-' + ${user.id}" th:checked="${user.trangThai eq 0}">
+                                            <label class="custom-control-label"
+                                                th:for="'trangThai-' + ${user.id}"></label>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td style="vertical-align: middle;">
+                                    <!-- From sửa -->
+                                    <!-- <div class="btn-group">
+                                        <a th:href="@{'/admin/chinhSuaNhanVien/id-nhan-vien=' + ${user.id}}"
+                                            class="btn btn-warning btn-sm" type="submit">
+                                            <i class="fas fa-edit text-primary"></i>
+                                        </a>
+                                    </div> -->
+                                    <!-- From xóa -->
+                                    <div class="btn-group">
+                                        <a th:href="@{'/admin/thongTinNhanVien/MaNhanVien=' + ${user.maNhanVien}}"
+                                            class="btn btn-info btn-sm button-thongTinNhanVien" type="submit">
+                                            <i class="far fa-user"></i>
+                                        </a>
+                                        <a th:href="@{'/admin/chinhSuaNhanVien/id-nhan-vien=' + ${user.id}}"
+                                            class="btn btn-warning btn-sm button-chinhSuaNhanVien" type="submit">
+                                            <i class="fas fa-edit text-primary"></i>
+                                        </a>
+                                        <button class="btn btn-danger xoaNhanVien" th:attr="data-id=${user.id}"
+                                            th:data-target="'#modalXoaNhanVien-' + ${user.id}">
+                                            <i class="fa fa-trash" aria-hidden="true"></i>
+                                        </button>
+                                        <br>
+                                        <div class="modal fade xoaNhanVien" th:id="'modalXoaNhanVien-' + ${user.id}"
+                                            tabindex="-1" aria-labelledby="XoaHDCTModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-centered">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="XoaHDCTModalLabel">Xóa nhân viên
+                                                        </h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                            aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        Xác nhận xóa nhân viên này?
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-primary btn-dong-y">Đồng ý
+                                                        </button>
+                                                        <button type="button" class="btn btn-secondary btn-khong"
+                                                            data-bs-dismiss="modal">Không
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- <div class="btn-group">
+                                        <a th:href="@{'/admin/thongTinNhanVien/MaNhanVien=' + ${user.maNhanVien}}"
+                                            class="btn btn-danger btn-sm" type="submit">
+                                            <i class="far fa-user"></i>
+                                        </a>
+                                    </div> -->
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="card-footer">
+                <div
+                    th:if="*{!listNguoiDungDTO.isEmpty() and #strings.contains(#httpServletRequest.requestURI, '/danhSach')}">
+                    <ul class="pagination">
+                        <li th:each="pageNumber : ${#numbers.sequence(1, totalPages)}">
+                            <a th:href="@{/admin/NhanVien/danhSach(page=${pageNumber})}" th:text="${pageNumber}"
+                                th:class="${pageNumber == page ? 'active-page' : ''}"></a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div
+                    th:if="*{!listNguoiDungDTO.isEmpty() and #strings.contains(#httpServletRequest.requestURI, '/timKiem')}">
+                    <ul class="pagination">
+                        <li th:each="pageNumber : ${#numbers.sequence(1, totalPages)}">
+                            <a th:with="searchUrl=@{/admin/NhanVien/timKiem/__${duLieuTimKiem}__(page=${pageNumber})}"
+                                th:href="${searchUrl}" th:text="${pageNumber}"
+                                th:class="${pageNumber == page ? 'active-page' : ''}"></a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div
+                    th:if="*{!listNguoiDungDTO.isEmpty() and #strings.contains(#httpServletRequest.requestURI, '/Ngay')}">
+                    <ul class="pagination">
+                        <li th:each="pageNumber : ${#numbers.sequence(1, totalPages)}">
+                            <a th:with="searchUrl=@{/admin/NhanVien/Ngay/__${duLieuTimKiem}__(page=${pageNumber})}"
+                                th:href="${searchUrl}" th:text="${pageNumber}"
+                                th:class="${pageNumber == page ? 'active-page' : ''}"></a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div
+                    th:if="*{!listNguoiDungDTO.isEmpty() and #strings.contains(#httpServletRequest.requestURI, '/TrangThai')}">
+                    <ul class="pagination">
+                        <li th:each="pageNumber : ${#numbers.sequence(1, totalPages)}">
+                            <a th:with="searchUrl=@{/admin/NhanVien/TrangThai /__${duLieuTimKiem}__(page=${pageNumber})}"
+                                th:href="${searchUrl}" th:text="${pageNumber}"
+                                th:class="${pageNumber == page ? 'active-page' : ''}"></a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="alert alert-warning container mt-3 text-center" th:if="*{listNguoiDungDTO.isEmpty()}"
+                    style="background-color: transparent; border: none;">
+                    <img src="/admin/img/noData2.png" alt="Không có sản phẩm" style="width: 300px; height: 300px;">
+                    <p class="empty-message" style="margin-top: 20px; font-size: 1.8em;">KHÔNG CÓ DỮ LIỆU</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>

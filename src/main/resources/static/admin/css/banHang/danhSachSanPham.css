@@ -1,0 +1,224 @@
+.button-add-productDetail {
+    overflow: auto;
+    margin-top: 10px;
+    position: relative;
+    display: inline-flex;
+    vertical-align: middle;
+    font-size: 18px;
+    color: #111111;
+    height: 40px;
+    width: 40px;
+    background: #f3f2ee;
+    border-radius: 50%;
+    line-height: 40px;
+    text-align: center;
+}
+
+.button-add-productDetail:hover {
+    overflow: auto;
+    margin-top: 10px;
+    position: relative;
+    display: inline-flex;
+    vertical-align: middle;
+    font-size: 18px;
+    color: #111111;
+    height: 40px;
+    width: 40px;
+    background: #f3f2ee;
+    border-radius: 50%;
+    line-height: 40px;
+    text-align: center;
+    border: 1px solid;
+    box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.5),
+    0 0 20px rgba(255, 255, 255, 0.2);
+    outline-color: rgba(255, 255, 255, 0);
+    outline-offset: 15px;
+}
+
+.product__details__option__color label input {
+    position: absolute;
+    visibility: hidden;
+}
+
+input[type="checkbox"],
+input[type="radio"] {
+    box-sizing: border-box;
+    padding: 0;
+}
+
+.product__details__option__size label {
+    color: #111111;
+    font-size: 15px;
+    font-weight: 700;
+    text-transform: uppercase;
+    display: inline-block;
+    border: 1px solid #e5e5e5;
+    padding: 6px 15px;
+    margin-bottom: 0;
+    margin-right: 5px;
+    cursor: pointer;
+}
+
+button,
+input,
+optgroup,
+select,
+textarea {
+    margin: 0;
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+}
+
+.product__details__option__size label.label-active {
+    background: #111111;
+    color: #ffffff;
+    border-color: #111111;
+}
+
+*,
+::after,
+::before {
+    box-sizing: border-box;
+}
+
+button,
+input {
+    overflow: visible;
+}
+
+button,
+input,
+optgroup,
+select,
+textarea {
+    margin: 0;
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+}
+
+.product__details__option__color {
+    display: inline-block;
+    position: relative;
+    top: 10px;
+}
+
+.product__details__option__color span {
+    color: #111111;
+    display: inline-block;
+    margin-right: 10px;
+    position: relative;
+    top: -9px;
+}
+
+.product__details__option__color label {
+    height: 30px;
+    width: 30px;
+    border-radius: 50%;
+    position: relative;
+    margin-right: 10px;
+    margin-bottom: 0;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.product__details__option__color label input {
+    position: absolute;
+    visibility: hidden;
+}
+
+input[type="checkbox"],
+input[type="radio"] {
+    box-sizing: border-box;
+    padding: 0;
+}
+
+button,
+input {
+    overflow: visible;
+}
+
+input[type="radio"i] {
+    background-color: initial;
+    cursor: default;
+    appearance: auto;
+    box-sizing: border-box;
+    margin: 3px 3px 0px 5px;
+    padding: initial;
+    border: initial;
+}
+
+.product__details__option {
+    margin-bottom: 30px;
+}
+
+.shopping__cart__table table tbody tr td.product__cart__item {
+    width: 400px;
+}
+
+.shopping__cart__table table tbody tr td {
+    padding-bottom: 30px;
+    padding-top: 30px;
+}
+
+td {
+    display: table-cell;
+    vertical-align: inherit;
+}
+
+table {
+    border-collapse: collapse;
+}
+
+.shopping__cart__table
+table
+tbody
+tr
+td.product__cart__item
+.product__cart__item__pic {
+    float: left;
+    margin-right: 30px;
+}
+
+.decrement-btn,
+.increment-btn,
+.save-btn,
+.cancel-btn {
+    display: inline-block;
+    padding: 8px 12px;
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+    text-decoration: none;
+    background-color: #eaeaea;
+    color: #333;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.decrement-btn:hover,
+.increment-btn:hover,
+.save-btn:hover,
+.cancel-btn:hover {
+    background-color: #ddd;
+}
+
+.decrement-btn {
+    background-color: #f0f0f0;
+}
+
+.decrement-btn:hover {
+    background-color: #e0e0e0;
+}
+
+.quantity-input {
+    width: 40px;
+    padding: 6px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    text-align: center;
+}

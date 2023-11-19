@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Shipping Fee Calculation</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+</head>
+<body>
+<div class="container">
+    <h1>Shipping Fee Calculation</h1>
+    <div>
+        <label for="province">Select Province:</label>
+        <select id="province">
+            <option value="">-- Select Province --</option>
+            <!-- Populate options using API response -->
+            <option th:each="province : ${provinces}" th:value="${province.ProvinceID}"
+                    th:text="${province.ProvinceName}"></option>
+        </select>
+    </div>
+    <div>
+        <label for="district">Select District:</label>
+        <select id="district" disabled>
+            <option value="">-- Select District --</option>
+        </select>
+    </div>
+    <div>
+        <label for="ward">Select Ward:</label>
+        <select id="ward" disabled>
+            <option value="">-- Select Ward --</option>
+        </select>
+    </div>
+
+    <div>
+        <label for="shippingFee">Shipping Fee:</label>
+        <input type="text" id="shippingFee" readonly>
+    </div>
+</div>
+
+<script th:inline="javascript">
+    $(document).ready(function () {
+        // Populate provinces
+        $.ajax({
+            url: "https://online-gateway.ghn.vn/shiip/public-api/master-data/province",
+            type: "POST",
+            dataType: "json",
+            headers: {
+                "Content-Type": "application/json",
+                "Token": "ab5e296c-25a3-11ee-b394-8ac29577e80e"
+            },
+            success: function (response) {
+                // Update combobox with province options
+                var provinces = response.data;
+                var provinceSelect = $("#province");
+                provinces.forEach(function (province) {
+                    provinceSelect.append("<option value='" + province.ProvinceID + "'>" + province.ProvinceName + "</option>");
+                });
+            },
+            error: function (xhr, status, error) {
+                console.log("API Request Failed:", error);
+            }
+        });
+
+        // Handle province selection change event
+        $("#province").change(function () {
+            var selectedProvinceId = $(this).val();
+
+            // Reset district and ward options
+            $("#district").prop("disabled", true).empty().append("<option value=''>-- Select District --</option>");
+            $("#ward").prop("disabled", true).empty().append("<option value=''>-- Select Ward --</option>");
+
+            if (selectedProvinceId) {
+                // Populate districts based on selected province
+                $.ajax({
+                    url: "https://online-gateway.ghn.vn/shiip/public-api/master-data/district",
+                    type: "GET",
+                    dataType: "json",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Token": "ab5e296c-25a3-11ee-b394-8ac29577e80e"
+                    },
+                    data: {
+                        "province_id": selectedProvinceId
+                    },
+                    success: function (response) {
+                        // Update combobox with district options
+                        var districts = response.data;
+                        var districtSelect = $("#district");
+                        districts.forEach(function (district) {
+                            districtSelect.append("<option value='" + district.DistrictID + "'>" + district.DistrictName + "</option>");
+                        });
+
+                        // Enable district selection
+                        districtSelect.prop("disabled", false);
+                    },
+                    error: function (xhr, status, error) {
+                        console.log("API Request Failed:", error);
+                    }
+                });
+            }
+        });
+
+        // Handle district selection change event
+        $("#district").change(function () {
+            var selectedDistrictId = $(this).val();
+
+            // Reset ward options
+            $("#ward").prop("disabled", true).empty().append("<option value=''>-- Select Ward --</option>");
+
+            if (selectedDistrictId) {
+                // Populate wards based on selected district
+                $.ajax({
+                    url: "https://online-gateway.ghn.vn/shiip/public-api/master-data/ward",
+                    type: "GET",
+                    dataType: "json",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Token": "ab5e296c-25a3-11ee-b394-8ac29577e80e"
+                    },
+                    data: {
+                        "district_id": selectedDistrictId
+                    },
+                    success: function (response) {
+                        // Update combobox with ward options
+                        var wards = response.data;
+                        var wardSelect = $("#ward");
+                        wards.forEach(function (ward) {
+                            wardSelect.append("<option value='" + ward.WardCode + "'>" + ward.WardName + "</option>");
+                        });
+
+                        // Enable ward selection
+                        wardSelect.prop("disabled", false);
+                    },
+                    error: function (xhr, status, error) {
+                        console.log("API Request Failed:", error);
+                    }
+                });
+            }
+        });
+
+        // Handle input change event
+        $("#province, #district, #ward").change(function () {
+            calculateShippingFee();
+        });
+
+        // Function to calculate shipping fee
+        function calculateShippingFee() {
+            var toDistrictId = parseInt($("#district").val());
+            var toWardCode = $("#ward").val();
+
+            if (toDistrictId && toWardCode) {
+                // Get service_id based on selected districts
+                $.ajax({
+                    url: "https://online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/available-services",
+                    type: "POST",
+                    dataType: "json",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Token": "ab5e296c-25a3-11ee-b394-8ac29577e80e"
+                    },
+                    data: JSON.stringify({
+                        "shop_id": 4365806,
+                        "from_district": 1454,
+                        "to_district": toDistrictId
+                    }),
+                    success: function (response) {
+                        var availableServices = response.data;
+                        if (availableServices.length > 0) {
+                            var serviceId = availableServices[0].service_id;
+
+                            // Calculate shipping fee
+                            $.ajax({
+                                url: "https://online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/fee",
+                                type: "POST",
+                                dataType: "json",
+                                headers: {
+                                    "Content-Type": "application/json",
+                                    "Token": "ab5e296c-25a3-11ee-b394-8ac29577e80e",
+                                    "ShopId": 4365806
+                                },
+                                data: JSON.stringify({
+                                    "from_district_id": 1454,
+                                    "from_ward_code": "21211",
+                                    "service_id": serviceId,
+                                    "to_district_id": toDistrictId,
+                                    "to_ward_code": toWardCode,
+                                    "weight": 200
+                                }),
+                                success: function (response) {
+                                    $("#shippingFee").val(response.data.total);
+                                },
+                                error: function (xhr, status, error) {
+                                    console.log("API Request Failed:", error);
+                                }
+                            });
+                        } else {
+                            console.log("No available services.");
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.log("API Request Failed:", error);
+                    }
+                });
+            }
+        }
+    });
+</script>
+</body>
+</html>

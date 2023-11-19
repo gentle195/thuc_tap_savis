@@ -1,0 +1,65 @@
+.panel-wrapper {
+    display: flex;
+}
+
+.left-panel {
+    width: 50%;
+    height: 100vh;
+    box-sizing: border-box;
+    padding: 20px;
+    border-right: 1px solid #ccc;
+
+}
+
+.right-panel {
+    width: 50%;
+    height: 100vh;
+    box-sizing: border-box;
+    padding: 20px;
+    margin-bottom: 5px;
+}
+
+.thanhToan {
+    /*background-color: #b3d7ff;*/
+    margin-bottom: 5px;
+    width: 100%;
+    height: 50%;
+    box-sizing: border-box;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.diaChi {
+    /*background-color: #1ab7ea;*/
+    width: 100%;
+    height: 50%;
+    box-sizing: border-box;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.tablea {
+    width: 100%;
+}
+
+.tablea th,
+.tablea td {
+    padding: 10px;
+    text-align: left;
+}
+
+.tablea th {
+    background-color: #f2f2f2;
+}
+
+.tong-tien {
+    font-size: 15px;
+    font-weight: bold;
+}
+
+.table-wrapper {
+    max-height: 500px; /* Đặt chiều cao tối đa của phần tử bao bọc bảng */
+    overflow-y: auto; /* Kích hoạt thanh cuộn dọc */
+}

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="zxx" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{customer/layouts/index}">
+<head>
+    <meta charset="UTF-8">
+    <title>Đã giao hàng</title>
+    <link rel="stylesheet" th:href="@{/customer/css/HoaDon/ChiTietCustomer/danhSach.css}">
+    <script th:src="@{/customer/js/HoaDon/jsChungHDCtomer.js}"></script>
+</head>
+
+<body>
+<section class="Customer_ChoGiaoHang" layout:fragment="content">
+    <div class="tab-buttons">
+        <button class="tab-button" onclick="redirectToChoxacNhanCustomer()">Chờ xác nhận</button>
+        <button class="tab-button" onclick="redirectToChoGiaoHangCustomer()">Chờ giao hàng</button>
+        <button class="tab-button" onclick="redirectToDangGiaoCustomer()">Đang giao</button>
+        <button class="tab-button active" onclick="redirectToDaGiaoCustomer()">Đã giao</button>
+        <button class="tab-button" onclick="redirectToDahuyCustomer()">Đã hủy</button>
+    </div>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="table-max">
+                    <table class="table" id="user-table-DangGiaoCustomer">
+                        <thead>
+                        <tr>
+                            <th scope="col">STT</th>
+                            <th scope="col">Mã đơn</th>
+                            <th scope="col">Người nhận</th>
+                            <th scope="col">Số điện thoại</th>
+                            <th scope="col">Thành tiền</th>
+                            <th scope="col">Trạng thái</th>
+                            <th scope="col" colspan="2">Thao tác</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="customerDG, stt: ${DaGiaoCustomer}">
+                            <th scope="row" th:text="${stt.count}"></th>
+                            <td th:text="${customerDG.maDon}"></td>
+                            <td th:text="${customerDG.nguoiNhan}"></td>
+                            <td th:text="${customerDG.sdtNguoiNhan}"></td>
+                            <!--                        <td th:text="${customerDG.tongTienHoaDon}"></td>-->
+                            <td th:text="${#numbers.formatDecimal(customerDG.tongTienHoaDon, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"></td>
+                            <td th:text="${customerDG.trangThai.name}"></td>
+                            <td>
+                                <div class="button-group">
+                                    <input type="hidden" id="idCustomerDG" th:value="${customerDG.id}">
+
+                                    <button class="action-button chiTietHoaDonCus" type="submit" id="chiTietHoaDonCusDG">
+                                        <i class="fa fa-info" aria-hidden="true"></i>
+                                    </button>
+
+                                    <script th:inline="javascript">
+                                        $(document).ready(function () {
+                                            $("#chiTietHoaDonCusDG").click(function () {
+                                                const id = $("#idCustomerDG").val();
+                                                window.location.href = "/customer/DonHang/ChiTietHoaDon/DaGiaoHang/hoa-don-id=" + id;
+                                            });
+                                        });
+                                    </script>
+
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <div th:if="${!#lists.isEmpty(DaGiaoCustomer)}">
+                        <ul class="pagination">
+                            <li th:each="pageNumber : ${#numbers.sequence(1, pageDaGiao)}">
+                                <a th:href="@{/customer/DonHang/DaGiaoHang(page=${pageNumber})}" th:text="${pageNumber}"
+                                   th:class="${pageNumber == page ? 'active-page' : ''}"></a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+</html>

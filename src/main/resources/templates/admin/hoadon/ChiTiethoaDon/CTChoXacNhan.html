@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/layouts/index}">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Chi tiết hóa đơn</title>
+    <link rel="stylesheet" th:href="@{/admin/css/hoaDon/chiTietHoaDon/chiTietHoaDon.css}">
+    <script th:src="@{/admin/js/hoadon/ChiTietHoaDon/CTChoXacNhan.js}"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+<div class="container-fluid" layout:fragment="content">
+    <h1>CHI TIẾT HÓA ĐƠN</h1>
+    <div th:object="${hoaDon}">
+        <input type="hidden" id="IDHoaDonCXN" th:value="${hoaDon.id}">
+        <p>Mã đơn: <span th:text="${hoaDon.maDon}"></span></p>
+        <p>Ngày tạo: <span th:text="${#dates.format(hoaDon.ngayTao, 'dd/MM/yyyy')}"></span></p>
+        <p>Tên khách hàng: <span th:text="${hoaDon.nguoiNhan}"></span></p>
+
+        <div class="action-wrapper">
+            <div class="themSPHDCT">
+                <a class="btn btn-primary" th:href="@{'/admin/hoaDon/chinhSuaHoaDon/' + ${hoaDon.id}}">
+                    <i class="fas fa-fw fa-shopping-cart"></i>
+                    Thêm sản phẩm
+                </a>
+            </div>
+        </div>
+
+        <div class="table-wrapper">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th data-field="state" data-checkbox="true"></th>
+                    <th scope="col">Sản phẩm</th>
+                    <th scope="col">Đơn giá</th>
+                    <th scope="col">Số lượng</th>
+                    <th scope="col">Thành tiền</th>
+                    <th scope="col">Thao tác</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                <tr th:each="hdct, stt : ${hoaDon.hoaDonChiTiets}" th:if="${!hdct.daXoa}">
+                    <td></td>
+                    <td>
+                        <div style="display: flex; align-items: center;">
+                            <img th:src="${'/customer/images/' + tenAnhChinhList[stt.index]}" alt=""
+                                 style="margin-right: 10px;" width="100px" height="100px">
+
+                            <div>
+                                <h6>
+                                    <strong>
+                                            <span style="text-transform: uppercase" class="TenSP"
+                                                  th:text="${hdct.sanPhamChiTiet.sanPham.tenSanPham}"></span>
+                                    </strong>
+                                </h6>
+                                <div class="ThongTinSP">
+                                    <span th:text="${hdct.sanPhamChiTiet.mauSac.tenMauSac}"></span>
+                                    <span>/</span>
+                                    <span th:text="${hdct.sanPhamChiTiet.kichCo.tenKichCo}"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                    <td th:text="${#numbers.formatDecimal(hdct.donGia, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"></td>
+
+                    <td>
+                        <div>
+                            <input class="quantity-input" type="number" min="1" th:value="${hdct.soLuong}"
+                                   th:attr="data-so-luong-hien-co=${hdct.sanPhamChiTiet.soLuong}">
+
+                            <button class="save-btn" th:data-id="${hdct.id}" style="display: none;">Lưu
+                            </button>
+                            <button class="cancel-btn" style="display: none;">Hủy</button>
+
+                            <p class="soLuongSPCT" style="display: none;">Số lượng hiện có sản phẩm: <span
+                                    class="soLuongHienCoTable"
+                                    th:text="${hdct.sanPhamChiTiet.soLuong}"></span></p>
+                        </div>
+                    </td>
+
+                    <td th:text="${#numbers.formatDecimal(hdct.tongTien, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"></td>
+
+                    <td>
+                        <button class="action-button xoaHoaDonCT" th:attr="data-id=${hdct.id}"
+                                th:data-target="'#modalxoaHDCT-' + ${hdct.id}">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                        <br>
+                        <div class="modal fade xoaHoaDonCTModal" th:id="'modalxoaHDCT-' + ${hdct.id}" tabindex="-1"
+                             aria-labelledby="xoaHoaDonCTModalLabel"
+                             aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="xoaHoaDonCTModalLabel">Xóa sản phẩm</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        Xác nhận xóa sản phẩm này khỏi hóa đơn?
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-primary btn-dong-y">Đồng ý</button>
+                                        <button type="button" class="btn btn-secondary btn-khong"
+                                                data-bs-dismiss="modal">Không
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <p>Tổng giá trị đơn hàng: <span
+                th:text="${#numbers.formatDecimal(hoaDon.tongTienDonHang, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"></span></p>
+        <p>Phí vận chuyển: <span
+                th:text="${#numbers.formatDecimal(hoaDon.tienShip, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"></span></p>
+        <p>Giảm giá:
+            <span th:if="${hoaDon.khuyenMai == null or hoaDon.khuyenMai.id == null}">0 VNĐ</span>
+            <span th:if="${hoaDon.tien_giam != null and hoaDon.khuyenMai != null and hoaDon.khuyenMai.id != null}">
+            <span th:if="${hoaDon.tien_giam >= hoaDon.khuyenMai.giaTriToiThieu}"
+                  th:utext="${#numbers.formatDecimal(hoaDon.tien_giam, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"></span>
+            <span th:if="${hoaDon.tien_giam < hoaDon.khuyenMai.giaTriToiThieu}"
+                  th:text="${hoaDon.tien_giam} + '%'"></span>
+            </span>
+        </p>
+        <p>Tổng tiền thanh toán: <span
+                th:text="${#numbers.formatDecimal(hoaDon.tongTienHoaDon, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"></span></p>
+
+    </div>
+
+    <h1 style="text-align: center">Lịch sử hóa đơn</h1>
+    <div class="lichSuHoaDon">
+        <table class="custom-table">
+            <thead>
+            <tr>
+                <th scope="col">Ngày thực hiện</th>
+                <th scope="col">Người thực hiện</th>
+                <th scope="col">Thao tác</th>
+                <th scope="col">Trạng thái</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="ls : ${lichSuHD}">
+                <td th:text="${#dates.format(ls.ngayTao, 'dd/MM/yyyy')}"></td>
+                <td th:text="${ls.nguoiThaoTac != null ? ls.nguoiThaoTac : ls.hoaDon.nguoiNhan}"></td>
+                <td th:text="${ls.thaoTac}"></td>
+                <td>Thành công</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <br>
+    <br>
+
+    <div class="container-fluid">
+        <div class="main-timeline">
+            <div class="timeline" th:each="choXacNhanTimeLine : ${timeLineChoXacNhan}">
+                <div class="icon"></div>
+                <div class="date-content">
+                    <div class="date-outer">
+                        <span class="date">
+                            <span class="month"
+                                  th:text="${#dates.format(choXacNhanTimeLine.ngayTao, 'dd/MM/yyyy')}"></span>
+                            <span class="hour"></span>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="timeline-content">
+                    <h5 class="title">Chờ xác nhận</h5>
+                    <p class="description"><strong>Thao tác: </strong>Tạo đơn hàng</p>
+                    <p><strong>Người tạo đơn: </strong><span th:if="${choXacNhanTimeLine.nguoiDung != null}"
+                                                             th:text="${choXacNhanTimeLine.nguoiDung.tenNguoiDung}"></span><span
+                            th:unless="${choXacNhanTimeLine.nguoiDung != null}" th:text="${hoaDon.nguoiNhan}"></span>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="button-group">
+            <!--XÁC NHẬN ĐƠN HÀNG-->
+            <button class="action-button XacNhanDon" th:attr="data-id=${hoaDon.id}"> Xác nhận đơn
+                <i class="fas fa-check"></i>
+            </button>
+            <br>
+            <div class="modal fade xacNhanModal" tabindex="-1" aria-labelledby="xacNhanModalLabel"
+                 aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="xacNhanModalLabel">Xác nhận đơn</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            Xác nhận đơn hàng?
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary btn-dong-y">Đồng ý</button>
+                            <button type="button" class="btn btn-secondary btn-khong"
+                                    data-bs-dismiss="modal">Không
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!--HỦY ĐƠN HÀNG-->
+            <button class="action-button HuyDon" th:attr="data-id=${hoaDon.id}"> Hủy đơn
+                <i class="fas fa-times"></i>
+            </button>
+            <br>
+            <div class="modal fade huyModal" tabindex="-1" aria-labelledby="huyDonModalLabel"
+                 aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="huyDonModalLabel">Hủy đơn hàng</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            Hủy đơn hàng?
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary btn-dong-y">Đồng ý</button>
+                            <button type="button" class="btn btn-secondary btn-khong"
+                                    data-bs-dismiss="modal">Không
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <button class="action-button inHoaDonChiTiet">In hóa đơn
+                <i class="fas fa-receipt"></i>
+            </button>
+            <input type="hidden" id="idChiTietHoaDon" th:value="${hoaDon.id}">
+            <div class="modal fade inHoaDonModal" tabindex="-1" aria-labelledby="inHoaDonModalLabel"
+                 aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="inHoaDonModalLabel">In hóa đơn</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            Bạn muốn in hóa đơn?
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary btn-dong-y">Đồng ý</button>
+                            <button type="button" class="btn btn-secondary btn-khong"
+                                    data-bs-dismiss="modal">Không
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <button class="action-button" onclick="quayLai()">Quay lại
+                <i class="fas fa-arrow-left"></i>
+            </button>
+        </div>
+    </div>
+</div>
+</body>
+</html>
+
+
+
+
+
+
